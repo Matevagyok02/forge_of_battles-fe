@@ -7,7 +7,7 @@ function App() {
         try{
 
             const response = (await fetch(
-                `http://localhost:3000/${input}`
+                `https://forge-of-battles-be.onrender.com/${input}`
             ));
 
             const responseBody = await response.json();
