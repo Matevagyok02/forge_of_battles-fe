@@ -11,20 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    # Add your test and build steps here
-    - name: Install dependencies
-      run: npm install
+      # Add your test and build steps here
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run tests
-      run: npm test
+      - name: Run tests
+        run: npm test
 
-    - name: Build project
-      run: npm run build
+      - name: Build project
+        run: npm run build
 
   merge:
     needs: build
@@ -32,25 +32,33 @@ jobs:
     if: success()
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - name: Merge branch into main or master
-      run: |
-        git config --global user.name "github-actions"
-        git config --global user.email "actions@github.com"
+      - name: Merge branch into main or master
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          
+          # Checkout master or main
+          if git show-ref --quiet refs/heads/main; then
+            git checkout main
+          else
+            git checkout master
+          fi
+          
+          # Merge the current branch into the main/master branch
+          git merge --no-ff ${{ github.head_ref }} -m "Merging ${{ github.head_ref }} into main/master"
+          
+          # Push the changes using GitHub's built-in token
+          git push origin HEAD
 
-        # Checkout main or master
-        if git show-ref --quiet refs/heads/main; then
-          git checkout main
-        else
-          git checkout master
-        fi
-        
-        # Merge the current branch into the main/master branch
-        git merge --no-ff ${{ github.head_ref }} -m "Merging ${{ github.head_ref }} into main"
-        
-        # Push the changes
-        git push origin HEAD
+      - name: Delete source branch
+        run: |
+          branch_name=${{ github.head_ref }}
+          if [ "$branch_name" != "main" ] && [ "$branch_name" != "master" ]; then
+            # Delete the source branch on GitHub
+            git push origin --delete $branch_name
+          fi
