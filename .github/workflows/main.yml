@@ -1,0 +1,56 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Add your test and build steps here
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test
+
+    - name: Build project
+      run: npm run build
+
+  merge:
+    needs: build
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Merge branch into main or master
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "actions@github.com"
+
+        # Checkout main or master
+        if git show-ref --quiet refs/heads/main; then
+          git checkout main
+        else
+          git checkout master
+        fi
+        
+        # Merge the current branch into the main/master branch
+        git merge --no-ff ${{ github.head_ref }} -m "Merging ${{ github.head_ref }} into main"
+        
+        # Push the changes
+        git push origin HEAD
