@@ -11,13 +11,12 @@ button {
 
 #chat-window {
   color: white;
-  height: 100%;
-  overflow-y: scroll;
-  width: 300px;
+  height: 300px;
+  width: 200px;
 }
 
-#chat-window > input {
-  width: 80px;
+#chat-window div {
+  overflow-x: scroll;
 }
 
 span {

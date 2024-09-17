@@ -9,32 +9,46 @@ const Chat: FC = () => {
     const [socket, setSocket] = useState<WebSocket | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [messageText, setMessageText] = useState('');
-    const [userId, setUserId] = useState('user123'); // Replace with dynamic user ID
+    const userId = 'user';
 
     useEffect(() => {
         // Initialize WebSocket connection
-        const ws = new WebSocket('ws://localhost:3000/', 'echo-protocol');
-        setSocket(ws);
+        let ws;
 
-        ws.onopen = () => {
-            console.log('Connected to WebSocket server');
-            ws.send(JSON.stringify({ action: 'connect', userId }));
-        };
+        const initWebSocket = () => {
+            ws = new WebSocket('ws://localhost:3000/', 'echo-protocol');
+            setSocket(ws);
 
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.action === 'receive_message') {
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    { from: data.from, messageText: data.messageText }
-                ]);
-            }
-        };
+            ws.onopen = () => {
+                console.log('Connected to WebSocket server');
+                ws.send(JSON.stringify({ action: 'connect', userId }));
+            };
 
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.action === 'receive_message') {
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        { from: data.from, messageText: data.messageText }
+                    ]);
+                }
+            };
+        }
+
+        if (document.readyState === 'complete') {
+            initWebSocket();
+        } else {
+            window.addEventListener('load', initWebSocket);
+        }
+
+        // Cleanup function to close WebSocket and remove the event listener
         return () => {
-            ws.close();
+            if (ws) {
+                ws.close();
+            }
+            window.removeEventListener('load', initWebSocket);
         };
-    }, [userId]);
+    }, []);
 
     const handleSendMessage = () => {
         if (messageText.trim() && socket) {
@@ -62,24 +76,20 @@ const Chat: FC = () => {
     };
 
     return (
-        <span>
+        <div id="chat-window">
+            <input
+                type="text"
+                value={messageText}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your message..."
+            />
             <div>
-                <h2>Chat</h2>
-                <input
-                    type="text"
-                    value={messageText}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Type your message..."
-                />
-                <button onClick={handleSendMessage}>Send</button>
-            </div>
-            <div id="chat-window">
                 {messages.map((message, index) => (
                     <p key={index}><strong>{message.from}:</strong> {message.messageText}</p>
                 ))}
             </div>
-        </span>
+        </div>
     );
 };
 
