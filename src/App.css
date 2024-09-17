@@ -9,6 +9,17 @@ button {
   margin-block: auto;
 }
 
+#chat-window {
+  color: white;
+  height: 100%;
+  overflow-y: scroll;
+  width: 300px;
+}
+
+#chat-window > input {
+  width: 80px;
+}
+
 span {
   color: black;
   padding: 20px;

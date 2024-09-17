@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import './App.css'
 import {useAuth0} from "@auth0/auth0-react";
+import Chat from "./components/Chat.tsx";
 
-function App() {
+const App = () => {
 
     const findCardById = async () => {
         try{
@@ -64,20 +65,23 @@ function App() {
                     </>
                 }
             </header>
-            <div className='container'>
-                <div className='input-container'>
-                    <input type='text' placeholder='Card ID' value={input} onChange={e => setInput(e.target.value)} />
-                    <input type='button' value='Find this card' onClick={findCardById}/>
+            <div>
+                <div className='container'>
+                    <div className='input-container'>
+                        <input type='text' placeholder='Card ID' value={input} onChange={e => setInput(e.target.value)} />
+                        <input type='button' value='Find this card' onClick={findCardById}/>
+                    </div>
+                    <div className='card-container'>
+                        <ul>
+                            {card && Object.entries(card).map(([key, value]) =>
+                                <li key={key}>
+                                    {key}: {value}
+                                </li>
+                            )}
+                        </ul>
+                    </div>
                 </div>
-                <div className='card-container'>
-                    <ul>
-                        {card && Object.entries(card).map(([key, value]) =>
-                            <li key={key}>
-                                {key}: {value}
-                            </li>
-                        )}
-                    </ul>
-                </div>
+                <Chat/>
             </div>
         </div>
     )
