@@ -13,7 +13,7 @@ const Chat: FC = () => {
 
     useEffect(() => {
         // Initialize WebSocket connection
-        let ws;
+        let ws: WebSocket;
 
         const initWebSocket = () => {
             ws = new WebSocket('ws://localhost:3000/', 'echo-protocol');
