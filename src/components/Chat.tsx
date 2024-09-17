@@ -9,14 +9,16 @@ const Chat: FC = () => {
     const [socket, setSocket] = useState<WebSocket | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [messageText, setMessageText] = useState('');
+
     const userId = 'user';
+    const wsUrl = import.meta.env.VITE_WEBSOCKET_URL;
 
     useEffect(() => {
         // Initialize WebSocket connection
         let ws: WebSocket;
 
         const initWebSocket = () => {
-            ws = new WebSocket('ws://localhost:3000/', 'echo-protocol');
+            ws = new WebSocket(wsUrl, 'echo-protocol');
             setSocket(ws);
 
             ws.onopen = () => {

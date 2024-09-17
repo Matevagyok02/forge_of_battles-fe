@@ -7,9 +7,10 @@ const App = () => {
 
     const findCardById = async () => {
         try{
+            const apiUrl = import.meta.env.VITE_API_URL;
 
             const response = (await fetch(
-                `https://forge-of-battles-be.onrender.com/${input ? input : defaultCardId}`
+                `${apiUrl}${input ? input : defaultCardId}`
             ));
 
             const responseBody = await response.json();
