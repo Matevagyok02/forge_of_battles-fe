@@ -1,22 +1,25 @@
-import { useState } from 'react'
+import {useState} from 'react'
 import './App.css'
 import {useAuth0} from "@auth0/auth0-react";
 import Chat from "./components/Chat.tsx";
+import Cards from "./components/Cards.tsx";
 
 const App = () => {
 
-    const findCardById = async () => {
-        try{
-            const apiUrl = import.meta.env.VITE_API_URL;
+    const apiUrl = import.meta.env.VITE_API_URL;
 
+    const findUserById = async () => {
+        try{
+            const token = await getAccessTokenSilently();
             const response = (await fetch(
-                `${apiUrl}${input ? input : defaultCardId}`
+                `${apiUrl}user/${input ? input : defaultId}`,
+                {headers: {Authorization: `Bearer ${token}`}}
             ));
 
             const responseBody = await response.json();
 
             if (response.status === 200) {
-                setCard(responseBody)
+                setUserData(responseBody)
             } else {
                 alert(responseBody.message);
             }
@@ -26,18 +29,12 @@ const App = () => {
         }
     }
 
-    const c = {
-        name: "---",
-        attack: 0,
-        defence: 0
-    }
-
-    const defaultCardId = '66e16221585be058e8f9dfa7'
+    const defaultId = 'google|145255'
 
     const [input, setInput] = useState('');
-    const [card, setCard] = useState(c);
+    const [userData, setUserData] = useState({username: "..."});
 
-    const { isAuthenticated, user, loginWithPopup, logout, isLoading} = useAuth0();
+    const { isAuthenticated, user, loginWithPopup, logout, isLoading, getAccessTokenSilently} = useAuth0();
 
     return(
         <div id='body'>
@@ -67,22 +64,25 @@ const App = () => {
                 }
             </header>
             <div>
-                <div className='container'>
-                    <div className='input-container'>
-                        <input type='text' placeholder='Card ID' value={input} onChange={e => setInput(e.target.value)} />
-                        <input type='button' value='Find this card' onClick={findCardById}/>
+                <div className="flex justify-between m-10">
+                    <div>
+                        <div className='input-container'>
+                            <input type='text' placeholder='User ID' value={input} onChange={e => setInput(e.target.value)} />
+                            <input type='button' value='Find user' onClick={findUserById}/>
+                        </div>
+                        <div className='card-container'>
+                            <ul>
+                                {userData && Object.entries(userData).map(([key, value]) =>
+                                    <li key={key}>
+                                        {key}: {value}
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
                     </div>
-                    <div className='card-container'>
-                        <ul>
-                            {card && Object.entries(card).map(([key, value]) =>
-                                <li key={key}>
-                                    {key}: {value}
-                                </li>
-                            )}
-                        </ul>
-                    </div>
+                    <Chat/>
                 </div>
-                <Chat/>
+                <Cards/>
             </div>
         </div>
     )

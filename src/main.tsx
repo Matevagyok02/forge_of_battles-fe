@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import {Auth0Provider} from "@auth0/auth0-react";
+import config from "../auth.config.json";
 
 const rootElement = document.getElementById('root');
 
@@ -10,10 +11,11 @@ if (rootElement) {
     createRoot(rootElement).render(
         <StrictMode>
             <Auth0Provider
-                domain="dev-58nywxjmv52aaecl.eu.auth0.com"
-                clientId="j3Cptk9wMBPOFDrwayCAwTPkaGdXBqf0"
+                domain={config.domain}
+                clientId={config.clientId}
                 cacheLocation="localstorage"
                 authorizationParams={{
+                    audience: config.audience,
                     redirect_uri: window.location.origin
                 }}
             >
