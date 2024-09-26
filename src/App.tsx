@@ -7,32 +7,70 @@ import Cards from "./components/Cards.tsx";
 const App = () => {
 
     const apiUrl = import.meta.env.VITE_API_URL;
+    const defaultPath = "test";
+
+    const [path, setPath] = useState('');
+    const [body, setBody] = useState('');
+    const [method, setMethod] = useState("GET");
+
+    const requestInit = {
+        headers: {},
+        method: "GET",
+        body: ""
+    };
+
 
     const findUserById = async () => {
         try{
             const token = await getAccessTokenSilently();
-            const response = (await fetch(
-                `${apiUrl}user/${input ? input : defaultId}`,
-                {headers: {Authorization: `Bearer ${token}`}}
-            ));
+            requestInit.headers = { Authorization: "Bearer " + token };
 
-            const responseBody = await response.json();
+            switch(method) {
+                case "POST":
+                    requestInit.headers = {
+                        ...requestInit.headers,
+                        "Content-Type": "application/json"
+                    };
+                    requestInit.method = "POST";
+                    requestInit.body = body;
+                    break;
+                case "PUT":
+                    requestInit.headers = {
+                        ...requestInit.headers,
+                        "Content-Type": "text/javascript"
+                    };
+                    requestInit.method = "PUT";
+                    break;
+                case "DELETE":
+                    requestInit.headers = {
+                        ...requestInit.headers,
+                        "Content-Type": "text/javascript"
+                    };
+                    requestInit.method = "DELETE";
+                    break;
+                default:
+                    requestInit.headers = {
+                        ...requestInit.headers,
+                        "Content-Type": "text/javascript"
+                    };
+                    requestInit.method = "GET";
+                    break;
+            }
+
+            const response = await fetch(`${apiUrl}${path ? path : defaultPath}`, requestInit);
+
+            const responseBody = await response.text();
 
             if (response.status === 200) {
-                setUserData(responseBody)
+                console.log(responseBody);
             } else {
-                alert(responseBody.message);
+                alert(responseBody);
             }
 
         } catch (error) {
             console.log(error);
         }
     }
-
-    const defaultId = 'google|145255'
-
-    const [input, setInput] = useState('');
-    const [userData, setUserData] = useState({username: "..."});
 
     const { isAuthenticated, user, loginWithPopup, logout, isLoading, getAccessTokenSilently} = useAuth0();
 
@@ -67,17 +105,24 @@ const App = () => {
                 <div className="flex justify-between m-10">
                     <div>
                         <div className='input-container'>
-                            <input type='text' placeholder='User ID' value={input} onChange={e => setInput(e.target.value)} />
-                            <input type='button' value='Find user' onClick={findUserById}/>
-                        </div>
-                        <div className='card-container'>
-                            <ul>
-                                {userData && Object.entries(userData).map(([key, value]) =>
-                                    <li key={key}>
-                                        {key}: {value}
-                                    </li>
-                                )}
+                            <ul className="flex flex-col gap-2">
+                                <li>
+                                    <input className="text-black" type='text' placeholder='request path' value={path} onChange={e => setPath(e.target.value)} />
+                                </li>
+                                <li>
+                                    <input className="text-black" type='text' placeholder='request body (json)' value={body} onChange={e => setBody(e.target.value)} />
+                                </li>
+                                <li>
+                                    <select className="text-white" name="request method" id="select" value={method} onChange={(e) => setMethod(e.target.value)}>
+                                        <option value="GET">GET</option>
+                                        <option value="POST">POST</option>
+                                        <option value="PUT">PUT</option>
+                                        <option value="DELETE">DELETE</option>
+                                    </select>
+                                </li>
                             </ul>
+
+                            <input type='button' value='Find user' onClick={findUserById}/>
                         </div>
                     </div>
                     <Chat/>
