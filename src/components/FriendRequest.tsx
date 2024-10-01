@@ -3,7 +3,9 @@ import {useAuth0} from "@auth0/auth0-react";
 import {io} from "socket.io-client";
 
 const FriendRequest = () => {
+
     const { user, isAuthenticated } = useAuth0();
+
     const [notifications, setNotifications] = useState<string[]>([]);
     const [socket, setSocket]: any = useState(null);
 
@@ -12,7 +14,7 @@ const FriendRequest = () => {
             if (socket) {
                 socket.emit('register', user.sub);
 
-                socket.on('receive-friend-request', (data: { sender: string; message: string }) => {
+                socket.on('friend-request', (data: { sender: string; message: string }) => {
                     setNotifications((prev) => [...prev, `${data.sender} sent you a friend request`]);
                 });
             } else {
@@ -30,7 +32,7 @@ const FriendRequest = () => {
 
         return () => {
             if (socket)
-                socket.off('receive-friend-request');
+                socket.off('friend-request');
         };
     }, [user, socket]);
 
@@ -46,6 +48,6 @@ const FriendRequest = () => {
             )}
         </div>
     );
-};
+}
 
 export default FriendRequest;

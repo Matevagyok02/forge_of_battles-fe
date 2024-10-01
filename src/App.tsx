@@ -1,8 +1,7 @@
 import {useState} from 'react'
 import './App.css'
 import {useAuth0} from "@auth0/auth0-react";
-import Cards from "./components/Cards.tsx";
-import FriendRequest from "./components/FriendRequest.tsx";
+import Chat from "./components/Chat.tsx";
 
 const App = () => {
 
@@ -21,7 +20,7 @@ const App = () => {
         };
 
         try{
-            let token
+            let token;
             token = isAuthenticated ? await getAccessTokenSilently() : undefined;
 
             requestInit.headers = { Authorization: "Bearer " + token };
@@ -125,8 +124,9 @@ const App = () => {
                         </div>
                     </div>
                 </div>
-                <FriendRequest />
-                <Cards/>
+                <Chat/>
+                {/*<FriendRequest />*/}
+                {/*<Cards/>*/}
             </div>
         </div>
     )
