@@ -2,7 +2,6 @@ import {useState} from 'react'
 import './App.css'
 import {useAuth0} from "@auth0/auth0-react";
 import Chat from "./components/Chat.tsx";
-import Cards from "./components/Cards.tsx";
 
 const App = () => {
 
@@ -12,17 +11,18 @@ const App = () => {
     const [path, setPath] = useState('');
     const [body, setBody] = useState('');
     const [method, setMethod] = useState("GET");
+    const { isAuthenticated, user, loginWithPopup, logout, isLoading, getAccessTokenSilently} = useAuth0();
 
-    const requestInit = {
-        headers: {},
-        method: "GET",
-        body: ""
-    };
+    const sendRequest = async () => {
+        const requestInit: RequestInit = {
+            headers: {},
+            method: "GET"
+        };
 
-
-    const findUserById = async () => {
         try{
-            const token = await getAccessTokenSilently();
+            let token;
+            token = isAuthenticated ? await getAccessTokenSilently() : undefined;
+
             requestInit.headers = { Authorization: "Bearer " + token };
 
             switch(method) {
@@ -72,8 +72,6 @@ const App = () => {
         }
     }
 
-    const { isAuthenticated, user, loginWithPopup, logout, isLoading, getAccessTokenSilently} = useAuth0();
-
     return(
         <div id='body'>
             <header>
@@ -91,7 +89,7 @@ const App = () => {
                                 { user &&
                                     <span>
                                         <label>
-                                            {user.name}
+                                            {user.sub}
                                         </label>
                                         <img src={user.picture} alt=''/>
                                     </span>
@@ -122,12 +120,13 @@ const App = () => {
                                 </li>
                             </ul>
 
-                            <input type='button' value='Find user' onClick={findUserById}/>
+                            <input type='button' value='Send request' onClick={sendRequest}/>
                         </div>
                     </div>
-                    <Chat/>
                 </div>
-                <Cards/>
+                <Chat/>
+                {/*<FriendRequest />*/}
+                {/*<Cards/>*/}
             </div>
         </div>
     )
