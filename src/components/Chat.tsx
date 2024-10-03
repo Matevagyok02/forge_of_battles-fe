@@ -80,7 +80,7 @@ const Chat = () => {
             <div className="h-60 w-fit overflow-scroll">
                 { messages.map((message, index) =>
                         <p key={index} className="w-fit">
-                            <label className="font-bold inline">{message.sender}: </label>
+                            <label className="inline">{message.sender}: </label>
                             <span className="text-white inline" >{message.message}</span>
                         </p>
                 )}
