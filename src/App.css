@@ -1,8 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Amarante&display=swap');
+
 #body {
   width: 100vw;
   height: 100vh;
   display: flex;
   flex-direction: column;
+  font-family: Amarante, serif;
 }
 
 button {
@@ -43,7 +46,8 @@ header {
   left: 0;
   height: 60px;
   width: 100%;
-  background-color: white;
+  background-color: black;
+  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;

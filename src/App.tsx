@@ -1,7 +1,9 @@
-import {useState} from 'react'
+import {MutableRefObject, useRef, useState} from 'react'
 import './App.css'
 import {useAuth0} from "@auth0/auth0-react";
 import Chat from "./components/Chat.tsx";
+import Frame from "./components/Frame.tsx";
+import Button from "./components/Button.tsx";
 
 const App = () => {
 
@@ -72,23 +74,30 @@ const App = () => {
         }
     }
 
+    const card = useRef<HTMLDivElement | undefined>() as MutableRefObject<HTMLDivElement>;
+
+    // const attack = () => {
+    //     const element: HTMLDivElement | undefined =  card.current;
+    //
+    //     if (element) {
+    //         element.classList.remove("attack")
+    //         setTimeout(() => element.classList.add("attack"), 100);
+    //     }
+    // }
+
     return(
         <div id='body'>
             <header>
                 { !isLoading &&
                     <>
                         { !isAuthenticated ?
-                            <button onClick={() => loginWithPopup()}>
-                                Log In
-                            </button>
+                            <Button text="Log In" onClick={() => loginWithPopup()} />
                             :
                             <>
-                                <button onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}>
-                                    Log Out
-                                </button>
+                                <Button text="Log Out" onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })} />
                                 { user &&
                                     <span>
-                                        <label>
+                                        <label className="text-white" >
                                             {user.sub}
                                         </label>
                                         <img src={user.picture} alt=''/>
@@ -125,6 +134,29 @@ const App = () => {
                     </div>
                 </div>
                 <Chat/>
+                <div className="p-10 flex items-stretch gap-10">
+                    <div className="flex flex-col justify-between" >
+                        <Button text="Button 0" />
+                        <Button text="Button 1" />
+                        <Button text="Button 2" />
+                        <Button text="Button 3" />
+                    </div>
+                    <div ref={card} >
+                        <Frame>
+                            <div className="p-3 bg-black flex justify-center">
+                                <p className="text-xl h-fit">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Donec in eros vitae magna ultricies bibendum eu quis erat.
+                                    Nunc efficitur turpis id nisi imperdiet, porttitor efficitur augue dapibus.
+                                    Curabitur id mauris ac sem porttitor sagittis. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Morbi lobortis iaculis malesuada. Pellentesque vitae finibus augue.
+                                    Curabitur tempus tincidunt tortor egestas pulvinar. Mauris faucibus interdum massa ut imperdiet.
+                                    Praesent dictum aliquet consectetur. Mauris ut nulla risus.
+                                </p>
+                            </div>
+                        </Frame>
+                    </div>
+                </div>
                 {/*<FriendRequest />*/}
                 {/*<Cards/>*/}
             </div>

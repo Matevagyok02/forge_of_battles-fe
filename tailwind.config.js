@@ -5,8 +5,15 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        amarante: ["Amarante", "serif"]
+      },
+      colors: {
+        gold: "#FFBF00"
+      }
+    }
   },
-  plugins: [],
+  plugins: []
 }
 
