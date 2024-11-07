@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: lightgray;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --window-frame-size: 960px;
+  --window-decor-size: 336px;
+
+  --silver: grey;
+
+  /*--bg-color: #17252F;*/
+  /*--light-bg: rgba(23, 37, 47, 0.80);*/
+  /*--bg: rgba(23, 37, 47, 0.95);*/
+
+  --bg-color: #202020;
+  --light-bg: rgba(32, 32, 32, 0.8);
+  --bg: rgba(32, 32, 32, 0.95);
+
+  --silver-border: 2px solid grey;
+  --thin-silver-border: 1px solid grey;
+}
+
+body {
+  font-family: "Source Code Pro", monospace;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}

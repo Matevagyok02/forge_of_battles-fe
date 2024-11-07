@@ -1,0 +1,120 @@
+.cut-corners {
+    mask: radial-gradient(10px at 15px 15px, transparent 100%, black) -15px -15px;
+}
+
+.frame-container {
+    width: fit-content;
+    height: fit-content;
+    min-height: 40px;
+    min-width: 40px;
+    position: relative;
+    display: flex;
+    /*filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));*/
+}
+
+.frame-decor-container {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    min-height: 100%;
+    min-width: 100%;
+    background-color: transparent;
+}
+
+.corner-decor {
+    background: url("../assets/corner.svg") no-repeat transparent;
+    width: 50%;
+    height: 50%;
+    position: absolute;
+}
+
+.top-right-corner {
+    @apply corner-decor;
+    top: 0;
+    right: 0;
+    transform: scaleX(-1);
+}
+
+.top-left-corner {
+    @apply corner-decor;
+    top: 0;
+    left: 0;
+}
+
+.bottom-right-corner {
+    @apply corner-decor;
+    bottom: 0;
+    right: 0;
+    rotate: 180deg;
+}
+
+.bottom-left-corner {
+    @apply corner-decor;
+    bottom: 0;
+    left: 0;
+    transform: scaleY(-1);
+}
+
+.frame-border {
+    @apply cut-corners;
+    position: absolute;
+    border: var(--silver-border);
+    height: 100%;
+    width: 100%;
+}
+
+.inner-frame-container {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.inner-frame {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    animation: disconnect-borders 0.2s ease forwards;
+}
+
+.top-left-inner-border {
+    @apply inner-frame;
+    top: 3px;
+    left: 3px;
+    border-top: var(--thin-silver-border);
+    border-left: var(--thin-silver-border);
+}
+
+.top-right-inner-border {
+    @apply inner-frame;
+    top: 3px;
+    right: 3px;
+    border-top: var(--thin-silver-border);
+    border-right: var(--thin-silver-border);
+}
+
+.bottom-left-inner-border {
+    @apply inner-frame;
+    bottom: 3px;
+    left: 3px;
+    border-bottom: var(--thin-silver-border);
+    border-left: var(--thin-silver-border);
+}
+
+.bottom-right-inner-border {
+    @apply inner-frame;
+    bottom: 3px;
+    right: 3px;
+    border-bottom: var(--thin-silver-border);
+    border-right: var(--thin-silver-border);
+}
+
+.frame-content {
+    @apply cut-corners;
+    position: relative;
+    z-index: 0;
+}
+
+
+

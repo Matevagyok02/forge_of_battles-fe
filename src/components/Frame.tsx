@@ -1,4 +1,4 @@
-import "../frame.css";
+import "../styles/frame.css";
 import {FC, ReactNode} from "react";
 
 interface FrameProps {
