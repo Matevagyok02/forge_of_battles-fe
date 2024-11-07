@@ -1,0 +1,490 @@
+main {
+    background-image: url("../assets/home_bg.jpg");
+    box-shadow: inset 0 0 70px 20px black;
+}
+
+.title-text {
+    width: 505px;
+    height: 64px;
+    background: url("../assets/title.svg") center/cover no-repeat;
+}
+
+/* ChatPanel */
+
+.chat-panel {
+    position: absolute;
+    bottom: 0;
+    border: 1px solid red;
+    width: calc(100vw - 2 * var(--window-decor-size));
+}
+
+.minimalized-chatbox {
+    position: relative;
+    padding-inline: 16px;
+    padding-block: 8px;
+    width: fit-content;
+    max-width: 32vh;
+    border: 1px solid white;
+}
+
+.minimalized-chatbox label {
+}
+
+/* FriendsPanel */
+
+.friends-panel-container {
+    position: absolute;
+    right: 1.2vh;
+    top: calc(50% - 65vh / 2);
+    height: 65vh;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.friends-panel {
+    position: relative;
+    height: 100%;
+    animation: friends-panel-close 0.2s ease forwards;
+    display: flex;
+    align-items: center;
+}
+
+.friends-panel-container .decorative-hex {
+    width: 40px;
+    font-size: 16px;
+}
+
+.friends-panel-container.friends-open .friends-panel {
+    animation: friends-panel-open 0.2s ease forwards;
+}
+
+.friends-panel-frame::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 100%;
+    border-radius: 4px;
+    background-color: var(--silver);
+
+    --border-w: 2px;
+    --hex-inner-h: 17px;
+
+    clip-path: polygon(
+        0 0,
+        var(--border-w) 0,
+        var(--border-w) calc(50% - 24px),
+        100% calc(50% - var(--hex-inner-h)),
+        100% calc(50% + var(--hex-inner-h)),
+        var(--border-w) calc(50% + 24px),
+        var(--border-w) 100%,
+        0 100%,
+        0 calc(50% + 24px - var(--border-w) / 2),
+        calc(100% - var(--border-w)) calc(50% + var(--hex-inner-h) - var(--border-w) / 2),
+        calc(100% - var(--border-w)) calc(50% - var(--hex-inner-h) + var(--border-w) / 2),
+        0 calc(50% - 24px + var(--border-w) / 2)
+    );
+}
+
+.friends-panel-frame {
+    padding-right: 8px;
+    height: 100%;
+    /*filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));*/
+}
+
+.friends-panel .user-avatar-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.friend {
+    cursor: pointer;
+    display: flex;
+    padding: 4px;
+    margin-left: 4px;
+    width: 100%;
+}
+
+.friend:hover {
+    background-image: linear-gradient(to right ,rgba(255, 255, 255, 0.1) 60%, transparent);
+    /*filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));*/
+}
+
+.friend:hover .status-title {
+    display: none;
+}
+
+.friends-panel-content {
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.friends-panel-content ul {
+    height: 100%;
+    margin-block: 8px;
+    overflow: scroll;
+    overflow-inline: hidden;
+    mask-image: linear-gradient(transparent , black 16px, black calc(100% - 16px), transparent 100%);
+}
+
+.unseen-msg {
+    animation: highlight 1.5s linear infinite;
+}
+
+.friend h1 {
+    line-height: 16px;
+    /*filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));*/
+}
+
+.friend .icon-btn {
+    opacity: 0;
+}
+
+.friend:hover .status-title {
+    opacity: 0;
+}
+
+.friend:hover .icon-btn {
+    opacity: 1;
+}
+
+.friend .user-avatar-frame {
+    border-width: 1px;
+}
+
+@keyframes friends-panel-open {
+    0% {
+        width: 0;
+        opacity: 0;
+    }
+    10% {
+        opacity: 0;
+        width: 10%;
+    }
+    50% {
+        width: 50%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+@keyframes friends-panel-close {
+    0% {
+        width: 100%;
+    }
+    50% {
+        width: 50%;
+    }
+    90% {
+        opacity: 0;
+        width: 0;
+    }
+    100% {
+        opacity: 0;
+        width: 0;
+    }
+}
+
+@keyframes highlight {
+    0% {
+        filter: none;
+    }
+    40% {
+        filter: drop-shadow(0 0 4px goldenrod);
+    }
+    50% {
+        filter: drop-shadow(0 0 6px goldenrod);
+    }
+    60% {
+        filter: drop-shadow(0 0 4px goldenrod);
+    }
+    100% {
+        filter: none;
+    }
+}
+
+.status-title {
+    position: absolute;
+    left: 0;
+    opacity: 1;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.friend-options {
+    position: absolute;
+    left: 0;
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.status-indicator {
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--silver);
+}
+
+.in-game  {
+    .status-indicator {
+        background-color: orangered;
+    }
+    .status-title {
+        color: orangered;
+    }
+}
+
+.online  {
+    .status-indicator {
+        background-color: limegreen;
+    }
+    .status-title {
+        color: limegreen;
+    }
+}
+
+.offline  {
+    .status-indicator {
+        background-color: dimgrey;
+    }
+    .status-title {
+        color: darkgrey;
+    }
+}
+
+.pending  {
+    .status-indicator {
+        background-color: orange;
+    }
+    .status-title {
+        color: orange;
+    }
+
+    pointer-events: none;
+}
+
+/* UserPanel */
+
+.user-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 4vh;
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    width: fit-content;
+    padding-right: 64px;
+    padding-left: 36px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    /*filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));*/
+}
+
+.user-panel .settings {
+    position: absolute;
+    top: 34px;
+    right: 60px;
+    display: flex;
+    gap: 10px;
+}
+
+.user-panel .settings .decorative-hex::after {
+    rotate: 90deg;
+}
+
+.user-panel .settings .decorative-hex {
+    width: 32px;
+}
+
+.user-name::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--silver);
+    clip-path: polygon(
+            0 0,
+            calc(100% - 30px) 0,
+            calc(100% - 30px) 2px,
+            5px 2px,
+            33px 30px,
+            100% 30px,
+            100% 100%,
+            32px 100%
+    );
+}
+
+.user-avatar-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    aspect-ratio: 1/1;
+    width: 56px;
+    height: auto;
+    background-color: black;
+    border-radius: 50%;
+}
+
+.user-avatar-container button {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 32px;
+    opacity: 0;
+}
+
+.user-avatar-container:hover button {
+    opacity: 1;
+}
+
+
+.user-avatar-container img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.change-avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 16px 16px;
+}
+
+/* ChangeAvatar */
+
+.avatar-selector {
+    display: grid;
+    padding-inline: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.avatar-selector img {
+    width: 56px;
+}
+
+.avatar-selector .selected {
+    filter: drop-shadow(0 0 4px goldenrod) drop-shadow(0 0 8px white);
+}
+
+img {
+    aspect-ratio: 1/1;
+    width: 40px;
+    height: auto;
+    border-radius: 50%;
+    border: 2px solid grey;
+}
+
+/* AuthPanel */
+
+.auth-panel {
+    position: absolute;
+    right: 5.6vh;
+    top: 3.8vh;
+    display: flex;
+    gap: 16px
+}
+
+.auth-panel .settings .decorative-hex {
+    width: 32px;
+}
+
+.auth-panel .settings {
+    display: flex;
+    gap: 8px;
+}
+
+/* OptionCard */
+
+.option-card-btn {
+    @apply option-card-background;
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 4/7;
+    height: 64vh;
+    width: auto;
+    border-radius: 6px;
+    justify-content: end;
+    box-shadow: 0 0 16px 4px black;
+}
+
+.option-card-btn:hover {
+    animation: option-card-hover 0.2s ease forwards;
+}
+
+.option-card-btn div {
+    padding: 12px 12px 32px 12px;
+    border-radius: 6px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 1));
+}
+
+.option-card-btn h1 {
+    min-width: fit-content;
+    font-size: 28px;
+}
+
+.option-card-btn p {
+    font-size: 14px;
+    min-height: 68px;
+}
+
+.option-card-background {
+    backdrop-filter: drop-shadow(0 0 40px black);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+@keyframes option-card-hover {
+    0% {}
+    100% {
+        scale: 1.05;
+        box-shadow: 0 0 64px rgba(255, 255, 255, 0.2) inset;
+    }
+}
+
+#joinGame {
+    background-image: url("../assets/join_game.jpeg");
+}
+
+#createGame {
+    background-image: url("../assets/create_game.jpeg");
+}
+
+#tutorialAndCards {
+    background-image: url("../assets/tutorial_and_cards.jpeg");
+}
+
+@media screen and (max-height: 702px) {
+    .friends-panel-container .decorative-hex {
+        translate: -8px 0;
+    }
+
+    .friends-panel-container.friends-open .decorative-hex {
+        translate: 0 0;
+    }
+}

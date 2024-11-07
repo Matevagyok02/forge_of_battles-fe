@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        amarante: ["Amarante", "serif"]
+        amarante: ["Amarante", "serif"],
+        sorceCodeProp: ["Source Code Pro", "monospace"],
       },
       colors: {
         gold: "#FFBF00"
