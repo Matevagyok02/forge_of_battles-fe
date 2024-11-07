@@ -1,4 +1,4 @@
-import "../styles/home.css"
+import "../styles/Home.css"
 import "../styles/card.css"
 import {Button, IconButton} from "../components/Button.tsx";
 import {FC, ReactElement, useCallback, useEffect, useState} from "react";
