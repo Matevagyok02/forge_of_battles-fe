@@ -1,4 +1,4 @@
-const apiUrl = "https://forge-of-battles-be.onrender.com" //import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 const accessTokenKey = "@@auth0spajs@@::RAwUMFRHSVMcEUzNXc9PrBAMPZ2KQz57::https://forge-of-battles-be.onrender.com::openid profile email";
 
 export interface CustomResponse {
@@ -7,9 +7,13 @@ export interface CustomResponse {
     body?: object | { message: string };
 }
 
-const getAccessToken = () => {
-    const accessTokenObj = localStorage.getItem(accessTokenKey);
-    return accessTokenObj ? JSON.parse(accessTokenObj as string) : null;
+const getAccessToken = (): string | undefined => {
+    const accessTokenObj = JSON.parse(localStorage.getItem(accessTokenKey) as string);
+    if ("body" in accessTokenObj && "access_token" in accessTokenObj.body) {
+        return accessTokenObj.body.access_token;
+    } else {
+        return undefined;
+    }
 }
 
 export const customFetch = async (path: string, method?: string, body?: object): Promise<CustomResponse> => {
