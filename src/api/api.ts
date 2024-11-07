@@ -22,7 +22,7 @@ export const customFetch = async (path: string, method?: string, body?: object):
 
         if (accessToken) {
             let headersInit: HeadersInit = {
-                Authorization: `Bearer ${accessToken.access_token}`,
+                Authorization: `Bearer ${accessToken}`,
                 "Content-Type": `${body ? "application/json" : undefined}`
             }
 
