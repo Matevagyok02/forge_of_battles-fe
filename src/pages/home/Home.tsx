@@ -747,13 +747,17 @@ const Home = () => {
                     }
                 });
                 setOpenedModal(<AuthDialog />);
-            } else if (_user) {
+            } else {
                 switch (id) {
                     case "createGame":
-                        setOpenedModal(<CreateGame />);
+                        if (_user) {
+                            setOpenedModal(<CreateGame />);
+                        }
                         break;
                     case "joinGame":
-                        setOpenedModal(<JoinGame />);
+                        if (_user) {
+                            setOpenedModal(<JoinGame />);
+                        }
                         break;
                     case "tutorialAndCards":
                         setOpenedModal(<TutorialAndCards />);
