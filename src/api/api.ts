@@ -28,7 +28,7 @@ export const customFetch = async (path: string, method?: string, body?: object):
 
             const init: RequestInit = {
                 method: method ? method : "GET",
-                headers: headersInit,
+                headers: headersInit
             }
 
             if (body) {
@@ -37,7 +37,7 @@ export const customFetch = async (path: string, method?: string, body?: object):
 
             const response: Response = await fetch(
                 apiUrl + path,
-                init,
+                init
             );
 
             let responseBody: object | undefined | { message: string } = undefined;
