@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl =  import.meta.env.VITE_API_URL; //"https://forge-of-battles-be.onrender.com"
 const accessTokenKey = "@@auth0spajs@@::RAwUMFRHSVMcEUzNXc9PrBAMPZ2KQz57::https://forge-of-battles-be.onrender.com::openid profile email";
 
 export interface CustomResponse {
@@ -52,6 +52,11 @@ export const customFetch = async (path: string, method?: string, body?: object):
                 return { ok: true, status: response.status, body: responseBody}
             }
             else {
+                if (response.status === 401) {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+
                 return { ok: false, status: response.status, body: responseBody}
             }
         } else {

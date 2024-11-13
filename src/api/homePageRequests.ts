@@ -51,3 +51,36 @@ export const declineFriendRequest = async (id: string) =>
         "DELETE"
     );
 
+export const getChatMessages = async (id: string) =>
+    await customFetch(
+        "/chat?from=" + id
+    );
+
+export const sendChatMessage = async (id: string, text: string) =>
+    await customFetch(
+        "/chat?to=" + id,
+        "POST",
+        {to: id, text: text}
+    );
+
+export const joinGameWithKey = async (key: string) =>
+    await customFetch(
+        "/match/join?key=" + key,
+        "PUT"
+    );
+
+export const createGame = async (timeLimit?: number, invite?: string) => {
+
+    let query;
+
+    query = timeLimit || invite ? "?" : "";
+    query += timeLimit ? `timeLimit=${timeLimit}` : "";
+    query += timeLimit && invite ? "&" : "";
+    query += invite ? `invite=${invite}` : "";
+
+    return await customFetch(
+        "/match/create" + query,
+        "POST",
+    );
+}
+
