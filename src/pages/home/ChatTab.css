@@ -1,0 +1,210 @@
+.chat-panel {
+    position: absolute;
+    bottom: 0;
+    width: calc(100vw - 2 * var(--window-decor-size));
+    display: flex;
+    justify-content: right;
+    align-items: end;
+    font-size: 14px;
+}
+
+.unseen-msg::after {
+    pointer-events: none;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 200%;
+    height: 100%;
+    animation: chat-unseen linear 1.5s infinite;
+}
+
+.chat-min {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    padding: 8px;
+    padding-inline: 16px;
+    width: 160px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-image: linear-gradient(to right, var(--bg-6), var(--bg-3));
+}
+
+.chat-min:hover {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.2), var(--bg-3));
+}
+
+.chat {
+    position: relative;
+    min-width: var(--window-decor-size);
+    width: 256px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 8px 16px;
+    margin-left: 8px;
+    background-image: linear-gradient(to bottom, var(--bg-9) 80%, var(--bg-8) 90%, var(--bg-7));
+    border: 1px solid grey;
+}
+
+.chat .icon-btn.cancel {
+    position: static;
+}
+
+.chat textarea {
+    display: flex;
+    flex: 1;
+    outline: none;
+    background-color: transparent;
+    border: none;
+    background-image: none;
+}
+
+.chat-textarea:focus {
+    outline: none;
+}
+
+.chat .icon-btn i {
+    font-size: 16px;
+}
+
+.chat .input-container {
+    display: flex;
+    align-items: end;
+    gap: 8px;
+    padding: 4px 8px 4px 4px;
+    background-image: linear-gradient(transparent , rgba(255, 255, 255, 0.1));
+    border: 1px solid grey;
+}
+
+.chat ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0;
+    list-style: none;
+}
+
+.message {
+    padding: 4px 8px;
+    width: fit-content;
+    height: fit-content;
+    max-width: 60%;
+    color: white;
+}
+
+.message.self {
+    align-self: flex-end;
+    background-color: rgb(49, 69, 94);
+    border-radius: 8px 8px 0 8px;
+}
+
+.message.partner {
+    align-self: flex-start;
+    background-color: rgb(70, 80, 91);
+    border-radius: 8px 8px 8px 0;
+}
+
+.chat ul {
+    height: 256px;
+    overflow: scroll;
+    overflow-inline: hidden;
+}
+
+@keyframes chat-unseen {
+    0% {
+        background-image: linear-gradient(to right, transparent, var(--warm-light), transparent var(--light-width));
+    }
+    3.33% {
+        background-image: linear-gradient(to right, transparent 3.33%, var(--warm-light), transparent calc(3.33% + var(--light-width)));
+    }
+    6.66% {
+        background-image: linear-gradient(to right, transparent 6.66%, var(--warm-light), transparent calc(6.66% + var(--light-width)));
+    }
+    10% {
+        background-image: linear-gradient(to right, transparent 10%, var(--warm-light), transparent calc(10% + var(--light-width)));
+    }
+    13.33% {
+        background-image: linear-gradient(to right, transparent 13.33%, var(--warm-light), transparent calc(13.33% + var(--light-width)));
+    }
+    16.66% {
+        background-image: linear-gradient(to right, transparent 16.66%, var(--warm-light), transparent calc(16.66% + var(--light-width)));
+    }
+    20% {
+        background-image: linear-gradient(to right, transparent 20%, var(--warm-light), transparent calc(20% + var(--light-width)));
+    }
+    23.33% {
+        background-image: linear-gradient(to right, transparent 23.33%, var(--warm-light), transparent calc(23.33% + var(--light-width)));
+    }
+    26.66% {
+        background-image: linear-gradient(to right, transparent 26.66%, var(--warm-light), transparent calc(26.66% + var(--light-width)));
+    }
+    30% {
+        background-image: linear-gradient(to right, transparent 30%, var(--warm-light), transparent calc(30% + var(--light-width)));
+    }
+    33.33% {
+        background-image: linear-gradient(to right, transparent 33.33%, var(--warm-light), transparent calc(33.33% + var(--light-width)));
+    }
+    36.66% {
+        background-image: linear-gradient(to right, transparent 36.66%, var(--warm-light), transparent calc(36.66% + var(--light-width)));
+    }
+    40% {
+        background-image: linear-gradient(to right, transparent 40%, var(--warm-light), transparent calc(40% + var(--light-width)));
+    }
+    43.33% {
+        background-image: linear-gradient(to right, transparent 43.33%, var(--warm-light), transparent calc(43.33% + var(--light-width)));
+    }
+    46.66% {
+        background-image: linear-gradient(to right, transparent 46.66%, var(--warm-light), transparent calc(46.66% + var(--light-width)));
+    }
+    50% {
+        background-image: linear-gradient(to right, transparent 50%, var(--warm-light), transparent calc(50% + var(--light-width)));
+    }
+    53.33% {
+        background-image: linear-gradient(to right, transparent 53.33%, var(--warm-light), transparent calc(53.33% + var(--light-width)));
+    }
+    56.66% {
+        background-image: linear-gradient(to right, transparent 56.66%, var(--warm-light), transparent calc(56.66% + var(--light-width)));
+    }
+    60% {
+        background-image: linear-gradient(to right, transparent 60%, var(--warm-light), transparent calc(60% + var(--light-width)));
+    }
+    63.33% {
+        background-image: linear-gradient(to right, transparent 63.33%, var(--warm-light), transparent calc(63.33% + var(--light-width)));
+    }
+    66.66% {
+        background-image: linear-gradient(to right, transparent 66.66%, var(--warm-light), transparent calc(66.66% + var(--light-width)));
+    }
+    70% {
+        background-image: linear-gradient(to right, transparent 70%, var(--warm-light), transparent calc(70% + var(--light-width)));
+    }
+    73.33% {
+        background-image: linear-gradient(to right, transparent 73.33%, var(--warm-light), transparent calc(73.33% + var(--light-width)));
+    }
+    76.66% {
+        background-image: linear-gradient(to right, transparent 76.66%, var(--warm-light), transparent calc(76.66% + var(--light-width)));
+    }
+    80% {
+        background-image: linear-gradient(to right, transparent 80%, var(--warm-light), transparent calc(80% + var(--light-width)));
+    }
+    83.33% {
+        background-image: linear-gradient(to right, transparent 83.33%, var(--warm-light), transparent calc(83.33% + var(--light-width)));
+    }
+    86.66% {
+        background-image: linear-gradient(to right, transparent 86.66%, var(--warm-light), transparent calc(86.66% + var(--light-width)));
+    }
+    90% {
+        background-image: linear-gradient(to right, transparent 90%, var(--warm-light), transparent calc(90% + var(--light-width)));
+    }
+    93.33% {
+        background-image: linear-gradient(to right, transparent 93.33%, var(--warm-light), transparent calc(93.33% + var(--light-width)));
+    }
+    96.66% {
+        background-image: linear-gradient(to right, transparent 96.66%, var(--warm-light), transparent calc(96.66% + var(--light-width)));
+    }
+    100% {
+        background-image: linear-gradient(to right, transparent, transparent);
+    }
+}

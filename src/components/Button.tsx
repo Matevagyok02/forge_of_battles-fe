@@ -16,6 +16,17 @@ interface IconButtonProps {
     onClick?: () => void;
 }
 
+const isNegative = (text: string) => {
+    switch (text) {
+        case "Cancel":
+        case "Decline":
+        case "Remove":
+            return true;
+        default:
+            return false;
+    }
+}
+
 export const Button: FC<ButtonProps> = (props) => {
 
     const handleClick = () => {
@@ -24,25 +35,12 @@ export const Button: FC<ButtonProps> = (props) => {
         }
     }
 
-    const isNegative = () => {
-        switch (props.text) {
-            case "Cancel":
-            case "Decline":
-            case "Remove":
-                return true;
-            default:
-                return false;
-        }
-    }
-
     return(
         <button
             onClick={handleClick}
             disabled={props.disabled}
-            className={
-            `h-fit w-fit framed-button cursor-pointer 
-            ${props.disabled ? 'grayscale pointer-events-none' : ''}
-            ${props.loading ? 'pointer-events-none glow' : ''}`}
+            className={`h-fit w-fit framed-button cursor-pointer ${props.disabled ? 'grayscale' : ''} ${props.disabled || props.loading ? 'pointer-events-none' : ''}`}
+            style={{pointerEvents: props.disabled || props.loading ? 'none' : 'auto'}}
         >
             <Frame>
                 <span className={`${props.text.length < 10 ? "w-40" : "w-52"} h-full flex justify-center items-center`} >
@@ -50,7 +48,7 @@ export const Button: FC<ButtonProps> = (props) => {
                         <div className="loader absolute" ></div>
                         :
                         <label
-                            className={`absolute font-amarante text-xl cursor-pointer ${isNegative() ? "red-text" : "gold-text"}`}
+                            className={`absolute font-amarante text-xl cursor-pointer ${isNegative(props.text) ? "red-text" : "btn-text"}`}
                         >
                             {props.text}
                         </label>
@@ -75,7 +73,10 @@ export const IconButton: FC<IconButtonProps> = (props) => {
         options: "ellipsis-vertical",
         remove: "trash-can",
         add: "plus",
-        message: "comment-dots"
+        message: "comment-dots",
+        minimize: "minus",
+        send: "paper-plane",
+        copy: "copy"
     }
 
     const icon = icons[props.icon];
@@ -87,7 +88,7 @@ export const IconButton: FC<IconButtonProps> = (props) => {
             className={`${props.decorated ? "decorative-hex" : ""} icon-btn ${props.icon}`}
             onClick={props.onClick}
         >
-            <i className={`fa-solid fa-${icon} text-gold`} ></i>
+            <i className={`fa-solid fa-${icon} ${isNegative(props.text) ? "text-red-600" : "btn-text"}`} ></i>
         </button>
     )
 }

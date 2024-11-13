@@ -1,15 +1,11 @@
 import "../styles/frame.css";
 import {FC, ReactNode} from "react";
 
-interface FrameProps {
-    children?: ReactNode;
-}
-
-const Frame: FC<FrameProps> = ({children}) => {
+const Frame: FC<{ children: ReactNode }> = ({children}) => {
 
     return(
         <div className="frame-container">
-            <div className="frame-content" >{children? children : null}</div>
+            <div className="frame-content" >{children}</div>
             <div className="frame-decor-container" >
                 <div className="frame-border"></div>
                 <div className="inner-frame-container">

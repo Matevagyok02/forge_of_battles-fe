@@ -1,4 +1,4 @@
-const apiUrl = "https://forge-of-battles-be.onrender.com" //import.meta.env.VITE_API_URL;
+const apiUrl =  import.meta.env.VITE_API_URL; //"https://forge-of-battles-be.onrender.com"
 const accessTokenKey = "@@auth0spajs@@::RAwUMFRHSVMcEUzNXc9PrBAMPZ2KQz57::https://forge-of-battles-be.onrender.com::openid profile email";
 
 export interface CustomResponse {
@@ -7,9 +7,13 @@ export interface CustomResponse {
     body?: object | { message: string };
 }
 
-const getAccessToken = () => {
-    const accessTokenObj = localStorage.getItem(accessTokenKey);
-    return accessTokenObj ? JSON.parse(accessTokenObj as string) : null;
+const getAccessToken = (): string | undefined => {
+    const accessTokenObj = JSON.parse(localStorage.getItem(accessTokenKey) as string);
+    if ("body" in accessTokenObj && "access_token" in accessTokenObj.body) {
+        return accessTokenObj.body.access_token;
+    } else {
+        return undefined;
+    }
 }
 
 export const customFetch = async (path: string, method?: string, body?: object): Promise<CustomResponse> => {
@@ -18,13 +22,13 @@ export const customFetch = async (path: string, method?: string, body?: object):
 
         if (accessToken) {
             let headersInit: HeadersInit = {
-                Authorization: `Bearer ${accessToken.access_token}`,
+                Authorization: `Bearer ${accessToken}`,
                 "Content-Type": `${body ? "application/json" : undefined}`
             }
 
             const init: RequestInit = {
                 method: method ? method : "GET",
-                headers: headersInit
+                headers: headersInit,
             }
 
             if (body) {
@@ -33,7 +37,7 @@ export const customFetch = async (path: string, method?: string, body?: object):
 
             const response: Response = await fetch(
                 apiUrl + path,
-                init
+                init,
             );
 
             let responseBody: object | undefined | { message: string } = undefined;
@@ -48,6 +52,11 @@ export const customFetch = async (path: string, method?: string, body?: object):
                 return { ok: true, status: response.status, body: responseBody}
             }
             else {
+                if (response.status === 401) {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+
                 return { ok: false, status: response.status, body: responseBody}
             }
         } else {

@@ -15,13 +15,23 @@
 
   --silver: grey;
 
-  /*--bg-color: #17252F;*/
-  /*--light-bg: rgba(23, 37, 47, 0.80);*/
-  /*--bg: rgba(23, 37, 47, 0.95);*/
+  --warm-light: rgba(203, 188, 130, 0.2);
+  --light-width: 128px;
 
-  --bg-color: #202020;
-  --light-bg: rgba(32, 32, 32, 0.8);
-  --bg: rgba(32, 32, 32, 0.95);
+  --bg-color: #17252F;
+  --bg-1: rgba(23, 37, 47, 0.1);
+  --bg-2: rgba(23, 37, 47, 0.2);
+  --bg-3: rgba(23, 37, 47, 0.3);
+  --bg-4: rgba(23, 37, 47, 0.4);
+  --bg-5: rgba(23, 37, 47, 0.5);
+  --bg-6: rgba(23, 37, 47, 0.6);
+  --bg-7: rgba(23, 37, 47, 0.7);
+  --bg-8: rgba(23, 37, 47, 0.8);
+  --bg-9: rgba(23, 37, 47, 0.9);
+
+  /*--bg-color: #202020;*/
+  /*--light-bg: rgba(32, 32, 32, 0.8);*/
+  /*--bg: rgba(32, 32, 32, 0.95);*/
 
   --silver-border: 2px solid grey;
   --thin-silver-border: 1px solid grey;

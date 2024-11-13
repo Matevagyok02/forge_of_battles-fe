@@ -48,8 +48,13 @@
     color: orangered;
 }
 
+.btn-text {
+    color: goldenrod;
+}
+
 .cancel {
     position: absolute;
+    z-index: 1;
     width: 20px;
     height: 20px;
     top: 8px;
