@@ -21,6 +21,7 @@ const isNegative = (text: string) => {
         case "Cancel":
         case "Decline":
         case "Remove":
+        case "Abandon":
             return true;
         default:
             return false;
@@ -48,7 +49,7 @@ export const Button: FC<ButtonProps> = (props) => {
                         <div className="loader absolute" ></div>
                         :
                         <label
-                            className={`absolute font-amarante text-xl cursor-pointer ${isNegative(props.text) ? "red-text" : "btn-text"}`}
+                            className={`absolute font-bold text-xl cursor-pointer ${isNegative(props.text) ? "red-text" : "btn-text"}`}
                         >
                             {props.text}
                         </label>

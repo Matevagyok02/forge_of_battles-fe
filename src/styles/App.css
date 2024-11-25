@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Amarante&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amarante&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 .gold-text {
     font-family: "Amarante", serif;
@@ -39,6 +39,7 @@
 }
 
 .modal.forced {
+    position: fixed;
     width: 100vw;
     height: 100vh;
     top: 0;
@@ -245,8 +246,4 @@ input[type="text"]:invalid {
     border-radius: 50px;
     background-color: transparent;
     box-shadow: 0 0 45px 20px rgba(0, 0, 0, 1);
-}
-
-@media  {
-
 }

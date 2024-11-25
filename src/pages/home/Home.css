@@ -200,7 +200,6 @@ img {
 }
 
 .option-card-btn p {
-    font-size: 14px;
     filter:
             drop-shadow(1px 1px 4px black)
             drop-shadow(-1px -1px 4px black)
@@ -306,6 +305,79 @@ img {
 .join-game-bg {
     @apply create-join-bg;
     background-image: url("../../assets/join_game.jpeg");
+}
+
+.key-input {
+    cursor: pointer;
+}
+
+.key-input input {
+    position: fixed;
+    z-index: -1;
+    opacity: 0;
+}
+
+.key-input-display {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.key-input-display li {
+    cursor: pointer;
+    width: 24px;
+    height: 28px;
+    border-radius: 4px;
+    color: white;
+    text-align: center;
+    border-bottom: 1px solid grey;
+    background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.1));
+}
+
+.key-input-display.focused li {
+    animation: focus 1.5s linear infinite;
+}
+
+.key-input-display li.filled {
+    animation: none;
+}
+
+@keyframes focus {
+    0% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.1));
+    }
+    10% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.12));
+    }
+    20% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.14));
+    }
+    30% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.16));
+    }
+    40% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.18));
+    }
+    50% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.2));
+    }
+    60% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.18));
+    }
+    70% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.16));
+    }
+    80% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.14));
+    }
+    90% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.12));
+    }
+    100% {
+        background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.1));
+    }
 }
 
 .create-game-bg {
@@ -450,7 +522,6 @@ input[type="range"] {
     position: absolute;
     z-index: -1;
     top: 24px;
-    font-size: 12px;
     font-weight: bold;
     min-width: 16px;
     text-align: center;

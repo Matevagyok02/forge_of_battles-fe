@@ -38,9 +38,9 @@
 }
 
 body {
-  font-family: "Source Code Pro", monospace;
+  font-family: "PT Serif", sans-serif;
   font-weight: 400;
-  letter-spacing: -0.05em;
+  line-height: 1.2;
 
   margin: 0;
   display: flex;

@@ -2,14 +2,15 @@ import "./Home.css";
 import "./FriendsPanel.css";
 import "./ChatTab.css";
 import {Button, IconButton} from "../../components/Button.tsx";
-import {FC, LegacyRef, ReactElement, useCallback, useEffect, useRef, useState} from "react";
+import {FC, LegacyRef, FocusEvent, ReactElement, useCallback, useEffect, useRef, useState} from "react";
 import {useAuth0} from "@auth0/auth0-react";
 import {
+    abandonMatch,
     acceptFriendRequest,
     changePicture, createGame,
-    declineFriendRequest,
+    declineFriendRequest, declineMatch, getLastCreatedGame,
     getUser,
-    joinGameWithKey,
+    joinGameWithKey, joinMatch,
     registerNewUser
 } from "../../api/homePageRequests.ts";
 import Modal, {ForcedModal, InfoModal} from "../../components/Modal.tsx";
@@ -24,7 +25,7 @@ const Home = () => {
     const [_user, setUser] = useState<User>();
     const [friends, setFriends] = useState<Friends>();
     const [friendRequests, setFriendRequests] = useState<Sender[]>();
-    const [gameRequests, setGameRequests] = useState<object[]>();
+    const [gameRequests, setGameRequests] = useState<Match[]>();
     const [chatPartners, setChatPartners] = useState<Friend[]>([]);
 
     const [openedInfoModal, setOpenedInfoModal] = useState<ReactElement[]>([]);
@@ -300,7 +301,7 @@ const Home = () => {
         );
     }
 
-    const GameRequest: FC<{match: object, onResolve: () => void}> = ({match, onResolve}) => {
+    const GameRequest: FC<{match: Match, onResolve: () => void}> = ({match, onResolve}) => {
 
         const [loading, setLoading] = useState(false);
         const [inviter, setInviter] = useState<Friend>();
@@ -308,14 +309,35 @@ const Home = () => {
 
         const acceptRequest = () => {
             setLoading(true);
-            onResolve();
-            //TODO
+
+            if (match) {
+                setLoading(true);
+
+                joinMatch(match.key).then(result => {
+                    if (result.ok) {
+                        onResolve();
+                        //TODO
+                    } else {
+                        setLoading(false);
+                        openInfoModal(
+                            <p>
+                                The match could not be joined, try again later
+                            </p>
+                        )
+                    }
+                    setLoading(false);
+                    onResolve();
+                });
+            }
         }
 
         const declineRequest = () => {
-            setLoading(true);
-            onResolve();
-            //TODO
+            if (match) {
+                setLoading(true);
+                declineMatch(match.key).then(() => {
+                    onResolve();
+                });
+            }
         }
 
         useEffect(() => {
@@ -324,7 +346,7 @@ const Home = () => {
             if (friendsRef.current && "player1Id" in match) {
                 interval = setInterval(() => {
                     setInviter(
-                        friendsRef.current?.getAvailableFriends().find(friend => friend.userId === match.player1Id)
+                        friendsRef.current?.getFriendById(match.player1Id)
                     );
                 }, 1000);
 
@@ -419,6 +441,8 @@ const Home = () => {
 
         const friendSelect = useRef<HTMLSelectElement | null>(null);
 
+        const matchSessionStorageKey = "lastCreatedMatch";
+
         const minTimeLimit = 15;
         const maxTimeLimit = 60;
         const step = 15;
@@ -429,6 +453,30 @@ const Home = () => {
 
         const changeTimeLimit = (input: number) => {
             setTimeLimit(input === maxTimeLimit ? undefined : input);
+        }
+
+        const saveMatchToSessionStorage = (match?: Match) => {
+            sessionStorage.setItem(matchSessionStorageKey, match ? JSON.stringify(match) : "null");
+        }
+
+        const abandonCreatedMatch = () => {
+            if (key) {
+                abandonMatch(key).then(result => {
+                    if (result.ok) {
+                        saveMatchToSessionStorage();
+                        setKey(undefined);
+                        setFriendToInvite(undefined);
+                        setErrorMsg(undefined);
+                        setTimeLimit(maxTimeLimit);
+                    } else {
+                        openInfoModal(
+                            <p>
+                                The match could not be deleted, try again later
+                            </p>
+                        );
+                    }
+                });
+            }
         }
 
         const changeFriendToInvite = (friendId: string | undefined) => {
@@ -460,9 +508,12 @@ const Home = () => {
             setLoading(true);
 
             createGame(timeLimit, friendToInvite?.userId).then(result => {
-                if (result.ok && result.body && "key" in result.body) {
+                if (result.ok && result.body) {
+                    const match = result.body as Match;
+                    saveMatchToSessionStorage(match);
+
                     setErrorMsg(undefined);
-                    setKey(result.body.key as string);
+                    setKey(match.key);
                 } else if (result.status === 409 && result.body && "message" in result.body) {
                     setErrorMsg(result.body.message);
                 } else {
@@ -490,6 +541,40 @@ const Home = () => {
             }
         }, [friendsRef.current]);
 
+        useEffect(() => {
+            console.log(friendsRef.current?.getAvailableFriends())
+            if (friendsRef.current && !key) {
+                const lastCreatedMatch = sessionStorage.getItem(matchSessionStorageKey);
+
+                if (lastCreatedMatch) {
+                    const match = JSON.parse(lastCreatedMatch) as Match;
+
+                    if (match) {
+                        setKey(match.key);
+
+                        if (match && match.player2Id) {
+                            setFriendToInvite(friendsRef.current?.getFriendById(match.player2Id));
+                        }
+                    }
+                } else {
+                    getLastCreatedGame().then(result => {
+                        if (result.ok && result.body) {
+                            const match = result.body as Match;
+                            saveMatchToSessionStorage(match);
+
+                            setKey(match.key as string);
+
+                            if (match.player2Id) {
+                                setFriendToInvite(friendsRef.current?.getFriendById(match.player2Id));
+                            }
+                        } else {
+                            saveMatchToSessionStorage();
+                        }
+                    });
+                }
+            }
+        }, [friendsRef.current]);
+
         return(
             <Modal close={() => setOpenedModal(null)} >
                 <div className="flex min-w-[112vh] min-h-[64vh]" >
@@ -506,14 +591,16 @@ const Home = () => {
                             <div className="flex justify-center gap-2 px-2" >
                                 <div className="create-game-player justify-start" >
                                     <img src={`./avatars/${_user?.picture}.jpg`} alt="" />
-                                    <h1>{_user?.username}</h1>
+                                    <h1 className="font-bold" >
+                                        {_user?.username}
+                                    </h1>
                                 </div>
                                 <h1 className="gold-text text-5xl" >
                                     VS
                                 </h1>
                                 { friendToInvite ?
                                     <div className="create-game-player justify-end" >
-                                        <h1>
+                                        <h1 className="font-bold" >
                                             {friendToInvite.username}
                                         </h1>
                                         <div className="create-game-friend-avatar-container" >
@@ -589,7 +676,7 @@ const Home = () => {
                             }
                         </div>
                         { key ?
-                            <div className="h-max-24 h-min-24 flex flex-col items-center" >
+                            <div className="flex flex-col items-center" >
                                 <div className="flex gap-2" >
                                     <h1 className="text-2xl font-bold" >
                                         {key}
@@ -602,9 +689,12 @@ const Home = () => {
                                     </h1>
                                     <IconButton text="Copy" icon="copy" onClick={() => navigator.clipboard.writeText(getLink(key))} />
                                 </div>
+                                <div className="mt-4" >
+                                    <Button text="Abandon" onClick={abandonCreatedMatch} />
+                                </div>
                             </div>
                             :
-                            <div className="h-max-24 h-min-24 flex flex-col justify-end items-center gap-2 w-1 min-w-full" >
+                            <div className="flex flex-col justify-end items-center gap-2 w-1 min-w-full" >
                                 { errorMsg &&
                                     <p className="error-text text-center" >
                                         {errorMsg}
@@ -625,8 +715,15 @@ const Home = () => {
         const [key, setKey] = useState<string>("");
         const [loading, setLoading] = useState<boolean>(false);
         const [errorMsg, setErrorMsg] = useState<string | undefined>();
+        const [focused, setFocused] = useState<boolean>(false);
 
         const keyRegex = /^[A-Z0-9]{0,6}$/;
+        const keyLength = 6;
+        const keyInputs: number[] = [];
+
+        for (let i = 0; i < keyLength; i++) {
+            keyInputs.push(i);
+        }
 
         const input = (input: string) => {
             const cleanInput = input.trim().toUpperCase();
@@ -658,12 +755,19 @@ const Home = () => {
             });
         }
 
+        const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
+            setFocused(true);
+            const value = e.target.value;
+            e.target.value = "";
+            e.target.value = value;
+        }
+
         return(
             <Modal close={() => setOpenedModal(null)} >
                 <div className="flex min-w-[112vh] min-h-[64vh]" >
                     <div className="flex flex-col gap-4 p-8 justify-center" >
                         <div className="flex flex-col gap-4 items-center">
-                            <h1 className="text-xl font-amarante" >
+                            <h1 className="text-3xl font-amarante" >
                                 Random
                             </h1>
                             <p className="w-2/3 text-center" >
@@ -673,19 +777,31 @@ const Home = () => {
                         </div>
                         <span className="hr" ></span>
                         <div className="flex flex-col gap-4 items-center">
-                            <h1 className="text-xl font-amarante" >
+                            <h1 className="text-3xl font-amarante" >
                                 Key
                             </h1>
                             <p className="text-center" >
                                 Enter a key to join a game with a friend
                             </p>
-                            <input
-                                className="text-center"
-                                type="text"
-                                placeholder="Enter key"
-                                value={key}
-                                onChange={(e) => input(e.target.value)}
-                            />
+                            <label htmlFor={"key-input"} className="key-input" >
+                                <input
+                                    id={"key-input"}
+                                    type="text"
+                                    pattern={keyRegex.source}
+                                    onChange={(e) => input(e.target.value)}
+                                    onFocus={e => handleFocus(e)}
+                                    onBlur={() => setFocused(false)}
+                                />
+                                <ul className={`key-input-display ${focused ? "focused" : ""}`} >
+                                    {keyInputs.map(i =>
+                                        <li
+                                            key={i}
+                                        >
+                                            {key[i]}
+                                        </li>
+                                    )}
+                                </ul>
+                            </label>
                             { errorMsg &&
                                 <p className="error-text" >
                                     {errorMsg}
@@ -1190,6 +1306,15 @@ interface Sender {
     userId: string;
     username: string;
     picture?: string;
+}
+
+interface Match {
+    key: string;
+    player1Id: string;
+    player2Id: string;
+    battle: object;
+    randomMatch: boolean;
+    started: boolean;
 }
 
 export default Home;

@@ -30,6 +30,7 @@ export interface FriendsPanelRef {
     requestDeclined: (declinerId: string) => void;
     addUnseenMsg: (userId: string) => void;
     getAvailableFriends: () => Friend[];
+    getFriendById: (userId: string) => Friend | undefined;
 }
 
 const FriendsPanel = forwardRef((
@@ -286,7 +287,8 @@ const FriendsPanel = forwardRef((
         requestAccepted : requestAccepted,
         requestDeclined : requestDeclined,
         addUnseenMsg : addUnseenMsg,
-        getAvailableFriends: () => friendList.filter(friend => friend.status === "online")
+        getAvailableFriends: () => friendList.filter(friend => friend.status === "online"),
+        getFriendById: (userId: string) => friendList.find(friend => friend.userId === userId)
     }), [friendList]);
 
     const getOnlineFriendsAndUnseenMsg = async (friends: Friend[]) => {

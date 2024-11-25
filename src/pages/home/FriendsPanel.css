@@ -16,6 +16,30 @@
     align-items: center;
 }
 
+.friends-panel::after {
+    content: "";
+    z-index: -1;
+    position: absolute;
+    left: 0;
+    top: -16px;
+    width: 200%;
+    height: calc(100% + 32px);
+    background-color: var(--bg-7);
+    border-radius: 32px;
+    --border-width: 2px;
+    clip-path: polygon(
+            var(--border-width) 0,
+            var(--border-width) calc(50% - 24px),
+            12px calc(50% - 14px),
+            12px calc(50% + 14px),
+            var(--border-width) calc(50% + 24px),
+            var(--border-width) 100%,
+            100% 100%,
+            100% 0
+    );
+    mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent);
+}
+
 .friends-panel-container .decorative-hex {
     width: 40px;
     font-size: 16px;
