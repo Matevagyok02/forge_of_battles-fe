@@ -1,4 +1,12 @@
-import {forwardRef, useEffect, useImperativeHandle, useRef, useState, KeyboardEvent, ChangeEvent} from "react";
+import {
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+    KeyboardEvent,
+    ChangeEvent,
+} from "react";
 import {Friend} from "./FriendsPanel.tsx";
 import {IconButton} from "../../components/Button.tsx";
 import {getChatMessages, sendChatMessage} from "../../api/homePageRequests.ts";

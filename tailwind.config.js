@@ -8,7 +8,7 @@ export default {
     extend: {
       fontFamily: {
         amarante: ["Amarante", "serif"],
-        sorceCodeProp: ["Source Code Pro", "monospace"],
+        frizQuadrata: ["Friz Quadrata", "serif"]
       },
       colors: {
         gold: "#FFBF00"

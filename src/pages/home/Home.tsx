@@ -2,47 +2,33 @@ import "./Home.css";
 import "./FriendsPanel.css";
 import "./ChatTab.css";
 import {Button, IconButton} from "../../components/Button.tsx";
-import {FC, LegacyRef, FocusEvent, ReactElement, useCallback, useEffect, useRef, useState} from "react";
-import {useAuth0} from "@auth0/auth0-react";
-import {
-    abandonMatch,
-    acceptFriendRequest,
-    changePicture, createGame,
-    declineFriendRequest, declineMatch, getLastCreatedGame,
-    getUser,
-    joinGameWithKey, joinMatch,
-    registerNewUser
-} from "../../api/homePageRequests.ts";
-import Modal, {ForcedModal, InfoModal} from "../../components/Modal.tsx";
-import FriendsPanel, {Friend, Friends, FriendsPanelRef} from "./FriendsPanel.tsx";
+import {FC, useCallback, useEffect, useRef, useState, useContext, ReactElement} from "react";
+import {getUser} from "../../api/homePageRequests.ts";
+import {IUser, IMatch, ISender, IUserResponseBody, IReceiver} from "../../interfaces.ts";
+import FriendsPanel, {Friend, FriendStatus} from "./FriendsPanel.tsx";
 import {io} from "socket.io-client";
 import ChatTab, {ChatRef, Message} from "./ChatTab.tsx";
+import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../Context.tsx";
+import JoinGame from "./JoinGame.tsx";
+import UserPanel from "./UserPanel.tsx";
+import Registration from "./Registration.tsx";
+import AuthRequiredDialog from "../../components/AuthRequiredDialog.tsx";
+import CreateGame from "./CreateGame.tsx";
+import TutorialAndCards from "./TutorialAndCards.tsx";
+import {GameRequest, FriendRequest} from "./Requests.tsx";
 
 const Home = () => {
 
-    const { user, isAuthenticated, logout, loginWithPopup } = useAuth0();
+    const { user, isAuthenticated, login } = useContext(AuthContext);
+    const { _user, setUser } = useContext(UserContext);
+    const { friends, setFriends } = useContext(FriendsContext);
+    const { openInfoModal, openedModal, openModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
 
-    const [_user, setUser] = useState<User>();
-    const [friends, setFriends] = useState<Friends>();
-    const [friendRequests, setFriendRequests] = useState<Sender[]>();
-    const [gameRequests, setGameRequests] = useState<Match[]>();
+    const [friendRequests, setFriendRequests] = useState<ISender[]>();
+    const [gameRequests, setGameRequests] = useState<IMatch[]>();
     const [chatPartners, setChatPartners] = useState<Friend[]>([]);
 
-    const [openedInfoModal, setOpenedInfoModal] = useState<ReactElement[]>([]);
-    const [openedModal, setOpenedModal] = useState<ReactElement | null>(null);
-    const [openedForcedModal, setOpenedForcedModal] = useState<ReactElement | null>(null);
-    const [modalToBeOpened, setModalToBeOpened] = useState<ReactElement>();
-
-    const friendsRef = useRef<FriendsPanelRef>();
     const chatRef = useRef<Map<string, ChatRef>>(new Map());
-
-    const customLogout = async () => {
-        await logout({logoutParams: {returnTo: window.location.origin }});
-    }
-
-    const openModal = useCallback((modalComponent: ReactElement | null) => {
-        setOpenedModal(modalComponent);
-    }, []);
 
     const openChat = useCallback((friend: Friend) => {
         setChatPartners(prevState => {
@@ -65,56 +51,23 @@ const Home = () => {
         chatRef.current.delete(id);
     }, []);
 
-    const openCreateGameWithInvite = useCallback((friend: Friend) => {
-        if (_user) {
-            setOpenedModal(<CreateGame friend={friend} />);
-        }
-    }, [_user]);
-
-    const openInfoModal = (infoModal: ReactElement) => {
-        setOpenedInfoModal(prevState => {
-            if (prevState.findIndex(modal => modal.key === infoModal.key) === -1) {
-                return [...prevState, infoModal];
-            } else {
-                return prevState;
-            }
-        });
-    }
-
-    const closeInfoModal = (index: number) => {
-        setOpenedInfoModal(prevState => prevState.filter((_, i) => i !== index));
-    }
-
-    const addFriend = (friend: Friend) => {
-        setFriends(prevState => {
-            if (prevState) {
-                return {
-                    friends: [...prevState.friends, friend],
-                    pending: prevState.pending
-                }
-            } else {
-                return prevState;
-            }
-        });
-    }
-
     const loadUser = () => {
         getUser().then( userObj => {
             if (user && userObj.ok && userObj.body) {
-                const userResponseObj = userObj.body as UserResponseBody;
+                const userResponseObj = userObj.body as IUserResponseBody;
 
                 sessionStorage.setItem("user", JSON.stringify(userResponseObj.user));
                 localStorage.setItem("signedUp", "true");
 
-                const newUser = userResponseObj.user as User;
+                const newUser = userResponseObj.user as IUser;
 
                 setUser(newUser);
 
                 const requests = newUser.requests;
 
                 if (Array.isArray(requests)) {
-                    const incomingRequests: Sender[] = [];
-                    const outgoingRequests: Receiver[] = [];
+                    const incomingRequests: ISender[] = [];
+                    const outgoingRequests: IReceiver[] = [];
 
                     requests.forEach(request => {
                         if (request.fromId !== newUser.userId) {
@@ -144,7 +97,7 @@ const Home = () => {
                     setFriendRequests(incomingRequests);
                 }
             } else if (userObj.status === 404) {
-                setOpenedModal(<Registration/>);
+                openForcedModal(<Registration/>);
             }
         });
     }
@@ -169,8 +122,19 @@ const Home = () => {
 
         socket.on("friend-request-accepted", (acceptor) => {
             const friend = acceptor as Friend;
-            if (friendsRef.current && friend) {
-                friendsRef.current?.requestAccepted(friend);
+            if (friends && friend) {
+                setFriends(prevState => {
+                    if (prevState) {
+                        return {
+                            ...prevState,
+                            friends: [...prevState.friends, friend],
+                            pending: prevState.pending.filter(friend => friend.userId !== acceptor.userId)
+                        }
+                    } else {
+                        return prevState;
+                    }
+                });
+
                 openInfoModal(
                     <div className="flex flex-col gap-2 px-4" >
                         <p className="text-center" >
@@ -187,8 +151,17 @@ const Home = () => {
 
         socket.on("friend-request-declined", (decliner) => {
             const userId = (decliner as Friend).userId;
-            if (friendsRef.current && userId) {
-                friendsRef.current?.requestDeclined(userId);
+            if (friends && userId) {
+                setFriends(prevState => {
+                    if (prevState)
+                        return {
+                            ...prevState,
+                            pending: prevState.pending.filter(friend => friend.userId !== userId)
+                        }
+                    else
+                        return prevState;
+                });
+
                 openInfoModal(
                     <div className="flex flex-col gap-2 px-4" >
                         <p className="text-center" >
@@ -205,21 +178,39 @@ const Home = () => {
 
         socket.on("friend-connected", (friend) => {
             const friendId = (friend as Friend).userId;
-            if (friendsRef.current) {
-                friendsRef.current?.updateFriendStatus(friendId, "online");
-            }
+
+            setFriends(prevState => {
+                if (prevState) {
+                    const updatedFriends = prevState.friends.map(f =>
+                        f.userId === friendId ? { ...f, status: FriendStatus.Online } : f
+                    );
+                    return { ...prevState, friends: updatedFriends };
+                } else {
+                    return prevState;
+                }
+            });
+
             if (chatRef.current && chatRef.current.has(friendId)) {
-                chatRef.current.get(friendId)?.changeStatus("online");
+                chatRef.current.get(friendId)?.changeStatus(FriendStatus.Online);
             }
         });
 
         socket.on("friend-disconnected", (friend) => {
             const friendId = (friend as Friend).userId;
-            if (friendsRef.current) {
-                friendsRef.current?.updateFriendStatus(friendId, "offline");
-            }
+
+            setFriends(prevState => {
+                if (prevState) {
+                    const updatedFriends = prevState.friends.map(f =>
+                        f.userId === friendId ? { ...f, status: FriendStatus.Offline } : f
+                    );
+                    return { ...prevState, friends: updatedFriends };
+                } else {
+                    return prevState;
+                }
+            });
+
             if (chatRef.current && chatRef.current.has(friendId)) {
-                chatRef.current.get(friendId)?.changeStatus("offline");
+                chatRef.current.get(friendId)?.changeStatus(FriendStatus.Offline);
             }
         });
 
@@ -231,8 +222,20 @@ const Home = () => {
                     createdAt: new Date(),
                     selfWritten: false
                 } as Message);
-            } else {
-                friendsRef.current?.addUnseenMsg(message.from);
+            }
+            else if (friends) {
+                setFriends(prevState => {
+                    if (prevState) {
+                        const newState = prevState;
+                        const friend = newState.friends.find(friend => friend.userId === message.from);
+                        if (friend) {
+                            friend.unseenMessage = true;
+                        }
+                        return newState;
+                    } else {
+                        return prevState;
+                    }
+                });
             }
         });
 
@@ -245,638 +248,40 @@ const Home = () => {
         });
     }
 
-    const FriendRequest: FC<{sender: Sender, onResolve: () => void}> = ({sender, onResolve}) => {
-
-        const [loading, setLoading] = useState(false);
-
-        const acceptRequest = () => {
-            setLoading(true);
-
-            acceptFriendRequest(sender.userId).then(result => {
-                if (result.ok && friendRequests) {
-                    addFriend(sender as Friend);
-                    onResolve();
-                } else {
-                    setLoading(false);
-                    alert("An unexpected server error has occurred");
-                }
-            });
-        }
-
-        const declineRequest = () => {
-            setLoading(true);
-
-            declineFriendRequest(sender.userId).then(result => {
-                if (result.ok && friendRequests) {
-                    onResolve();
-                } else {
-                    setLoading(false);
-                    alert("An unexpected server error has occurred");
-                }
-            });
-        }
-
-        return(
-            <ForcedModal>
-                <div className="flex flex-col items-center gap-4 p-4" >
-                    <div className="flex items-end gap-2" >
-                        <img src={`./avatars/${sender.picture || "1"}.jpg`} alt="" />
-                        <h1 className="text-2xl" >{sender.username}</h1>
-                    </div>
-                    <div className="hr" ></div>
-                    <div className="flex gap-4" >
-                        <Button
-                            text="Decline"
-                            onClick={declineRequest}
-                            loading={loading}
-                        />
-                        <Button
-                            text="Accept"
-                            onClick={acceptRequest}
-                            loading={loading}
-                        />
-                    </div>
-                </div>
-            </ForcedModal>
-        );
-    }
-
-    const GameRequest: FC<{match: Match, onResolve: () => void}> = ({match, onResolve}) => {
-
-        const [loading, setLoading] = useState(false);
-        const [inviter, setInviter] = useState<Friend>();
-        const [searchInterval, setSearchInterval] = useState<number | undefined>();
-
-        const acceptRequest = () => {
-            setLoading(true);
-
-            if (match) {
-                setLoading(true);
-
-                joinMatch(match.key).then(result => {
-                    if (result.ok) {
-                        onResolve();
-                        //TODO
-                    } else {
-                        setLoading(false);
-                        openInfoModal(
-                            <p>
-                                The match could not be joined, try again later
-                            </p>
-                        )
-                    }
-                    setLoading(false);
-                    onResolve();
-                });
-            }
-        }
-
-        const declineRequest = () => {
-            if (match) {
-                setLoading(true);
-                declineMatch(match.key).then(() => {
-                    onResolve();
-                });
-            }
-        }
-
-        useEffect(() => {
-            let interval: number | undefined;
-
-            if (friendsRef.current && "player1Id" in match) {
-                interval = setInterval(() => {
-                    setInviter(
-                        friendsRef.current?.getFriendById(match.player1Id)
-                    );
-                }, 1000);
-
-                setSearchInterval(interval);
-            }
-
-            return () => {
-                if (interval) {
-                    clearInterval(interval);
-                }
-            }
-        }, [friendsRef.current]);
-
-        useEffect(() => {
-            if (inviter && searchInterval) {
-                clearInterval(searchInterval);
-            }
-        }, [inviter]);
-
-        return(
-            inviter &&
-            <ForcedModal>
-                <div className="flex flex-col items-center gap-4 p-4" >
-                    <div className="flex items-end gap-2" >
-                        <img src={`./avatars/${inviter.picture || "1"}.jpg`} alt="" />
-                        <h1 className="text-2xl" >{inviter.username}</h1>
-                    </div>
-                    <div className="hr" ></div>
-                    <div className="flex gap-4" >
-                        <Button
-                            text="Decline"
-                            onClick={declineRequest}
-                            loading={loading}
-                        />
-                        <Button
-                            text="Accept"
-                            onClick={acceptRequest}
-                            loading={loading}
-                        />
-                    </div>
-                </div>
-            </ForcedModal>
-        );
-    }
-
-    const TutorialAndCards: FC = () => {
-
-        return(
-            <Modal close={() => setOpenedModal(null)} >
-                <div className="tutorial-and-cards-panel" >
-                    <div>
-                        <div className="decorative-hex" id="tutorial" >
-
-                        </div>
-                        <p>
-                            Play the tutorial to learn the game mechanics and how to play
-                        </p>
-                        <Button text="Tutorial  " onClick={() => alert("TODO")} />
-                    </div>
-                    <span className="vr" ></span>
-                    <div>
-                        <div className="decorative-hex" id="rules" >
-
-                        </div>
-                        <p>
-                            Check our set of rules to learn how to play the game
-                        </p>
-                        <Button text="Rules     " onClick={() => alert("TODO")} />
-                    </div>
-                    <span className="vr" ></span>
-                    <div>
-                        <div className="decorative-hex" id="cards" >
-                        </div>
-                        <p>
-                            Browse cards from each deck, learn their about their abilities and how to use them
-                        </p>
-                        <Button text="Cards     " onClick={() => alert("TODO")} />
-                    </div>
-                </div>
-            </Modal>
-        );
-    }
-
-    const CreateGame: FC<{ friend?: Friend }> = ({friend}) => {
-
-        const [friendToInvite, setFriendToInvite] = useState<Friend | undefined>(friend);
-        const [timeLimit, setTimeLimit] = useState<number>();
-        const [key, setKey] = useState<string>();
-        const [errorMsg, setErrorMsg] = useState<string>();
-        const [loading, setLoading] = useState<boolean>(false);
-        const [availableFriends, setAvailableFriends] = useState<Friend[]>();
-
-        const friendSelect = useRef<HTMLSelectElement | null>(null);
-
-        const matchSessionStorageKey = "lastCreatedMatch";
-
-        const minTimeLimit = 15;
-        const maxTimeLimit = 60;
-        const step = 15;
-
-        const getLink = (key?: string) => {
-            return `${window.location.origin}/join/${key}`
-        }
-
-        const changeTimeLimit = (input: number) => {
-            setTimeLimit(input === maxTimeLimit ? undefined : input);
-        }
-
-        const saveMatchToSessionStorage = (match?: Match) => {
-            sessionStorage.setItem(matchSessionStorageKey, match ? JSON.stringify(match) : "null");
-        }
-
-        const abandonCreatedMatch = () => {
-            if (key) {
-                abandonMatch(key).then(result => {
-                    if (result.ok) {
-                        saveMatchToSessionStorage();
-                        setKey(undefined);
-                        setFriendToInvite(undefined);
-                        setErrorMsg(undefined);
-                        setTimeLimit(maxTimeLimit);
-                    } else {
-                        openInfoModal(
-                            <p>
-                                The match could not be deleted, try again later
-                            </p>
-                        );
-                    }
-                });
-            }
-        }
-
-        const changeFriendToInvite = (friendId: string | undefined) => {
-            if (friendId && availableFriends) {
-                setFriendToInvite(availableFriends.find(friend => friend.userId === friendId));
-            } else {
-                setFriendToInvite(undefined);
-            }
-        }
-
-        const openSelect = useCallback(() => {
-            if (friendSelect.current && availableFriends && availableFriends.length > 0) {
-                friendSelect.current!.showPicker();
-            } else {
-                openInfoModal(
-                  <div className="text-center flex flex-col px-4" >
-                      <p>
-                          You have no friends available to invite
-                      </p>
-                      <small className="w-1 min-w-full" >
-                          (If you see an active friend on your "Friend Panel", wait a few seconds and try again)
-                      </small>
-                  </div>
-                );
-            }
-        }, [friendSelect, availableFriends]);
-
-        const create = () => {
-            setLoading(true);
-
-            createGame(timeLimit, friendToInvite?.userId).then(result => {
-                if (result.ok && result.body) {
-                    const match = result.body as Match;
-                    saveMatchToSessionStorage(match);
-
-                    setErrorMsg(undefined);
-                    setKey(match.key);
-                } else if (result.status === 409 && result.body && "message" in result.body) {
-                    setErrorMsg(result.body.message);
-                } else {
-                    setErrorMsg("An unexpected server error has occurred, try again later");
-                }
-                setLoading(false);
-            });
-        }
-
-        useEffect(() => {
-            let interval: number | undefined;
-
-            if (friendsRef.current) {
-                setAvailableFriends(friendsRef.current?.getAvailableFriends());
-
-                interval = setInterval(() => {
-                    setAvailableFriends(friendsRef.current?.getAvailableFriends());
-                }, 5000);
-            }
-
-            return () => {
-                if (interval) {
-                    clearInterval(interval);
-                }
-            }
-        }, [friendsRef.current]);
-
-        useEffect(() => {
-            console.log(friendsRef.current?.getAvailableFriends())
-            if (friendsRef.current && !key) {
-                const lastCreatedMatch = sessionStorage.getItem(matchSessionStorageKey);
-
-                if (lastCreatedMatch) {
-                    const match = JSON.parse(lastCreatedMatch) as Match;
-
-                    if (match) {
-                        setKey(match.key);
-
-                        if (match && match.player2Id) {
-                            setFriendToInvite(friendsRef.current?.getFriendById(match.player2Id));
-                        }
-                    }
-                } else {
-                    getLastCreatedGame().then(result => {
-                        if (result.ok && result.body) {
-                            const match = result.body as Match;
-                            saveMatchToSessionStorage(match);
-
-                            setKey(match.key as string);
-
-                            if (match.player2Id) {
-                                setFriendToInvite(friendsRef.current?.getFriendById(match.player2Id));
-                            }
-                        } else {
-                            saveMatchToSessionStorage();
-                        }
-                    });
-                }
-            }
-        }, [friendsRef.current]);
-
-        return(
-            <Modal close={() => setOpenedModal(null)} >
-                <div className="flex min-w-[112vh] min-h-[64vh]" >
-                    <div className="flex flex-col justify-between items-center p-8" >
-                        <div className="w-1 min-w-full" >
-                            <h1 className="text-center font-amarante text-4xl" >
-                                Create a game
-                            </h1>
-                            <p className="text-center px-16 py-4" >
-                                Select a friend to invite or use the generated key or link to invite your opponent
-                            </p>
-                        </div>
-                        <div className="flex flex-col justify-center gap-4" >
-                            <div className="flex justify-center gap-2 px-2" >
-                                <div className="create-game-player justify-start" >
-                                    <img src={`./avatars/${_user?.picture}.jpg`} alt="" />
-                                    <h1 className="font-bold" >
-                                        {_user?.username}
-                                    </h1>
-                                </div>
-                                <h1 className="gold-text text-5xl" >
-                                    VS
-                                </h1>
-                                { friendToInvite ?
-                                    <div className="create-game-player justify-end" >
-                                        <h1 className="font-bold" >
-                                            {friendToInvite.username}
-                                        </h1>
-                                        <div className="create-game-friend-avatar-container" >
-                                            { !key &&
-                                                <div className="remove-friend-inv" >
-                                                    <IconButton text={"Remove"} icon={"minimize"} onClick={() => setFriendToInvite(undefined)} />
-                                                </div>
-                                            }
-                                            <img src={`./avatars/${friendToInvite.picture}.jpg`} alt="" />
-                                        </div>
-                                    </div>
-                                    :
-                                    <div className="create-game-player justify-end" >
-                                        <div className="img-frame-placeholder" >
-                                            <IconButton icon="add" text="Select friend" onClick={openSelect} />
-                                            <select
-                                                onChange={(e) => changeFriendToInvite(e.target.value)}
-                                                defaultValue={undefined}
-                                                ref={friendSelect as LegacyRef<HTMLSelectElement>}
-                                            >
-                                                <option hidden value={undefined} ></option>
-                                                { availableFriends && availableFriends.map(friend =>
-                                                    <option key={friend.userId} value={friend.userId} >
-                                                        {friend.username}
-                                                    </option>
-                                                )}
-                                            </select>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                            <div className="hr" ></div>
-                            { !key ?
-                                <div className="px-2 flex gap-4" >
-                                    <div>
-                                        <h1 className="font-amarante text-xl" >
-                                            Time Limit
-                                        </h1>
-                                        <small>
-                                            (min/player)
-                                        </small>
-                                    </div>
-                                    <div className="flex flex-col pt-1 flex-grow" >
-                                        <div className="slider" >
-                                            <input
-                                                type="range"
-                                                min={minTimeLimit}
-                                                max={maxTimeLimit}
-                                                step={step}
-                                                defaultValue={maxTimeLimit}
-                                                onChange={(e) => changeTimeLimit(Number(e.target.value))}
-                                            />
-                                            <ul>
-                                                <li data-content="15" ></li>
-                                                <span></span>
-                                                <li data-content="30" ></li>
-                                                <span></span>
-                                                <li data-content="45" ></li>
-                                                <span></span>
-                                                <li data-content="∞" ></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                :
-                                <p className="text-center" >
-                                    { friendToInvite ?
-                                        "Wait for your friend to join the game..."
-                                        :
-                                        "Send the following key or link to your opponent"
-                                    }
-                                </p>
-                            }
-                        </div>
-                        { key ?
-                            <div className="flex flex-col items-center" >
-                                <div className="flex gap-2" >
-                                    <h1 className="text-2xl font-bold" >
-                                        {key}
-                                    </h1>
-                                    <IconButton text="Copy" icon="copy" onClick={() => navigator.clipboard.writeText(key as string)} />
-                                </div>
-                                <div className="flex gap-2" >
-                                    <h1 className="underline" >
-                                        {getLink(key)}
-                                    </h1>
-                                    <IconButton text="Copy" icon="copy" onClick={() => navigator.clipboard.writeText(getLink(key))} />
-                                </div>
-                                <div className="mt-4" >
-                                    <Button text="Abandon" onClick={abandonCreatedMatch} />
-                                </div>
-                            </div>
-                            :
-                            <div className="flex flex-col justify-end items-center gap-2 w-1 min-w-full" >
-                                { errorMsg &&
-                                    <p className="error-text text-center" >
-                                        {errorMsg}
-                                    </p>
-                                }
-                                <Button text={"Create"} onClick={create} loading={loading} />
-                            </div>
-                        }
-                    </div>
-                    <div className="create-game-bg" ></div>
-                </div>
-            </Modal>
-        );
-    }
-
-    const JoinGame: FC = () => {
-
-        const [key, setKey] = useState<string>("");
-        const [loading, setLoading] = useState<boolean>(false);
-        const [errorMsg, setErrorMsg] = useState<string | undefined>();
-        const [focused, setFocused] = useState<boolean>(false);
-
-        const keyRegex = /^[A-Z0-9]{0,6}$/;
-        const keyLength = 6;
-        const keyInputs: number[] = [];
-
-        for (let i = 0; i < keyLength; i++) {
-            keyInputs.push(i);
-        }
-
-        const input = (input: string) => {
-            const cleanInput = input.trim().toUpperCase();
-
-            if (cleanInput.match(keyRegex)) {
-                setKey(cleanInput);
-            }
-        }
-
-        const joinRandom = () => {
-            openInfoModal(
-                <p className="px-4" >
-                    This feature has not been implemented yet
-                </p>
-            );
-        }
-
-        const joinWithKey = () => {
-            setLoading(true);
-
-            joinGameWithKey(key).then(result => {
-               if (result.ok) {
-                   alert("TODO");
-               } else {
-                   setErrorMsg("You cannot join this game");
-               }
-
-                setLoading(false);
-            });
-        }
-
-        const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
-            setFocused(true);
-            const value = e.target.value;
-            e.target.value = "";
-            e.target.value = value;
-        }
-
-        return(
-            <Modal close={() => setOpenedModal(null)} >
-                <div className="flex min-w-[112vh] min-h-[64vh]" >
-                    <div className="flex flex-col gap-4 p-8 justify-center" >
-                        <div className="flex flex-col gap-4 items-center">
-                            <h1 className="text-3xl font-amarante" >
-                                Random
-                            </h1>
-                            <p className="w-2/3 text-center" >
-                                Join a random game to fight against strangers
-                            </p>
-                            <Button text="Queue Up" onClick={joinRandom} loading={loading} />
-                        </div>
-                        <span className="hr" ></span>
-                        <div className="flex flex-col gap-4 items-center">
-                            <h1 className="text-3xl font-amarante" >
-                                Key
-                            </h1>
-                            <p className="text-center" >
-                                Enter a key to join a game with a friend
-                            </p>
-                            <label htmlFor={"key-input"} className="key-input" >
-                                <input
-                                    id={"key-input"}
-                                    type="text"
-                                    pattern={keyRegex.source}
-                                    onChange={(e) => input(e.target.value)}
-                                    onFocus={e => handleFocus(e)}
-                                    onBlur={() => setFocused(false)}
-                                />
-                                <ul className={`key-input-display ${focused ? "focused" : ""}`} >
-                                    {keyInputs.map(i =>
-                                        <li
-                                            key={i}
-                                        >
-                                            {key[i]}
-                                        </li>
-                                    )}
-                                </ul>
-                            </label>
-                            { errorMsg &&
-                                <p className="error-text" >
-                                    {errorMsg}
-                                </p>
-                            }
-                            <Button
-                                text="Join"
-                                onClick={joinWithKey}
-                                loading={loading}
-                                disabled={key.length < 6}
-                            />
-                        </div>
-                    </div>
-                    <div className="join-game-bg" ></div>
-                </div>
-            </Modal>
-        );
-    }
-
     const OptionCardButton: FC<{id: string}> = ({id}) => {
-
-        const AuthDialog = () => {
-
-            const customLogin = () => {
-                loginWithPopup().then(() => {
-                    if (modalToBeOpened) {
-                        setOpenedModal(modalToBeOpened);
-                    }
-                });
-            }
-
-            return(
-                <Modal close={() => setOpenedModal(null)} >
-                    <div className="p-4 flex flex-col items-center">
-                        <p className="p-4 w-1 min-w-full text-center" >
-                            Please log in if you already have an account or register to create a new one
-                        </p>
-                        <div className="flex gap-4" >
-                            <Button text="Log In" onClick={customLogin} />
-                            <Button text="Register" onClick={customLogin} />
-                        </div>
-                    </div>
-                </Modal>
-            );
-        }
 
         const content = optionCardContent[id];
 
         const openOption = () => {
             if (!isAuthenticated && id !== "tutorialAndCards") {
-                setModalToBeOpened(() => {
-                    switch (id) {
-                        case "createGame":
-                            return <CreateGame />;
-                        case "joinGame":
-                            return <JoinGame />;
-                        default:
-                            return undefined;
-                    }
-                });
-                setOpenedModal(<AuthDialog />);
+                let modalToBeOpened: ReactElement | undefined;
+
+                switch (id) {
+                    case "createGame":
+                        modalToBeOpened = <CreateGame />;
+                        break;
+                    case "joinGame":
+                        modalToBeOpened = <JoinGame />;
+                        break;
+                    default:
+                        break;
+                }
+
+                openModal(<AuthRequiredDialog modalToBeOpened={modalToBeOpened} />);
             } else {
                 switch (id) {
                     case "createGame":
                         if (_user) {
-                            setOpenedModal(<CreateGame />);
+                            openModal(<CreateGame />);
                         }
                         break;
                     case "joinGame":
                         if (_user) {
-                            setOpenedModal(<JoinGame />);
+                            openModal(<JoinGame />);
                         }
                         break;
                     case "tutorialAndCards":
-                        setOpenedModal(<TutorialAndCards />);
+                        openModal(<TutorialAndCards />);
                         break;
                     default:
                         break;
@@ -899,254 +304,6 @@ const Home = () => {
         )
     }
 
-    const ChangeAvatar: FC<{ currentAvatar: string }> = ({currentAvatar}) => {
-
-        const [selected, setSelected] = useState<string>(currentAvatar);
-        const [changed, setChanged] = useState<boolean | undefined>();
-        const [loading, setLoading] = useState<boolean>(false);
-
-        const changeAvatar = () => {
-            changePicture(selected).then(result => {
-                setChanged(result.ok);
-
-                if (result.ok) {
-                    setUser(prevState => {
-                        if (prevState) {
-                            return {
-                                ...prevState,
-                                picture: selected
-                            }
-                        } else {
-                            return prevState;
-                        }
-                    });
-                }
-
-                setLoading(false);
-            });
-        }
-
-        return(
-            <Modal close={() => setOpenedModal(null)} >
-                <div className="change-avatar" >
-                    { typeof changed === "undefined" ?
-                        <>
-                            <ul className="avatar-selector" >
-                                {avatarList.map(avatar =>
-                                    <li
-                                        key={avatar}
-                                        onClick={() => setSelected(avatar)}
-                                        className={selected === avatar ? "selected" : ""}
-                                    >
-                                        <img src={`./avatars/${avatar}.jpg`} alt="" />
-                                    </li>
-                                )}
-                            </ul>
-                            <div className="hr" ></div>
-                            <Button
-                                text={"Change Avatar"}
-                                loading={loading}
-                                onClick={changeAvatar}
-                                disabled={selected === currentAvatar}
-                            />
-                        </>
-                        :
-                        <>
-                            { changed ?
-                                <>
-                                    <p className="px-4" >
-                                        Your avatar was changed successfully
-                                    </p>
-                                    <div className="hr" ></div>
-                                    <Button text={"Ok"} onClick={() => setOpenedModal(null)} />
-                                </>
-                                :
-                                <>
-                                    <p className="error-text px-4" >
-                                        Something went wrong, please try again
-                                    </p >
-                                    <div className="hr" ></div>
-                                    <Button text={"Ok"} onClick={() => setOpenedModal(null)} />
-                                </>
-                            }
-                        </>
-                    }
-                </div>
-            </Modal>
-        )
-    }
-
-    const Registration: FC = () => {
-
-        const [username, setUsername] = useState<string>("");
-        const [picture, setPicture] = useState<string>("1");
-        const [loading, setLoading] = useState<boolean>(false);
-        const [registered, setRegistered] = useState<boolean | undefined>();
-        const [errorMsg, setErrorMsg] = useState<string | undefined>();
-
-        const usernameRegex = /^[a-zA-Z0-9]{0,16}$/;
-        const universalErrorMsg = "Username must be 8-16 characters and contain only letters and numbers";
-
-        const register = () => {
-            if (username.match(usernameRegex) && username.length > 7) {
-                setLoading(true);
-
-                registerNewUser(username, picture).then(result => {
-                    if (result.status === 409) {
-                        setErrorMsg(() => {
-                            if (result.body && "message" in result.body) {
-                                return result.body.message;
-                            } else {
-                                return "This username is already taken";
-                            }
-                        });
-                    } else {
-                        setRegistered(result.ok);
-                    }
-                    setLoading(false);
-                });
-            } else {
-                setErrorMsg(universalErrorMsg);
-            }
-        }
-
-        const input = (input: string) => {
-            setUsername(input);
-
-            if (username.length > 7 && input.length < 8 ) {
-                setErrorMsg("Username must contain at least 8 characters");
-                return;
-            }
-
-            if (input.match(usernameRegex)) {
-                setErrorMsg(undefined);
-            } else {
-                setErrorMsg(universalErrorMsg);
-            }
-        }
-
-        const closeRegistretion = () => {
-            if (registered && user?.sub) {
-                setOpenedModal(null);
-                setUser({
-                        userId: user.sub,
-                        username: username,
-                        picture: picture,
-                        friends: [],
-                        requests: []
-                });
-                setFriends({
-                    friends: [],
-                    pending: []
-                });
-            }
-        }
-
-        return(
-            <ForcedModal>
-                <div className="p-4 flex flex-col items-center gap-4" >
-                    {typeof registered === "undefined" ?
-                        <>
-                            <p className="text-center w-72 px-4" >
-                                Select an avatar and enter a username to create an account
-                            </p>
-
-                            <div className="hr" ></div>
-
-                            <ul className="avatar-selector" >
-                                {avatarList.map(avatar =>
-                                    <li
-                                        key={avatar}
-                                        onClick={() => setPicture(avatar)}
-                                        className={picture === avatar ? "selected" : ""}
-                                    >
-                                        <img src={`./avatars/${avatar}.jpg`} alt="" />
-                                    </li>
-                                )}
-                            </ul>
-
-                            <small className="text-center w-72 px-4" >
-                                Change it later by clicking on the edit icon inside the avatar display
-                            </small>
-
-                            <div className="hr" ></div>
-
-                            <input
-                                className="username-input"
-                                type="text"
-                                placeholder="Username (min. 8 characters)"
-                                pattern={usernameRegex.source}
-                                onChange={(e) => input(e.target.value)}
-                            />
-
-                            <div className="hr" ></div>
-
-                            { errorMsg &&
-                                <p className="error-text text-center w-72 px-4" >
-                                    {errorMsg}
-                                </p>
-                            }
-
-                            <div className="flex gap-4" >
-                                <Button
-                                    text={"Cancel"}
-                                    onClick={customLogout}
-                                />
-                                <Button
-                                    text={"Submit"}
-                                    loading={loading}
-                                    onClick={register}
-                                />
-                            </div>
-                        </>
-                        :
-                        <>
-                            { registered ?
-                                <>
-                                    <p className="text-center w-72 px-4" >
-                                        Your account was created successfully
-                                    </p>
-                                    <div className="hr" ></div>
-                                    <Button text={"Continue"} onClick={closeRegistretion} />
-                                </>
-                                :
-                                <>
-                                    <p className="error-text text-center w-72 px-4" >
-                                        Something went wrong, please try again later
-                                    </p >
-                                    <div className="hr" ></div>
-                                    <Button text={"Ok"} onClick={customLogout} />
-                                </>
-                            }
-                        </>
-                    }
-                </div>
-            </ForcedModal>
-        )
-    }
-
-    const UserPanel: FC<{ user: User }> = ({user}) => {
-
-        return(
-            <div className="user-panel" >
-                <div className="user-name" >
-                    <h1 className="min-w-28 text-center" >
-                        {user.username}
-                    </h1>
-                </div>
-                <div className="user-avatar-container" >
-                    <img src={`./avatars/${user.picture}.jpg`} alt="" />
-                    <IconButton text="Edit" icon="edit" onClick={() => setOpenedModal(<ChangeAvatar currentAvatar={user.picture} />)} />
-                </div>
-                <div className="settings" >
-                    <IconButton text="Music" icon="music" decorated onClick={() => alert("TODO")} />
-                    <IconButton text="Sound" icon="sound" decorated onClick={() => alert("TODO")} />
-                    <IconButton text="Log Out" icon="logout" decorated onClick={customLogout} />
-                </div>
-            </div>
-        );
-    }
-
     useEffect(() => {
         if (!_user && isAuthenticated) {
             loadUser();
@@ -1156,45 +313,29 @@ const Home = () => {
 
     useEffect(() => {
         if (gameRequests && gameRequests!.length > 0) {
-            setOpenedForcedModal(
+            openForcedModal(
                 <GameRequest
                     match={gameRequests[0]}
                     onResolve={() => setGameRequests(gameRequests!.slice(1, gameRequests!.length - 1))}
                 />
             );
         } else if (friendRequests && friendRequests!.length > 0) {
-            setOpenedForcedModal(
+            openForcedModal(
                 <FriendRequest
                     sender={friendRequests[0]}
                     onResolve={() => setFriendRequests(friendRequests!.slice(1, friendRequests!.length - 1))}
                 />
             );
         } else {
-            setOpenedForcedModal(null);
+            closeForcedModal();
         }
     }, [friendRequests, gameRequests]);
 
-    useEffect(() => {
-        if (modalToBeOpened) {
-            setOpenedModal(modalToBeOpened);
-            setModalToBeOpened(undefined);
-        }
-    }, [_user]);
-
     return(
         <main>
-            {openedInfoModal.map((content, index) => (
-                <InfoModal close={() => closeInfoModal(index)} key={index} >
-                    {content}
-                </InfoModal>
-            ))}
             <div>
                 <div className="h-[100vh] w-fit" >
                     <div className="title-text" ></div>
-                    {
-                        openedForcedModal &&
-                        openedForcedModal
-                    }
                     { openedModal ?
                         openedModal
                         :
@@ -1207,15 +348,11 @@ const Home = () => {
                 </div>
                 { _user ?
                     <>
-                        <UserPanel user={_user} />
+                        <UserPanel />
                         { friends &&
                             <>
                                 <FriendsPanel
-                                    ref={friendsRef}
-                                    friends={friends}
-                                    modalSetter={openModal}
-                                    chatOpen={openChat}
-                                    openCreateGamePanel={openCreateGameWithInvite}
+                                    openChat={openChat}
                                 />
                                 <div className="chat-panel" >
                                     {chatPartners.map(partner => (
@@ -1242,7 +379,7 @@ const Home = () => {
                         { !isAuthenticated &&
                             <Button
                                 text="Log In &nbsp; Register"
-                                onClick={loginWithPopup}
+                                onClick={login}
                             />
                         }
                         <div className="settings" >
@@ -1255,10 +392,6 @@ const Home = () => {
         </main>
     );
 }
-
-const avatarList = [
-    "1", "2", "3"
-];
 
 const optionCardContent: { [key: string]: { title: string, description: string } } = {
     createGame: {
@@ -1273,48 +406,6 @@ const optionCardContent: { [key: string]: { title: string, description: string }
         title: "Tutorial & Cards",
         description: "Play the tutorial to learn the game mechanics or browse the game rules and cards"
     }
-}
-
-interface User {
-    userId: string;
-    username: string;
-    picture: string;
-    friends: string[];
-    requests: FriendRequest[];
-}
-
-interface UserResponseBody {
-    user: User;
-    friends: Friend[];
-}
-
-interface FriendRequest {
-    fromId: string;
-    toId: string;
-    userProps: { username: string, picture?: string };
-}
-
-interface Receiver {
-    userId: string;
-    username: string;
-    picture?: string;
-    status: string;
-    unseenMessage: boolean;
-}
-
-interface Sender {
-    userId: string;
-    username: string;
-    picture?: string;
-}
-
-interface Match {
-    key: string;
-    player1Id: string;
-    player2Id: string;
-    battle: object;
-    randomMatch: boolean;
-    started: boolean;
 }
 
 export default Home;
