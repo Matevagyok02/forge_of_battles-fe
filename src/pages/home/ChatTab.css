@@ -60,6 +60,7 @@
     background-color: transparent;
     border: none;
     background-image: none;
+    resize: none;
 }
 
 .chat-textarea:focus {

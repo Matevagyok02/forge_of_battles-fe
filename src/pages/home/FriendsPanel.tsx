@@ -1,19 +1,20 @@
 import {
     FC,
-    forwardRef,
-    ReactElement,
+    useContext,
     useEffect,
-    useImperativeHandle,
     useState
 } from "react";
 import { Button, IconButton } from "../../components/Button.tsx";
 import { findFriendByUsername, getOnlineFriends, getUnseenMsg, sendFriendInvite } from "../../api/homePageRequests.ts";
 import Modal from "../../components/Modal.tsx";
 import { CustomResponse } from "../../api/api.ts";
+import {FriendsContext, ModalContext} from "../../Context.tsx";
+import CreateGame from "./CreateGame.tsx";
 
 export interface Friends {
     friends: Friend[];
     pending: Friend[];
+    update?: boolean;
 }
 
 export interface Friend {
@@ -24,43 +25,29 @@ export interface Friend {
     unseenMessage?: boolean;
 }
 
-export interface FriendsPanelRef {
-    updateFriendStatus: (userId: string, status: string) => void;
-    requestAccepted: (acceptor: Friend) => void;
-    requestDeclined: (declinerId: string) => void;
-    addUnseenMsg: (userId: string) => void;
-    getAvailableFriends: () => Friend[];
+export enum FriendStatus {
+    Online = "online",
+    Busy = "busy",
+    Offline = "offline",
+    Pending = "pending"
 }
 
-const FriendsPanel = forwardRef((
-    props: {
-        friends: Friends,
-        modalSetter: (modal: ReactElement | null) => void,
-        chatOpen: (friend: Friend) => void,
-        openCreateGamePanel: (friend: Friend) => void },
-    ref
-) => {
+const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) => {
 
     const [open, setOpen] = useState(false);
-    const [friendList, setFriendList] = useState<Friend[]>([]);
-    const [pendingList, setPendingList] = useState<Friend[]>([]);
-    const [forceUpdate, setForceUpdate] = useState(true);
     const [unseenMessages, setUnseenMessages] = useState(false);
 
     const ListedFriend: FC<Friend> = ((friend) => {
 
         const removeUnseenMsg = (userId: string) => {
-            setFriendList(prevState => {
+            setFriends(prevState => {
                 if (prevState) {
                     const newState = prevState;
-
-                    const index = newState.findIndex(friend => friend.userId === userId);
-                    if (index !== -1) {
-                        newState[index].unseenMessage = false;
-                        return newState;
-                    } else {
-                        return prevState;
+                    const friend = newState.friends.find(friend => friend.userId === userId);
+                    if (friend) {
+                        friend.unseenMessage = false;
                     }
+                    return newState;
                 } else {
                     return prevState;
                 }
@@ -69,7 +56,7 @@ const FriendsPanel = forwardRef((
 
         const openChatWithFriend = () => {
             removeUnseenMsg(friend.userId);
-            props.chatOpen(friend);
+            openChat(friend);
         }
 
         return (
@@ -86,14 +73,14 @@ const FriendsPanel = forwardRef((
                         <small className="status-title">
                             {friend.status}
                         </small>
-                        {friend.status !== "pending" &&
+                        {friend.status !== FriendStatus.Pending &&
                             <div className="friend-options">
                                 <IconButton text="Message" icon="message" onClick={openChatWithFriend} />
                                 { friend.status === "online" &&
                                     <IconButton
                                         text="Invite"
                                         icon="add"
-                                        onClick={() => props.openCreateGamePanel(friend)}
+                                        onClick={() => openModal(<CreateGame friend={friend} />)}
                                     />
                                 }
                             </div>
@@ -104,16 +91,13 @@ const FriendsPanel = forwardRef((
         )
     });
 
-    const reRender = () => {
-        setForceUpdate(false);
-        setInterval(() => {
-            setForceUpdate(true);
-        }, 10);
-    }
+    const { openModal, closeModal } = useContext(ModalContext);
+    const { friends, setFriends } = useContext(FriendsContext);
 
     const AddFriend = () => {
+
         const [loading, setLoading] = useState(false);
-        const [searchResult, setSearchResult] = useState<Friend | undefined>();
+        const [searchResult, setSearchResult] = useState<Friend | null>(null);
         const [inviteResult, setInviteResult] = useState<CustomResponse>();
         const [found, setFound] = useState(true);
         const [searchQuery, setSearchQuery] = useState("");
@@ -129,10 +113,19 @@ const FriendsPanel = forwardRef((
                             picture: searchResult.picture,
                             status: "pending"
                         }
-
-                        setPendingList([...pendingList, invitedFriend]);
+                        setFriends(prevState => {
+                            if (prevState) {
+                                const newState = prevState;
+                                newState.pending.push(invitedFriend);
+                                return newState;
+                            } else {
+                                return {
+                                    friends: [],
+                                    pending: [invitedFriend]
+                                }
+                            }
+                        });
                     }
-
                     setInviteResult(result);
                 });
             }
@@ -154,7 +147,7 @@ const FriendsPanel = forwardRef((
         }
 
         return (
-            <Modal close={() => props.modalSetter(null)}>
+            <Modal>
                 <div className="flex flex-col gap-4 p-5 items-center w-fit">
                     {searchResult && !inviteResult ?
                         <>
@@ -164,7 +157,7 @@ const FriendsPanel = forwardRef((
                             </div>
                             <div className="hr"></div>
                             <div className="flex gap-4">
-                                <Button text="Back" onClick={() => setSearchResult(undefined)} />
+                                <Button text="Back" onClick={() => setSearchResult(null)} />
                                 <Button text="Invite" onClick={inviteFriend} />
                             </div>
                         </>
@@ -178,7 +171,7 @@ const FriendsPanel = forwardRef((
                                         </p>
                                     }
                                     <div className="hr"></div>
-                                    <Button text={"Close"} onClick={() => props.modalSetter(null)} />
+                                    <Button text={"Close"} onClick={closeModal} />
                                 </>
                                 :
                                 <>
@@ -209,93 +202,13 @@ const FriendsPanel = forwardRef((
         );
     }
 
-    const updateFriendStatus = (userId: string, status: string) => {
-        setFriendList(prevState => {
-            if (prevState) {
-                const newState = prevState;
-
-                const index = newState.findIndex(friend => friend.userId === userId);
-                if (index !== -1) {
-                    newState[index].status = status;
-                    return newState;
-                } else {
-                    return prevState;
-                }
-            } else {
-                return prevState;
-            }
-        });
-
-        reRender();
-    }
-
-    const requestAccepted = (acceptor: Friend) => {
-        setPendingList(prevState => {
-            if (prevState) {
-                return prevState.filter(friend => friend.userId !== acceptor.userId);
-            } else {
-                return prevState;
-            }
-        });
-
-        setFriendList(prevState => {
-            if (prevState) {
-                return [...prevState, acceptor];
-            } else {
-                return prevState;
-            }
-        });
-
-        reRender();
-    }
-
-    const requestDeclined = (declinerId: string) => {
-        setPendingList(prevState => {
-            if (prevState) {
-                return prevState.filter(friend => friend.userId !== declinerId);
-            } else {
-                return prevState;
-            }
-        });
-
-        reRender();
-    }
-
-    const addUnseenMsg = (userId: string) => {
-        setFriendList(prevState => {
-            if (prevState) {
-                const newState = prevState;
-
-                const index = newState.findIndex(friend => friend.userId === userId);
-                if (index !== -1) {
-                    newState[index].unseenMessage = true;
-                    return newState;
-                } else {
-                    return prevState;
-                }
-            } else {
-                return prevState;
-            }
-        });
-
-        reRender();
-    }
-
-    useImperativeHandle(ref, () => ({
-        updateFriendStatus : updateFriendStatus,
-        requestAccepted : requestAccepted,
-        requestDeclined : requestDeclined,
-        addUnseenMsg : addUnseenMsg,
-        getAvailableFriends: () => friendList.filter(friend => friend.status === "online")
-    }), [friendList]);
-
     const getOnlineFriendsAndUnseenMsg = async (friends: Friend[]) => {
         const onlineFriends = await getOnlineFriends();
         const unseenMessages = await getUnseenMsg();
 
         const updatedFriends = friends.map(friend => ({
             ...friend,
-            status: friend.status || "offline",
+            status: friend.status || FriendStatus.Offline,
             unseenMessage: false
         }));
 
@@ -307,7 +220,7 @@ const FriendsPanel = forwardRef((
             onlineFriends.body.onlineFriends.forEach(friend => {
                 const index = updatedFriends.findIndex(entry => entry.userId === friend.userId);
                 if (index !== -1) {
-                    updatedFriends[index].status = friend["busy"] ? "busy" : "online";
+                    updatedFriends[index].status = friend[FriendStatus.Busy] ? FriendStatus.Busy : FriendStatus.Online;
                 }
             });
         }
@@ -325,22 +238,28 @@ const FriendsPanel = forwardRef((
             });
         }
 
-        setFriendList(updatedFriends);
+        return updatedFriends;
     }
 
     useEffect(() => {
-        if (props.friends && props.friends.friends.length > 0) {
-            getOnlineFriendsAndUnseenMsg(props.friends.friends).then(() => {
-                setPendingList(props.friends.pending);
+        if (friends && friends.friends.length > 0) {
+            getOnlineFriendsAndUnseenMsg(friends.friends).then(updatedFriends => {
+                setFriends(
+                    prevState => {
+                        return {
+                            friends: updatedFriends,
+                            pending: prevState ? prevState.pending : []
+                        }
+                    });
             });
         }
-    }, [props.friends]);
+    }, []);
 
     useEffect(() => {
-        if (!forceUpdate) {
+        if (friends) {
             let unseenMsgCount = 0
 
-            friendList.forEach(friend => {
+            friends.friends.forEach(friend => {
                 if (friend.unseenMessage) {
                     unseenMsgCount++;
                 }
@@ -348,64 +267,66 @@ const FriendsPanel = forwardRef((
 
             setUnseenMessages(unseenMsgCount > 0);
         }
-    }, [friendList, forceUpdate]);
+    }, [friends]);
 
     return (
         <div className={`friends-panel-container ${open ? "friends-open" : "friends-closed"}`}>
-            { forceUpdate ?
-                <>
-                    {!unseenMessages ?
-                        <IconButton text="Friends" icon="friends" decorated onClick={() => setOpen(!open)} />
-                        :
-                        <button
-                            title="Check unseen messages"
-                            className={`decorative-hex icon-btn`}
-                            onClick={() => setOpen(!open)}
-                        >
-                            <div className="unseen-msg-icon" ></div>
-                            <i className={`fa-solid fa-envelope text-gold`} ></i>
-                        </button>
-                    }
-                </>
+            {!unseenMessages ?
+                <IconButton text="Friends" icon="friends" decorated onClick={() => setOpen(!open)} />
                 :
-                ""
+                <button
+                    title="Check unseen messages"
+                    className={`decorative-hex icon-btn`}
+                    onClick={() => setOpen(!open)}
+                >
+                    <div className="unseen-msg-icon" ></div>
+                    <i className={`fa-solid fa-envelope text-gold`} ></i>
+                </button>
             }
             <div className="friends-panel">
                 <div className="friends-panel-frame"></div>
                 <div className="friends-panel-content">
                     <div className="flex w-full justify-center"></div>
-                    { forceUpdate ?
-                        <ul>
-                            {friendList && friendList.map(friend =>
-                                <ListedFriend
-                                    userId={friend.userId}
-                                    username={friend.username}
-                                    picture={friend.picture}
-                                    status={friend.status}
-                                    unseenMessage={friend.unseenMessage}
-                                    key={friend.userId}
-                                />
-                            )}
-                            {pendingList && pendingList.map(friend =>
-                                <ListedFriend
-                                    userId={friend.userId}
-                                    username={friend.username}
-                                    picture={friend.picture}
-                                    status="pending"
-                                    key={friend.userId}
-                                />
-                            )}
-                        </ul>
-                        :
-                        ""
-                    }
+                    <ul>
+                        {friends &&
+                            <>
+                                {friends.friends.map(friend =>
+                                    <ListedFriend
+                                        userId={friend.userId}
+                                        username={friend.username}
+                                        picture={friend.picture}
+                                        status={friend.status}
+                                        unseenMessage={friend.unseenMessage}
+                                        key={friend.userId}
+                                    />
+                                )}
+                                {friends.pending.map(friend =>
+                                    <ListedFriend
+                                        userId={friend.userId}
+                                        username={friend.username}
+                                        picture={friend.picture}
+                                        status="pending"
+                                        key={friend.userId}
+                                    />
+                                )}
+                            </>
+                        }
+                    </ul>
                     <div className="flex w-full justify-center items-center p-2">
-                        <Button text="+ Friend" onClick={() => props.modalSetter(<AddFriend />)} />
+                        <Button text="+ Friend" onClick={() => openModal(<AddFriend />)} />
                     </div>
                 </div>
             </div>
         </div>
     );
-});
+};
 
 export default FriendsPanel;
+
+export const getFriendById = (userId: string, friends: Friend[]): Friend | undefined => {
+    return friends.find(friend => friend.userId === userId);
+}
+
+export const getAvailableFriends = (friends: Friend[]): Friend[] => {
+    return friends.filter(friend => friend.status === FriendStatus.Online);
+}

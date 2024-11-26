@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: Friz Quadrata;
+    src: url("../assets/font/friz_quadrata.ttf") format("truetype");
+}
+
 :root {
   color: lightgray;
 
@@ -38,9 +43,9 @@
 }
 
 body {
-  font-family: "Source Code Pro", monospace;
-  font-weight: 400;
-  letter-spacing: -0.05em;
+  font-family: Friz Quadrata, sans-serif;
+  letter-spacing: 1px;
+  line-height: 1.2;
 
   margin: 0;
   display: flex;

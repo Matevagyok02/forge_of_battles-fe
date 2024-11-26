@@ -1,14 +1,17 @@
 import Frame from "./Frame.tsx";
 import {Button, IconButton} from "./Button.tsx";
-import {FC, ReactNode} from "react";
+import {FC, ReactNode, useContext} from "react";
+import {ModalContext} from "../Context.tsx";
 
-const Modal: FC<{ children: ReactNode, close: () => void }> = ({ children, close }) => {
+const Modal: FC<{ children: ReactNode}> = ({ children}) => {
+
+    const {closeModal} = useContext(ModalContext)
 
     return (
         <div className="modal-container" >
             <div className="modal" >
                 <Frame>
-                    <IconButton text="" icon="cancel" onClick={close} />
+                    <IconButton text="" icon="cancel" onClick={closeModal} />
                     {children}
                 </Frame>
             </div>

@@ -1,4 +1,12 @@
-import {forwardRef, useEffect, useImperativeHandle, useRef, useState, KeyboardEvent} from "react";
+import {
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+    KeyboardEvent,
+    ChangeEvent,
+} from "react";
 import {Friend} from "./FriendsPanel.tsx";
 import {IconButton} from "../../components/Button.tsx";
 import {getChatMessages, sendChatMessage} from "../../api/homePageRequests.ts";
@@ -97,6 +105,12 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
         setMinimized(false);
     }
 
+    const input = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        setMessageText(e.target.value);
+        e.target.style.height = "auto";
+        e.target.style.height = (e.target.scrollHeight) + "px";
+    }
+
     return(
         <div className={`chat-container`} >
             { minimized ?
@@ -147,17 +161,15 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
                     </ul>
                     <div className="input-container" >
                         <textarea
-                            maxLength={500}
-                            rows={3}
+                            rows={1}
                             placeholder="..."
                             value={messageText}
-                            onChange={(e) => setMessageText(e.target.value)}
+                            onChange={e => input(e)}
                             onKeyDown={(e) => handleEnterPress(e)}
                         ></textarea>
                         <IconButton text="Send" icon="send" onClick={sendMessage} />
                     </div>
                 </div>
-
             }
         </div>
     );

@@ -84,3 +84,31 @@ export const createGame = async (timeLimit?: number, invite?: string) => {
     );
 }
 
+export const getLastCreatedGame = async () =>
+    await customFetch(
+        "/match/last-created"
+    );
+
+export const abandonMatch = async (key: string) =>
+    await customFetch(
+        "/match/abandon?key=" + key,
+        "DELETE"
+    );
+
+export const declineMatch = async (key: string) =>
+    await customFetch(
+        "/match/decline?key=" + key,
+        "DELETE"
+    );
+
+export const joinMatch = async (key: string) =>
+    await customFetch(
+        "/match/join?key=" + key,
+        "PUT"
+    );
+
+export const getActiveMatches = async () =>
+    await customFetch(
+        "/match"
+    );
+
