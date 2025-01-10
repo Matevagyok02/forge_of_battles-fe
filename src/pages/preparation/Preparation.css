@@ -1,0 +1,249 @@
+main.preparation {
+    background-image: url("../../assets/preparation_bg.jpg");
+    box-shadow: inset 0 0 70px 20px black;
+}
+
+.deck-selector-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.game-info-container {
+    position: absolute;
+    right: 40px;
+    bottom: 40px;
+}
+
+.game-info-panel {
+    width: 320px;
+    min-height: 256px;
+    background-color: var(--bg-9);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.decks-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 896px;
+    height: 1px;
+    perspective: 1024px;
+}
+
+.decks-container > * {
+    translate: 0 -64px;
+}
+
+.deck-selector-panel button label {
+    font-size: 32px;
+}
+
+.deck-selector-panel button span {
+    height: 56px;
+    width: 256px;
+}
+
+.center {
+    transform: translate(0, 100px) scale(1); /* Center card, larger */
+}
+
+.right:hover, .left:hover {
+    filter: drop-shadow(0 0 4px goldenrod) drop-shadow(0 24px 16px black);
+}
+
+.right {
+    transform: translate(260px) scale(0.8); /* Right card, smaller */
+}
+
+.left {
+    transform: translate(-260px) scale(0.8); /* Left card, smaller */
+}
+
+.center::after {
+    content: "";
+    position: absolute;
+    top: -56px;
+    left: 50%;
+    width: 48px;
+    height: 48px;
+    translate: -50%;
+    background-color: goldenrod;
+    clip-path: polygon(
+        0 0,
+        50% 100%,
+        100% 0,
+        50% calc(100% - 4px)
+    );
+    animation: levitate 2s infinite;
+    filter: drop-shadow(0 0 8px goldenrod);
+}
+
+.left-to-center {
+    animation: left-to-center 0.5s linear forwards;
+}
+
+.center-to-right {
+    animation: center-to-right 0.5s linear forwards;
+}
+
+.right-to-left {
+    z-index: -1;
+    animation: right-to-left 0.5s linear forwards;
+}
+
+.center-to-left {
+    animation: center-to-left 0.5s linear forwards;
+}
+
+.left-to-right {
+    z-index: -1;
+    animation: left-to-right 0.5s linear forwards;
+}
+
+.right-to-center {
+    animation: right-to-center 0.5s linear forwards;
+}
+
+@keyframes right-to-center {
+    0% {
+        transform: translate(260px, 0) scale(0.8);
+    }
+    25% {
+        transform: translate(230px, 40px) scale(0.85);
+    }
+    50% {
+        transform: translate(200px, 80px) scale(0.9);
+    }
+    75% {
+        transform: translate(100px, 90px) scale(0.95);
+    }
+    100% {
+        transform: translate(0, 100px) scale(1);
+    }
+}
+
+@keyframes center-to-left {
+    0% {
+        transform: translate(0, 100px) scale(1);
+    }
+    25% {
+        transform: translate(-100px, 90px) scale(0.95);
+    }
+    50% {
+        transform: translate(-200px, 80px) scale(0.9);
+    }
+    75% {
+        transform: translate(-230px, 40px) scale(0.85);
+    }
+    100% {
+        transform: translate(-260px) scale(0.8);
+    }
+}
+
+@keyframes left-to-right {
+    0% {
+        transform: translate(-260px) scale(0.8);
+    }
+    25% {
+        transform: translate(-130px, -100px) scale(0.7);
+    }
+    50% {
+        transform: translate(0px, -150px) scale(0.6);
+    }
+    75% {
+        transform: translate(130px, -100px) scale(0.7);
+    }
+    100% {
+        transform: translate(260px) scale(0.8);
+    }
+}
+
+@keyframes left-to-center {
+    0% {
+        transform: translate(-260px, 0) scale(0.8);
+    }
+    25% {
+        transform: translate(-230px, 40px) scale(0.85);
+    }
+    50% {
+        transform: translate(-200px, 80px) scale(0.9);
+    }
+    75% {
+        transform: translate(-100px, 90px) scale(0.95);
+    }
+    100% {
+        transform: translate(0, 100px) scale(1);
+    }
+}
+
+@keyframes center-to-right {
+    0% {
+        transform: translate(0, 100px) scale(1);
+    }
+    25% {
+        transform: translate(100px, 90px) scale(0.95);
+    }
+    50% {
+        transform: translate(200px, 80px) scale(0.9);
+    }
+    75% {
+        transform: translate(230px, 40px) scale(0.85);
+    }
+    100% {
+        transform: translate(260px) scale(0.8);
+    }
+}
+
+@keyframes right-to-left {
+    0% {
+        transform: translate(260px) scale(0.8);
+    }
+    25% {
+        transform: translate(130px, -100px) scale(0.7);
+    }
+    50% {
+        transform: translate(0px, -150px) scale(0.6);
+    }
+    75% {
+        transform: translate(-130px, -100px) scale(0.7);
+    }
+    100% {
+        transform: translate(-260px) scale(0.8);
+    }
+}
+
+@keyframes levitate {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+#not-ready {
+    @apply animate-spin;
+    font-size: 32px;
+    color: var(--silver);
+    line-height: unset;
+    text-align: center;
+    aspect-ratio: 1/1;
+    filter: drop-shadow(0 0 8px white);
+}
+
+#ready {
+    @apply animate-pulse;
+    font-size: 32px;
+    color: goldenrod;
+    filter: drop-shadow(0 0 8px goldenrod);
+}

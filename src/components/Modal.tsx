@@ -1,9 +1,9 @@
 import Frame from "./Frame.tsx";
 import {Button, IconButton} from "./Button.tsx";
-import {FC, ReactNode, useContext} from "react";
+import {FC, ReactElement, ReactNode, useContext} from "react";
 import {ModalContext} from "../Context.tsx";
 
-const Modal: FC<{ children: ReactNode}> = ({ children}) => {
+const Modal: FC<{ children: ReactNode, closeCondition?: boolean }> = ({ children, closeCondition = true}) => {
 
     const {closeModal} = useContext(ModalContext)
 
@@ -11,7 +11,9 @@ const Modal: FC<{ children: ReactNode}> = ({ children}) => {
         <div className="modal-container" >
             <div className="modal" >
                 <Frame>
-                    <IconButton text="" icon="cancel" onClick={closeModal} />
+                    { closeCondition &&
+                        <IconButton text="" icon="cancel" onClick={closeModal} />
+                    }
                     {children}
                 </Frame>
             </div>
@@ -30,7 +32,23 @@ export const ForcedModal: FC<{ children: ReactNode }> = ({ children }) => {
     );
 }
 
-export const InfoModal: FC<{ children: ReactNode, close: () => void }> = ({ children, close }) => {
+export interface IInfoModal {
+    content: ReactElement;
+    onOk?: (args?: any) => void;
+}
+
+export const InfoModal: FC<{
+    children: ReactNode,
+    close: () => void,
+    onOk?: (args?: any) => void
+}> = ({ children, close, onOk }) => {
+
+    const closeModal = () => {
+        if (onOk) {
+            onOk();
+        }
+        close();
+    }
 
     return(
         <div className="modal-container info" >
@@ -39,7 +57,7 @@ export const InfoModal: FC<{ children: ReactNode, close: () => void }> = ({ chil
                     <div className="flex flex-col gap-4 items-center p-4" >
                         {children}
                         <div className="hr" ></div>
-                        <Button text="Ok" onClick={close} />
+                        <Button text="Ok" onClick={closeModal} />
                     </div>
                 </Frame>
             </div>

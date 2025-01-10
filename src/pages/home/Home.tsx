@@ -16,13 +16,15 @@ import AuthRequiredDialog from "../../components/AuthRequiredDialog.tsx";
 import CreateGame from "./CreateGame.tsx";
 import TutorialAndCards from "./TutorialAndCards.tsx";
 import {GameRequest, FriendRequest} from "./Requests.tsx";
+import {useNavigate} from "react-router-dom";
 
 const Home = () => {
 
+    const navigate = useNavigate();
     const { user, isAuthenticated, login } = useContext(AuthContext);
     const { _user, setUser } = useContext(UserContext);
     const { friends, setFriends } = useContext(FriendsContext);
-    const { openInfoModal, openedModal, openModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
+    const { openInfoModal, openedModal, openModal, closeModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
 
     const [friendRequests, setFriendRequests] = useState<ISender[]>();
     const [gameRequests, setGameRequests] = useState<IMatch[]>();
@@ -101,6 +103,11 @@ const Home = () => {
             }
         });
     }
+
+    const refreshGameCreation = () => {
+        closeModal();
+        setTimeout(() => openModal(<CreateGame/>), 0);
+    };
 
     const setUpSocket = () => {
         const socket = io(
@@ -246,6 +253,25 @@ const Home = () => {
                 setGameRequests([match]);
             }
         });
+
+        socket.on("match-invite-declined", (decliner) => {
+            openInfoModal(
+                <div className="flex flex-col gap-2 px-4" >
+                    <p className="text-center" >
+                        The following user has declined your match invite:
+                    </p>
+                    <div className="flex items-end justify-center gap-2" >
+                        <img src={`./avatars/${decliner.picture || "1"}.jpg`} alt="" />
+                        <h1 className="text-2xl" >{decliner.username}</h1>
+                    </div>
+                </div>,
+                refreshGameCreation
+            );
+        });
+
+        socket.on("match-invite-accepted", (key) => {
+            navigate("/preparation/" + key);
+        });
     }
 
     const OptionCardButton: FC<{id: string}> = ({id}) => {
@@ -332,7 +358,7 @@ const Home = () => {
     }, [friendRequests, gameRequests]);
 
     return(
-        <main>
+        <main className="home" >
             <div>
                 <div className="h-[100vh] w-fit" >
                     <div className="title-text" ></div>

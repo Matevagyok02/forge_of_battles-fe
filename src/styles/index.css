@@ -23,6 +23,8 @@
   --warm-light: rgba(203, 188, 130, 0.2);
   --light-width: 128px;
 
+  --card-aspect-ratio: 142/193;
+
   --bg-color: #17252F;
   --bg-1: rgba(23, 37, 47, 0.1);
   --bg-2: rgba(23, 37, 47, 0.2);

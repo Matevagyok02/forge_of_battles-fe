@@ -33,7 +33,7 @@ main{
 }
 
 .window-decor {
-    background: url("../assets/window_frame.svg") fixed no-repeat;
+    background: url("../assets/svg/window_frame.svg") fixed no-repeat;
     background-size: var(--window-frame-size) var(--window-frame-size);
     width: 100%;
     height: 100%;

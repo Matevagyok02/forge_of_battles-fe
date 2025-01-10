@@ -1,10 +1,13 @@
 import {FC, FocusEvent, useContext, useState} from "react";
-import {joinGameWithKey} from "../../api/homePageRequests.ts";
+import {joinMatch} from "../../api/homePageRequests.ts";
 import Modal from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {ModalContext} from "../../Context.tsx";
+import {useNavigate} from "react-router-dom";
 
 const JoinGame: FC = () => {
+
+    const navigate = useNavigate();
 
     const [key, setKey] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
@@ -40,9 +43,9 @@ const JoinGame: FC = () => {
     const joinWithKey = () => {
         setLoading(true);
 
-        joinGameWithKey(key).then(result => {
+        joinMatch(key).then(result => {
             if (result.ok) {
-                alert("TODO");
+                navigate(`/preparation/${key}`);
             } else {
                 setErrorMsg("You cannot join this game");
             }

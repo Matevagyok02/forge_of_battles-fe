@@ -4,7 +4,7 @@ import {User} from "@auth0/auth0-react";
 import {Friends} from "./pages/home/FriendsPanel.tsx";
 
 export interface IModalContext {
-    openInfoModal: (content: ReactElement) => void;
+    openInfoModal: (content: ReactElement, onOk?: (args?: any) => void) => void;
     closeInfoModal: (index: number) => void;
     openedModal: ReactElement | null;
     openModal: (value: ReactElement) => void;

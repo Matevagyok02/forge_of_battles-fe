@@ -5,12 +5,16 @@ import {abandonMatch, createGame, getLastCreatedGame} from "../../api/homePageRe
 import Modal from "../../components/Modal.tsx";
 import {Button, IconButton} from "../../components/Button.tsx";
 import {FriendsContext, ModalContext, UserContext} from "../../Context.tsx";
+import {useNavigate} from "react-router-dom";
 
-const CreateGame: FC<{ friend?: Friend }> = ({friend}) => {
+const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
+
+    const navigate = useNavigate();
 
     const [friendToInvite, setFriendToInvite] = useState<Friend | undefined>(friend);
     const [timeLimit, setTimeLimit] = useState<number>();
     const [key, setKey] = useState<string>();
+    const [matchStage, setMatchStage] = useState<string>();
     const [errorMsg, setErrorMsg] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
     const [availableFriends, setAvailableFriends] = useState<Friend[]>();
@@ -20,8 +24,6 @@ const CreateGame: FC<{ friend?: Friend }> = ({friend}) => {
     const { openInfoModal } = useContext(ModalContext);
 
     const friendSelect = useRef<HTMLSelectElement | null>(null);
-
-    const matchSessionStorageKey = "lastCreatedMatch";
 
     const minTimeLimit = 15;
     const maxTimeLimit = 60;
@@ -35,19 +37,14 @@ const CreateGame: FC<{ friend?: Friend }> = ({friend}) => {
         setTimeLimit(input === maxTimeLimit ? undefined : input);
     }
 
-    const saveMatchToSessionStorage = (match?: IMatch) => {
-        sessionStorage.setItem(matchSessionStorageKey, match ? JSON.stringify(match) : "null");
-    }
-
     const abandonCreatedMatch = () => {
         if (key) {
             abandonMatch(key).then(result => {
                 if (result.ok) {
-                    saveMatchToSessionStorage();
                     setKey(undefined);
                     setFriendToInvite(undefined);
                     setErrorMsg(undefined);
-                    setTimeLimit(maxTimeLimit);
+                    changeTimeLimit(maxTimeLimit);
                 } else {
                     openInfoModal(
                         <p>
@@ -56,6 +53,32 @@ const CreateGame: FC<{ friend?: Friend }> = ({friend}) => {
                     );
                 }
             });
+        }
+    }
+
+    const rejoinMatch = () => {
+        const refresh = () => location.reload();
+
+        if (key) {
+            if (matchStage === "preparing") {
+                navigate(`/preparation/${key}`);
+            } else if (matchStage === "started") {
+                navigate(`/battle/${key}`);
+            } else {
+                openInfoModal(
+                    <p>
+                        The match has already started, press "OK" to refresh the page and try again
+                    </p>,
+                    refresh
+                );
+            }
+        } else {
+            openInfoModal(
+                <p>
+                    Something went worng, press "OK" to refresh the page and try again
+                </p>,
+                refresh
+            );
         }
     }
 
@@ -90,10 +113,9 @@ const CreateGame: FC<{ friend?: Friend }> = ({friend}) => {
         createGame(timeLimit, friendToInvite?.userId).then(result => {
             if (result.ok && result.body) {
                 const match = result.body as IMatch;
-                saveMatchToSessionStorage(match);
-
                 setErrorMsg(undefined);
                 setKey(match.key);
+                setMatchStage(match.stage);
             } else if (result.status === 409 && result.body && "message" in result.body) {
                 setErrorMsg(result.body.message);
             } else {
@@ -110,39 +132,22 @@ const CreateGame: FC<{ friend?: Friend }> = ({friend}) => {
 
     useEffect(() => {
         if (friends && !key) {
-            const lastCreatedMatch = sessionStorage.getItem(matchSessionStorageKey);
-
-            if (lastCreatedMatch) {
-                const match = JSON.parse(lastCreatedMatch) as IMatch;
-
-                if (match) {
+            getLastCreatedGame().then(result => {
+                if (result.ok && result.body) {
+                    const match = result.body as IMatch;
                     setKey(match.key);
+                    setMatchStage(match.stage);
 
-                    if (match && match.player2Id) {
+                    if (match.player2Id) {
                         setFriendToInvite(getFriendById(match.player2Id, friends.friends));
                     }
                 }
-            } else {
-                getLastCreatedGame().then(result => {
-                    if (result.ok && result.body) {
-                        const match = result.body as IMatch;
-                        saveMatchToSessionStorage(match);
-
-                        setKey(match.key as string);
-
-                        if (match.player2Id) {
-                            setFriendToInvite(getFriendById(match.player2Id, friends.friends));
-                        }
-                    } else {
-                        saveMatchToSessionStorage();
-                    }
-                });
-            }
+            });
         }
     }, [friends]);
 
     return(
-        <Modal>
+        <Modal closeCondition={!key} >
             <div className="flex min-w-[112vh] min-h-[64vh]" >
                 <div className="flex flex-col justify-between items-center p-8" >
                     <div className="w-1 min-w-full" >
@@ -233,10 +238,13 @@ const CreateGame: FC<{ friend?: Friend }> = ({friend}) => {
                             </div>
                             :
                             <p className="text-center" >
-                                { friendToInvite ?
-                                    "Wait for your friend to join the game..."
+                                { matchStage === "pending" ?
+                                    friendToInvite ?
+                                            "Wait for your friend to join the game..."
+                                            :
+                                            "Send the following key or link to your opponent"
                                     :
-                                    "Send the following key or link to your opponent"
+                                    `Click "Rejoin" to continue the game`
                                 }
                             </p>
                         }
@@ -255,9 +263,15 @@ const CreateGame: FC<{ friend?: Friend }> = ({friend}) => {
                                 </h1>
                                 <IconButton text="Copy" icon="copy" onClick={() => navigator.clipboard.writeText(getLink(key))} />
                             </div>
-                            <div className="mt-4" >
-                                <Button text="Abandon" onClick={abandonCreatedMatch} />
-                            </div>
+                            { matchStage === "pending" ?
+                                <div className="mt-4" >
+                                    <Button text="Abandon" onClick={abandonCreatedMatch} />
+                                </div>
+                                :
+                                <div className="mt-4" >
+                                    <Button text="Rejoin" onClick={rejoinMatch} />
+                                </div>
+                            }
                         </div>
                         :
                         <div className="flex flex-col justify-end items-center gap-2 w-1 min-w-full" >

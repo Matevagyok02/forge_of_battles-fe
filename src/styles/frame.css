@@ -24,7 +24,7 @@
 }
 
 .corner-decor {
-    background: url("../assets/corner.svg") no-repeat transparent;
+    background: url("../assets/svg/corner.svg") no-repeat transparent;
     width: 50%;
     height: 50%;
     position: absolute;

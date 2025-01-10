@@ -63,12 +63,6 @@ export const sendChatMessage = async (id: string, text: string) =>
         {to: id, text: text}
     );
 
-export const joinGameWithKey = async (key: string) =>
-    await customFetch(
-        "/match/join?key=" + key,
-        "PUT"
-    );
-
 export const createGame = async (timeLimit?: number, invite?: string) => {
 
     let query;
