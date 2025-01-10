@@ -25,13 +25,18 @@ export interface ISender {
     picture?: string;
 }
 
+export interface IBattle {
+    timeLimit?: number;
+    playerStates: Map<string, object>;
+}
+
 export interface IMatch {
     key: string;
     player1Id: string;
     player2Id: string;
     battle: object;
     randomMatch: boolean;
-    started: boolean;
+    stage: string;
 }
 
 export interface IUser {

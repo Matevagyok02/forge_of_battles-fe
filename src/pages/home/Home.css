@@ -1,4 +1,4 @@
-main {
+main.home {
     background-image: url("../../assets/home_bg.jpg");
     box-shadow: inset 0 0 70px 20px black;
 }
@@ -6,7 +6,7 @@ main {
 .title-text {
     width: 100%;
     height: 112px;
-    background: url("../../assets/title.svg") center/cover no-repeat;
+    background: url("../../assets/svg/title.svg") center/cover no-repeat;
     background-size: 504px 64px;
 }
 
@@ -223,15 +223,15 @@ img {
 }
 
 #joinGame {
-    background-image: url("../../assets/join_game.jpeg");
+    background-image: url("../../assets/join_game.jpg");
 }
 
 #createGame {
-    background-image: url("../../assets/create_game.jpeg");
+    background-image: url("../../assets/create_game.jpg");
 }
 
 #tutorialAndCards {
-    background-image: url("../../assets/tutorial_and_cards.jpeg");
+    background-image: url("../../assets/tutorial_and_cards.jpg");
 }
 
 /* TutorialAndCards */
@@ -280,15 +280,15 @@ img {
 }
 
 #tutorial {
-    background-image: url("../../assets/tutorial_icon.svg");
+    background-image: url("../../assets/svg/tutorial_icon.svg");
 }
 
 #cards {
-    background-image: url("../../assets/cards_icon.svg");
+    background-image: url("../../assets/svg/cards_icon.svg");
 }
 
 #rules {
-    background-image: url("../../assets/rules_icon.svg");
+    background-image: url("../../assets/svg/rules_icon.svg");
 }
 
 /* JoinGame & CreateGame */
@@ -304,7 +304,7 @@ img {
 
 .join-game-bg {
     @apply create-join-bg;
-    background-image: url("../../assets/join_game.jpeg");
+    background-image: url("../../assets/join_game.jpg");
 }
 
 .key-input {
@@ -382,7 +382,7 @@ img {
 
 .create-game-bg {
     @apply create-join-bg;
-    background-image: url("../../assets/create_game.jpeg");
+    background-image: url("../../assets/create_game.jpg");
 }
 
 .create-game-player {

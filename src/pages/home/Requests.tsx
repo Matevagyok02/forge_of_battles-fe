@@ -5,6 +5,7 @@ import {Friend, getFriendById} from "./FriendsPanel.tsx";
 import {ForcedModal} from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {FriendsContext, ModalContext} from "../../Context.tsx";
+import {useNavigate} from "react-router-dom";
 
 export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sender, onResolve}) => {
 
@@ -58,6 +59,9 @@ export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sen
                     <img src={`./avatars/${sender.picture || "1"}.jpg`} alt="" />
                     <h1 className="text-2xl" >{sender.username}</h1>
                 </div>
+                <div className="text-xl" >
+                    wants to be your friend
+                </div>
                 <div className="hr" ></div>
                 <div className="flex gap-4" >
                     <Button
@@ -78,6 +82,8 @@ export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sen
 
 export const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, onResolve}) => {
 
+    const navigate = useNavigate();
+
     const [loading, setLoading] = useState(false);
     const [inviter, setInviter] = useState<Friend>();
     const [searchInterval, setSearchInterval] = useState<number | undefined>();
@@ -94,7 +100,10 @@ export const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, 
             joinMatch(match.key).then(result => {
                 if (result.ok) {
                     onResolve();
-                    //TODO
+                    setTimeout(
+                        () => navigate("/preparation/" + match.key),
+                        10
+                    )
                 } else {
                     setLoading(false);
                     openInfoModal(
@@ -154,6 +163,9 @@ export const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, 
                 <div className="flex items-end gap-2" >
                     <img src={`./avatars/${inviter.picture || "1"}.jpg`} alt="" />
                     <h1 className="text-2xl" >{inviter.username}</h1>
+                </div>
+                <div className="text-xl" >
+                    has invited you for a battle
                 </div>
                 <div className="hr" ></div>
                 <div className="flex gap-4" >

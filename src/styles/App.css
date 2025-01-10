@@ -6,6 +6,7 @@
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
     filter: drop-shadow(0 0 8px black);
+    height: fit-content;
 }
 
 .red-text {
@@ -14,6 +15,16 @@
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
     filter: drop-shadow(0 0 8px black);
+}
+
+#empty-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--bg-color);
 }
 
 .modal-container {
@@ -53,7 +64,7 @@
     box-shadow: inset 0 0 500px 1000px rgba(0, 0, 0, 0.5);
 }
 
-.modal.info .frame-content {
+.info .modal .frame-content {
     background-color: var(--bg-9);
 }
 
@@ -97,20 +108,6 @@
     width: 100%;
     background-color: black;
     clip-path: polygon(2px 0, 20% 100%, 80% 100%, calc(100% - 2px) 0);
-}
-
-header {
-    position: sticky;
-    top: 0;
-    left: 0;
-    height: 60px;
-    width: 100%;
-    background-color: black;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-inline: 10px;
 }
 
 input[type="text"] {
