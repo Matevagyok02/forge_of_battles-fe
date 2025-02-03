@@ -103,14 +103,14 @@ const Preparation: FC = () => {
 
                         const userId = user!.sub;
 
-                        if (userId && (match.battle as IBattle).playerStates.has(userId)) {
+                        if (userId && userId in (match.battle as IBattle).playerStates) {
                             setIsReady(true);
                         }
 
                         const opponentId = [match.player1Id, match.player2Id].find(id => id !== userId);
 
                         if (opponentId) {
-                            if ((match.battle as IBattle).playerStates.has(opponentId)) {
+                            if (opponentId in (match.battle as IBattle).playerStates) {
                                 setOpponentIsReady(true);
                             }
 
