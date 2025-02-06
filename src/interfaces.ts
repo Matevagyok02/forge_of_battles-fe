@@ -1,9 +1,6 @@
 import {Friend} from "./pages/home/FriendsPanel.tsx";
 
-export interface IUserResponseBody {
-    user: IUser;
-    friends: Friend[];
-}
+/*---Friend Interfaces---*/
 
 export interface IFriendRequest {
     fromId: string;
@@ -25,9 +22,104 @@ export interface ISender {
     picture?: string;
 }
 
+/*---Card Interfaces---*/
+
+export interface RequirementArgs {
+    cardToSacrifice?: string;
+    useAsMana?: string[];
+    targetPositions?: {
+        self: string[],
+        opponent: string[]
+    },
+    targetCards?: string[];
+    nestedArgs?: RequirementArgs;
+}
+
+export interface AbilityRequirements {
+    mana?: number,
+    sacrifice?: boolean,
+    emptyDeployZone?: boolean,
+    nestedArgs?: boolean,
+    selectedCardAmount?: number,
+    selectablePositions?: {
+        self: string[],
+        opponent: string[],
+        allowCrossTarget: boolean,
+        targetAmount: number
+    };
+}
+
+export interface IAbility {
+    cardId: string;
+    cardHolderId?: string;
+    description: string;
+    type: string;
+    usageType: string;
+    subtype: string;
+    requirements?: AbilityRequirements;
+    targetPositions?: {
+        self: string[],
+        opponent: string[]
+    },
+    targetCards?: string[];
+    nestedArgs?: RequirementArgs;
+}
+
+export interface CostModifierAbility extends IAbility {
+    deploy: number;
+    action: number;
+    passive: number;
+}
+
+export interface AttributeModifierAbility extends IAbility {
+    attack: number;
+    defence: number;
+}
+
+export interface InstantAbility extends IAbility {
+    name: string;
+    args?: object | string;
+}
+
+export interface ICard {
+    id: string;
+    name: string;
+    deck: string;
+    cost: number;
+    attack: number;
+    defence: number;
+    pieces: number;
+    actionAbility: IAbility;
+    passiveAbility: IAbility;
+}
+
+/*---Match Interfaces---*/
+
+export interface IDeployedCard {
+    [key: string]: ICard;
+}
+
+
+export interface IPlayerState {
+    deck: string;
+    drawingDeck: string[];
+    bonusHealth: number[];
+    casualties: string[];
+    onHand: string[];
+    mana: number;
+    manaCards: string[];
+    deployedCards: IDeployedCard;
+    timeLeft?: {
+        turnStartedAt: number;
+        timeLeft: number;
+    };
+    turnStage: number;
+    drawsPerTurn: number;
+}
+
 export interface IBattle {
     timeLimit?: number;
-    playerStates: Map<string, object>;
+    playerStates: Map<string, IPlayerState>;
 }
 
 export interface IMatch {
@@ -39,10 +131,17 @@ export interface IMatch {
     stage: string;
 }
 
+/*---User Interfaces---*/
+
 export interface IUser {
     userId: string;
     username: string;
     picture: string;
     friends: string[];
     requests: IFriendRequest[];
+}
+
+export interface IUserResponseBody {
+    user: IUser;
+    friends: Friend[];
 }

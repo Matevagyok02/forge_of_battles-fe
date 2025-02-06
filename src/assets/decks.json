@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Light",
+    "id": "light",
+    "primaryColor": "#40E0D0",
+    "secondaryColor": "#40E0D0",
+    "description": "A deck that focuses on healing and buffing allies."
+  },
+  {
+    "name": "Darkness",
+    "id": "darkness",
+    "primaryColor": "#9648D3",
+    "secondaryColor": "#9648D3",
+    "description": "A deck that focuses on debuffing enemies and dealing damage."
+  },
+  {
+    "name": "Venom",
+    "id": "venom",
+    "primaryColor": "#16BE16",
+    "secondaryColor": "#16BE16",
+    "description": "A deck that focuses on poisoning enemies and dealing damage. (This deck is still under development)"
+  }
+]

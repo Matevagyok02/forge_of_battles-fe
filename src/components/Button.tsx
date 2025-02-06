@@ -22,6 +22,9 @@ const isNegative = (text: string) => {
         case "Decline":
         case "Remove":
         case "Abandon":
+        case "Delete":
+        case "No":
+        case "Leave":
             return true;
         default:
             return false;
@@ -36,6 +39,17 @@ export const Button: FC<ButtonProps> = (props) => {
         }
     }
 
+    const getWidth = () => {
+        const length = props.text.length;
+
+        if (length < 5)
+            return "w-32";
+        else if (length < 10)
+            return "w-40";
+        else
+            return "w-52";
+    }
+
     return(
         <button
             onClick={handleClick}
@@ -44,7 +58,7 @@ export const Button: FC<ButtonProps> = (props) => {
             style={{pointerEvents: props.disabled || props.loading ? 'none' : 'auto'}}
         >
             <Frame>
-                <span className={`${props.text.length < 10 ? "w-40" : "w-52"} h-full flex justify-center items-center`} >
+                <span className={`${getWidth()} h-full flex justify-center items-center`} >
                     { props.loading ?
                         <div className="loader absolute" ></div>
                         :
@@ -77,7 +91,9 @@ export const IconButton: FC<IconButtonProps> = (props) => {
         message: "comment-dots",
         minimize: "minus",
         send: "paper-plane",
-        copy: "copy"
+        copy: "copy",
+        arrowRight: "arrow-right",
+        arrowLeft: "arrow-left",
     }
 
     const icon = icons[props.icon];

@@ -1,7 +1,7 @@
 import {FC, LegacyRef, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {Friend, getAvailableFriends, getFriendById} from "./FriendsPanel.tsx";
 import {IMatch} from "../../interfaces.ts";
-import {abandonMatch, createGame, getLastCreatedGame} from "../../api/homePageRequests.ts";
+import {abandonMatch, createGame, getLastCreatedGame} from "../../api/match.ts";
 import Modal from "../../components/Modal.tsx";
 import {Button, IconButton} from "../../components/Button.tsx";
 import {FriendsContext, ModalContext, UserContext} from "../../Context.tsx";

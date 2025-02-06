@@ -1,0 +1,153 @@
+main, main * {
+    all: unset;
+    color: white;
+    user-select: none;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+main {
+    position: absolute;
+    top: 0;
+    display: block;
+    height: 100vh;
+    background-color: var(--bg-color);
+}
+
+main {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+main > div {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+main > div > h1 {
+    text-align: center;
+    font-size: 20px;
+}
+
+main > div > table {
+    max-width: fit-content;
+}
+
+.card-preview {
+    position: fixed;
+    margin: 32px;
+    bottom: 64px;
+
+    height: 50vh;
+    font-size: 4.4vh;
+}
+
+input:focus{
+    outline: none;
+    border: none;
+}
+
+textarea:focus {
+    outline: none;
+    border: 2px dotted white;
+}
+
+input[type="text"] {
+    width: 100%;
+    all: unset;
+    border-bottom: 2px dotted white;
+}
+
+input[type="checkbox"] {
+    all: revert !important;
+}
+
+input[type="number"] {
+    width: 100%;
+    appearance: none;
+    border-bottom: 2px dotted white;
+}
+
+textarea {
+    font-size: 12px;
+    padding: 4px;
+    width: 100%;
+    border: 2px dotted white;
+}
+
+select {
+    width: 100%;
+    text-align: center;
+    border: 1px solid white;
+    border-radius: 2px;
+    padding: 2px;
+}
+
+select, select * {
+    background-color: inherit !important;
+}
+
+option {
+    color: black;
+}
+
+.passive-ability-form {
+    background-color: royalblue;
+}
+
+.action-ability-form {
+    background-color: crimson;
+}
+
+table {
+    display: table;
+}
+
+tr {
+    display: table-row;
+}
+
+tr:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+td, th {
+    min-width: fit-content;
+    padding-inline: 8px;
+    padding-block: 2px;
+    display: table-cell;
+}
+
+.positions-table td, .positions-table th {
+    padding-block: 0;
+}
+
+option:active, select:focus {
+    background-color: black;
+}
+
+#reset-form-btn {
+    height: 40px;
+    aspect-ratio: 1/1;
+    background-color: red;
+}
+
+#save-form-btn {
+    width: 160px;
+    background-color: green;
+}
+
+button {
+    text-align: center;
+    font-size: 24px;
+    padding: 4px;
+}
+
+button:hover {
+    filter: brightness(1.4);
+    transform: scale(1.05);
+}

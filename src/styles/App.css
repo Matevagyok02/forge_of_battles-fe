@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Amarante&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
+body {
+    font-family: Friz Quadrata, sans-serif;
+    letter-spacing: 1px;
+    line-height: 1.2;
+
+    margin: 0;
+    display: flex;
+    place-items: center;
+    min-width: 320px;
+    min-height: 100vh;
+}
+
 .gold-text {
     font-family: "Amarante", serif;
     background: linear-gradient(gold 40%, darkgoldenrod 50%, goldenrod 60%);
@@ -131,116 +143,3 @@ input[type="text"]:invalid {
     @apply error-text;
 }
 
-.card-container {
-    display: flex;
-    justify-content: start;
-    border-radius: 10px;
-    margin-top: 20px;
-    background-color: #9f9c9c;
-    width: 100%;
-    padding: 10px;
-    height: fit-content;
-}
-
-/*--------------------------------------------------------------------------------------------------------------------*/
-
-.cards {
-    height: fit-content;
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
-
-.cards ul {
-    height: 480px;
-    position: relative;
-    padding: 0;
-    list-style: none;
-    display: flex;
-}
-
-.cards li {
-    position: relative;
-    width: 200px;
-    height: 300px;
-    background-color: #213547;
-    margin: 20px;
-    border-radius: 15px;
-    border: 2px solid gold;
-    filter: drop-shadow(5px 10px 20px black);
-    transition: transform 1s ease, 1s ease; /* Smooth movement */
-    transform-origin: center center; /* Set origin for scaling */
-}
-
-.card-0 {
-    z-index: 3;
-    transform: translate(-100px) scale(0.8); /* Left card, smaller */
-    animation: left-center 0.7s linear forwards;
-}
-
-.card-1 {
-    z-index: 2;
-    transform: translate(0, 100px) scale(1); /* Center card, larger */
-    animation: center-right 0.7s linear forwards;
-}
-
-.card-2 {
-    z-index: 1;
-    transform: translate(100px) scale(0.8); /* Right card, smaller */
-    animation: right-left 0.7s linear forwards;
-}
-
-@keyframes left-center {
-    0% {
-        transform: translate(-100px, 0) scale(0.8);
-    }
-    50% {
-        transform: translate(-15px, 75px) scale(0.9);
-    }
-    100% {
-        transform: translate(240px, 100px) scale(1);
-    }
-}
-
-@keyframes center-right {
-    0% {
-        transform: translate(0, 100px) scale(1);
-    }
-    50% {
-        transform: translate(255px, 75px) scale(0.9);
-    }
-    100% {
-        transform: translate(340px) scale(0.8);
-    }
-}
-
-@keyframes right-left {
-    0% {
-        transform: translate(100px) scale(0.8);
-    }
-    50% {
-        transform: translate(-240px, -20px) scale(0.7);
-    }
-    100% {
-        transform: translate(-580px) scale(0.8);
-    }
-}
-
-.cards label {
-    display: inline-block;
-    color: white;
-    text-align: center;
-    width: 100%;
-}
-
-.cards span {
-    margin-inline: auto;
-    padding: 0;
-    transform: translate(0, 290px);
-    width: 80%;
-    height: 0;
-    border-radius: 50px;
-    background-color: transparent;
-    box-shadow: 0 0 45px 20px rgba(0, 0, 0, 1);
-}

@@ -1,5 +1,5 @@
 import {FC, useContext, useState} from "react";
-import {registerNewUser} from "../../api/homePageRequests.ts";
+import {registerNewUser} from "../../api/user.ts";
 import {ForcedModal} from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../Context.tsx";
