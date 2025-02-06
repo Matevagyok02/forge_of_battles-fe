@@ -9,7 +9,7 @@ import {
 } from "react";
 import {Friend} from "./FriendsPanel.tsx";
 import {IconButton} from "../../components/Button.tsx";
-import {getChatMessages, sendChatMessage} from "../../api/homePageRequests.ts";
+import {getChatMessages, sendChatMessage} from "../../api/chat.ts";
 
 export interface Message {
     senderId: string;

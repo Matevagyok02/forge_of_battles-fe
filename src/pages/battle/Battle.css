@@ -1,0 +1,178 @@
+#battle {
+    position: fixed;
+    left: 50%;
+    top: 0;
+    translate: -50% 0;
+    height: 100vh;
+    aspect-ratio: 16/9;
+    background-image: url("../../assets/background/battle_bg.jpg");
+    background-color: black;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+}
+
+.player-hand {
+    position: absolute;
+    height: 30vh;
+    width: 70vh;
+    left: 50%;
+    bottom: 2vh;
+    translate: -50% 0;
+    display: flex;
+    align-items: center;
+    animation: spread-cards 0.5s linear forwards;
+}
+
+@keyframes spread-cards {
+    0% {
+        justify-content: center;
+        gap: 0;
+    }
+    50% {
+        gap: 0;
+    }
+    100% {
+
+    }
+}
+
+.opponent-hand {
+    @apply player-hand;
+    bottom: auto;
+    top: -6vh;
+    scale: -0.6 0.6;
+}
+
+.opponent-hand .card-back:hover {
+    scale: 1.05;
+    filter: brightness(1.2);
+}
+
+.battle-interface {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 1.6vw;
+}
+
+.battle-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: radial-gradient(circle at center, var(--bg-8), var(--bg-4) 80%);
+    backdrop-filter: blur(2px);
+}
+
+.inspected-card {
+    position: relative;
+    height: 50vh !important;
+    font-size: 4.5vh !important;
+}
+
+.card-usage-options {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card-usage-options li {
+    width: 100%;
+    padding: 8px;
+}
+
+#attack-option {
+    position: relative;
+}
+
+#cancel-inspect-option {
+    color: crimson;
+}
+
+.card-usage-options > li {
+    border-block: 2px solid transparent;
+    font-size: 4vh;
+    filter: drop-shadow(4px 4px 4px black);
+    text-align: center;
+    cursor: pointer;
+}
+
+.card-usage-options #attack-option ul {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    translate: 0 -50%;
+    display: none;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-usage-options #attack-option:hover ul {
+    display: flex;
+}
+
+.card-usage-options #attack-option li {
+    width: 100%;
+    padding: 4px;
+    font-size: 0.8em;
+}
+
+.card-usage-options #attack-option ul li:hover {
+    background-image: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1) 10%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1) 90%, transparent);
+}
+
+.card-usage-options > li:hover {
+    border-image: linear-gradient(to right, transparent, rgba(218, 165, 32, 0.7), transparent) 1;
+    background-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.2) 10%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2) 90%, transparent);
+}
+
+.discard-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 45vw;
+    height: 100vh;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cancel-discard-overview-btn {
+    position: relative;
+    margin-top: 1vh;
+}
+
+.cancel-discard-overview-btn button {
+    position: absolute;
+    left: 50%;
+    translate: -50% 0;
+    font-size: 24px;
+}
+
+.cancel-discard-overview-btn button i {
+    color: goldenrod !important;
+}
+
+.discard-overview-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    height: 100vh;
+    padding-block: 4vh;
+    justify-content: center;
+    overflow-y: scroll;
+    mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent);
+}
+
+.discard-overview .discarded-card {
+    position: relative;
+    height: 40vh;
+    font-size: 3.6vh;
+    animation: discard-overview-replace 0.1s linear forwards;
+}

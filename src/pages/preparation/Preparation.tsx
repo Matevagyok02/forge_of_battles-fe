@@ -1,20 +1,26 @@
 import "./Preparation.css";
 import {useNavigate, useParams} from "react-router-dom";
 import Deck from "./Deck.tsx";
-import {FC, useCallback, useEffect, useState} from "react";
+import {FC, useCallback, useContext, useEffect, useState} from "react";
 import {Button} from "../../components/Button.tsx";
 import Frame from "../../components/Frame.tsx";
 import {IBattle, IMatch, IUser} from "../../interfaces.ts";
-import {findPlayerById, getMatchByKey} from "../../api/prepRoomRequests.ts";
 import {io, Socket} from "socket.io-client";
 import {useAuth0} from "@auth0/auth0-react";
+import {parseTimeLimit} from "../../utils.ts";
+import {findPlayerById} from "../../api/user.ts";
+import {getMatchByKey} from "../../api/match.ts";
+import {ModalContext} from "../../Context.tsx";
+import LeaveMatchDialog from "./LeaveMatchDialog.tsx";
+import WindowFrame from "../../components/WindowFrame.tsx";
+import decksBaseInfo from "../../assets/decks.json";
 
 interface IDeck {
     name: string;
     id: string;
     description: string;
-    animation: string;
-    pos: Pos;
+    animation?: string;
+    pos?: Pos;
 }
 
 enum Pos {
@@ -22,12 +28,6 @@ enum Pos {
     right = "right",
     left = "left"
 }
-
-const decksBaseInfo = [
-    {name: "Light", id: "light", description: "A deck that focuses on healing and buffing allies."},
-    {name: "Darkness", id: "darkness", description: "A deck that focuses on debuffing enemies and dealing damage."},
-    {name: "Venom", id: "venom", description: "A deck that focuses on poisoning enemies and dealing damage. (This deck is still under development)"}
-];
 
 const Preparation: FC = () => {
 
@@ -51,16 +51,18 @@ const Preparation: FC = () => {
         return decks;
     }
     const { user } = useAuth0();
+    const { openForcedModal } = useContext(ModalContext);
 
     const [match, setMatch] = useState<IMatch>();
     const [opponent, setOpponent] = useState<IUser>();
     const [decks, setDecks] = useState<IDeck[]>(initDecks(decksBaseInfo));
+    const [isHost, setIsHost] = useState<boolean>();
     const [isReady, setIsReady] = useState(false);
     const [opponentIsReady, setOpponentIsReady] = useState(false);
     const [selectedDeck, setSelectedDeck] = useState<IDeck>(decksBaseInfo[0] as IDeck);
     const [socket, setSocket] = useState<Socket>();
 
-    useEffect(() => {
+    useEffect( () => {
         if (user) {
             if (key !== "test") {
                 loadMatch();
@@ -89,48 +91,85 @@ const Preparation: FC = () => {
         }
     }, [socket, selectedDeck]);
 
-    const loadMatch = () => {
-        if (key) {
-            getMatchByKey(key).then((result) => {
-                if(result.ok && result.body
-                    && (result.body as IMatch).stage !== "pending"
-                ) {
-                    const match = result.body as IMatch;
+    // const loadMatch = () => {
+    //     if (key) {
+    //         getMatchByKey(key).then((result) => {
+    //             if(result.ok && result.body
+    //                 && (result.body as IMatch).stage !== "pending"
+    //             ) {
+    //                 const match = result.body as IMatch;
+    //
+    //                 if (match.stage === "preparing") {
+    //                     const match = result.body as IMatch;
+    //                     setMatch(match);
+    //
+    //                     const userId = user!.sub;
+    //
+    //                     if (userId && userId in (match.battle as IBattle).playerStates) {
+    //                         setIsReady(true);
+    //                     }
+    //
+    //                     setIsHost(userId === match.player1Id);
+    //
+    //                     const opponentId = [match.player1Id, match.player2Id].find(id => id !== userId);
+    //
+    //                     if (opponentId) {
+    //                         if (opponentId in (match.battle as IBattle).playerStates) {
+    //                             setOpponentIsReady(true);
+    //                         }
+    //
+    //                         findPlayerById(opponentId).then((result) => {
+    //                             if (result.ok && result.body) {
+    //                                 setOpponent(result.body as IUser);
+    //                             } else {
+    //                                 navigate("/");
+    //                             }
+    //                         });
+    //                     } else {
+    //                         navigate("/");
+    //                     }
+    //                 } else {
+    //                     navigate(`/battle/${key}`);
+    //                 }
+    //             } else {
+    //                 navigate("/");
+    //             }
+    //         });
+    //     } else {
+    //         navigate("/");
+    //     }
+    // }
 
-                    if (match.stage === "preparing") {
-                        const match = result.body as IMatch;
-                        setMatch(match);
+    const loadMatch = async () => {
+        if (!key) return navigate("/");
 
-                        const userId = user!.sub;
+        const result = await getMatchByKey(key);
+        if (!result.ok || !result.body || (result.body as IMatch).stage === "pending") {
+            return navigate("/");
+        }
 
-                        if (userId && userId in (match.battle as IBattle).playerStates) {
-                            setIsReady(true);
-                        }
+        const match = result.body as IMatch;
+        if (match.stage !== "preparing") {
+            return navigate(`/battle/${key}`);
+        }
 
-                        const opponentId = [match.player1Id, match.player2Id].find(id => id !== userId);
+        setMatch(match);
+        const userId = user!.sub;
+        if (userId && userId in (match.battle as IBattle).playerStates) {
+            setIsReady(true);
+        }
 
-                        if (opponentId) {
-                            if (opponentId in (match.battle as IBattle).playerStates) {
-                                setOpponentIsReady(true);
-                            }
+        setIsHost(userId === match.player1Id);
+        const opponentId = [match.player1Id, match.player2Id].find(id => id !== userId);
+        if (!opponentId) return navigate("/");
 
-                            findPlayerById(opponentId).then((result) => {
-                                if (result.ok && result.body) {
-                                    setOpponent(result.body as IUser);
-                                } else {
-                                    navigate("/");
-                                }
-                            });
-                        } else {
-                            navigate("/");
-                        }
-                    } else {
-                        navigate(`/battle/${key}`);
-                    }
-                } else {
-                    navigate("/");
-                }
-            });
+        if (opponentId in (match.battle as IBattle).playerStates) {
+            setOpponentIsReady(true);
+        }
+
+        const opponentResult = await findPlayerById(opponentId);
+        if (opponentResult.ok && opponentResult.body) {
+            setOpponent(opponentResult.body as IUser);
         } else {
             navigate("/");
         }
@@ -226,77 +265,77 @@ const Preparation: FC = () => {
     }
 
     return (
-        <main className="preparation" >
-            <div className="deck-selector-panel" >
-                <div className="title-text" ></div>
-                <div className="decks-container" >
-                    {decks.map((deck) =>
-                        <Deck
-                            key={deck.id}
-                            name={deck.name}
-                            id={deck.id}
-                            pos={deck.pos!}
-                            animation={deck.animation!}
-                            onClick={handleOnClick}
+        <WindowFrame>
+            <main className="preparation" >
+                <div className="deck-selector-panel" >
+                    <div className="title-text" ></div>
+                    <div className="decks-container" >
+                        {decks.map((deck) =>
+                            <Deck
+                                key={deck.id}
+                                name={deck.name}
+                                id={deck.id}
+                                pos={deck.pos!}
+                                animation={deck.animation!}
+                                onClick={handleOnClick}
+                            />
+                        )}
+                    </div>
+                    <div className="h-40 flex flex-col gap-5 items-center" >
+                        { !isReady ?
+                            <span id="ready-btn">
+                            <Button text={"Ready"} onClick={confirmReady} disabled={selectedDeck.id === "venom"} />
+                        </span>
+                            :
+                            <h1 className="text-4xl animate-pulse" >
+                                Waiting for opponent...
+                            </h1>
+                        }
+                        <Button
+                            text={isHost ? "Abandon" : "Leave"}
+                            onClick={() => openForcedModal(<LeaveMatchDialog matchKey={key} isHost={!!isHost} />)}
                         />
-                    )}
-                </div>
-                <div className="p-12 h-40" >
-                    { !isReady ?
-                        <Button text={"Ready"} onClick={confirmReady} disabled={selectedDeck.id === "venom"} />
-                        :
-                        <h1 className="text-4xl animate-pulse" >
-                            Waiting for opponent...
-                        </h1>
-                    }
-                </div>
-                <div className="game-info-container" >
-                    <Frame>
-                        <div className="game-info-panel" >
-                            { opponent &&
-                                <>
-                                    <div className="flex px-2 gap-2" >
-                                        <img src={`../avatars/${opponent.picture || "1"}.jpg`} alt="" />
-                                        <h1 className="text-2xl" >{opponent.username}</h1>
-                                        { opponentIsReady ?
-                                            <i id="ready" className="fa-solid fa-check" ></i>
-                                            :
-                                            <i id="not-ready" className="fa-solid fa-spinner" ></i>
-                                        }
-                                    </div>
-                                    <div className="hr" ></div>
-                                </>
-                            }
-                            { match && parseTimeLimit(match) &&
-                                <>
-                                    <div className="text-xl px-2" >
-                                        Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
-                                    </div>
-                                    <div className="hr" ></div>
-                                </>
-                            }
-                            <div className="px-2" >
-                                <h1 className="text-2xl" >
-                                    {selectedDeck.name}
-                                </h1>
-                                <p>
-                                    {selectedDeck.description}
-                                </p>
+                    </div>
+                    <div className="game-info-container" >
+                        <Frame>
+                            <div className="game-info-panel" >
+                                { opponent &&
+                                    <>
+                                        <div className="flex px-2 gap-2" >
+                                            <img src={`../avatars/${opponent.picture || "1"}.jpg`} alt="" />
+                                            <h1 className="text-2xl" >{opponent.username}</h1>
+                                            { opponentIsReady ?
+                                                <i id="ready" className="fa-solid fa-check" ></i>
+                                                :
+                                                <i id="not-ready" className="fa-solid fa-spinner" ></i>
+                                            }
+                                        </div>
+                                        <div className="hr" ></div>
+                                    </>
+                                }
+                                { match && parseTimeLimit(match) &&
+                                    <>
+                                        <div className="text-xl px-2" >
+                                            Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
+                                        </div>
+                                        <div className="hr" ></div>
+                                    </>
+                                }
+                                <div className="px-2" >
+                                    <h1 className="text-2xl" >
+                                        {selectedDeck.name}
+                                    </h1>
+                                    <p>
+                                        {selectedDeck.description}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    </Frame>
+                        </Frame>
+                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </WindowFrame>
     );
-}
-
-const parseTimeLimit = (match: IMatch): number | undefined => {
-    const timeLimit = (match.battle as IBattle).timeLimit;
-
-    return timeLimit
-        ? timeLimit / 1000 / 60
-        : undefined;
 }
 
 export default Preparation;

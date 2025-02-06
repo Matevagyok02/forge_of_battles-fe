@@ -3,7 +3,7 @@ import "./FriendsPanel.css";
 import "./ChatTab.css";
 import {Button, IconButton} from "../../components/Button.tsx";
 import {FC, useCallback, useEffect, useRef, useState, useContext, ReactElement} from "react";
-import {getUser} from "../../api/homePageRequests.ts";
+import {getUser} from "../../api/user.ts";
 import {IUser, IMatch, ISender, IUserResponseBody, IReceiver} from "../../interfaces.ts";
 import FriendsPanel, {Friend, FriendStatus} from "./FriendsPanel.tsx";
 import {io} from "socket.io-client";
@@ -17,6 +17,7 @@ import CreateGame from "./CreateGame.tsx";
 import TutorialAndCards from "./TutorialAndCards.tsx";
 import {GameRequest, FriendRequest} from "./Requests.tsx";
 import {useNavigate} from "react-router-dom";
+import WindowFrame from "../../components/WindowFrame.tsx";
 
 const Home = () => {
 
@@ -358,64 +359,66 @@ const Home = () => {
     }, [friendRequests, gameRequests]);
 
     return(
-        <main className="home" >
-            <div>
-                <div className="h-[100vh] w-fit" >
-                    <div className="title-text" ></div>
-                    { openedModal ?
-                        openedModal
+        <WindowFrame>
+            <main className="home" >
+                <div>
+                    <div className="h-[100vh] w-fit" >
+                        <div className="title-text" ></div>
+                        { openedModal ?
+                            openedModal
+                            :
+                            <div className="option-card-btn-container">
+                                <OptionCardButton id="createGame" />
+                                <OptionCardButton id="joinGame" />
+                                <OptionCardButton id="tutorialAndCards" />
+                            </div>
+                        }
+                    </div>
+                    { _user ?
+                        <>
+                            <UserPanel />
+                            { friends &&
+                                <>
+                                    <FriendsPanel
+                                        openChat={openChat}
+                                    />
+                                    <div className="chat-panel" >
+                                        {chatPartners.map(partner => (
+                                            <ChatTab
+                                                key={partner.userId}
+                                                friend={partner}
+                                                userId={_user.userId}
+                                                closeChat={closeChat}
+                                                ref={(ref: ChatRef) => {
+                                                    if (ref) {
+                                                        chatRef.current.set(partner.userId, ref);
+                                                    } else {
+                                                        chatRef.current.delete(partner.userId);
+                                                    }
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                </>
+                            }
+                        </>
                         :
-                        <div className="option-card-btn-container">
-                            <OptionCardButton id="createGame" />
-                            <OptionCardButton id="joinGame" />
-                            <OptionCardButton id="tutorialAndCards" />
+                        <div className="auth-panel" >
+                            { !isAuthenticated &&
+                                <Button
+                                    text="Log In &nbsp; Register"
+                                    onClick={login}
+                                />
+                            }
+                            <div className="settings" >
+                                <IconButton text="Music" icon="music" decorated onClick={() => alert("TODO")} />
+                                <IconButton text="Sound" icon="sound" decorated onClick={() => alert("TODO")} />
+                            </div>
                         </div>
                     }
                 </div>
-                { _user ?
-                    <>
-                        <UserPanel />
-                        { friends &&
-                            <>
-                                <FriendsPanel
-                                    openChat={openChat}
-                                />
-                                <div className="chat-panel" >
-                                    {chatPartners.map(partner => (
-                                        <ChatTab
-                                            key={partner.userId}
-                                            friend={partner}
-                                            userId={_user.userId}
-                                            closeChat={closeChat}
-                                            ref={(ref: ChatRef) => {
-                                                if (ref) {
-                                                    chatRef.current.set(partner.userId, ref);
-                                                } else {
-                                                    chatRef.current.delete(partner.userId);
-                                                }
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-                            </>
-                        }
-                    </>
-                    :
-                    <div className="auth-panel" >
-                        { !isAuthenticated &&
-                            <Button
-                                text="Log In &nbsp; Register"
-                                onClick={login}
-                            />
-                        }
-                        <div className="settings" >
-                            <IconButton text="Music" icon="music" decorated onClick={() => alert("TODO")} />
-                            <IconButton text="Sound" icon="sound" decorated onClick={() => alert("TODO")} />
-                        </div>
-                    </div>
-                }
-            </div>
-        </main>
+            </main>
+        </WindowFrame>
     );
 }
 

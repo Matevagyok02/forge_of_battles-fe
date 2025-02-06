@@ -1,5 +1,5 @@
 import {createContext, Dispatch, ReactElement, SetStateAction} from "react";
-import {IUser} from "./interfaces.ts";
+import {IMatch, IPlayerState, IUser} from "./interfaces.ts";
 import {User} from "@auth0/auth0-react";
 import {Friends} from "./pages/home/FriendsPanel.tsx";
 
@@ -31,6 +31,13 @@ export interface IFriendsContext {
     setFriends: Dispatch<SetStateAction<Friends>>;
 }
 
+export interface IMatchContext {
+    match: IMatch;
+    setMatch: Dispatch<SetStateAction<IMatch>>;
+    player: () => IPlayerState;
+    opponent: () => IPlayerState;
+}
+
 export const ModalContext = createContext<IModalContext>({} as IModalContext);
 
 export const AuthContext = createContext({} as IAuthContext);
@@ -38,3 +45,5 @@ export const AuthContext = createContext({} as IAuthContext);
 export const UserContext = createContext({} as IUserContext);
 
 export const FriendsContext = createContext({} as IFriendsContext);
+
+export const MatchContext = createContext({} as IMatchContext);

@@ -1,7 +1,6 @@
 import './styles/App.css'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Home from "./pages/home/Home.tsx";
-import WindowFrame from "./components/WindowFrame.tsx";
 import {ReactElement, useState} from "react";
 import {IInfoModal, InfoModal} from "./components/Modal.tsx";
 import {AuthContext, FriendsContext, ModalContext, UserContext} from "./Context.tsx";
@@ -11,6 +10,8 @@ import {Friends} from "./pages/home/FriendsPanel.tsx";
 import Preparation from "./pages/preparation/Preparation.tsx";
 import Battle from "./pages/battle/Battle.tsx";
 import Join from "./pages/Join.tsx";
+import AdminRoute from "./components/AdminRoute.tsx";
+import AddCard from "./pages/addCard/AddCard.tsx";
 
 const App = () => {
 
@@ -86,27 +87,25 @@ const App = () => {
             >
                 <UserContext.Provider value={{_user, setUser}}>
                     <FriendsContext.Provider value={{friends, setFriends}}>
-                        <WindowFrame>
-                            <BrowserRouter>
-                                {openedInfoModal.map((infoModal, index) => (
-                                    <InfoModal close={() => closeInfoModal(index)} onOk={infoModal.onOk} key={index} >
-                                        {infoModal.content}
-                                    </InfoModal>
-                                ))}
+                        <BrowserRouter>
+                            {openedInfoModal.map((infoModal, index) => (
+                                <InfoModal close={() => closeInfoModal(index)} onOk={infoModal.onOk} key={index} >
+                                    {infoModal.content}
+                                </InfoModal>
+                            ))}
 
-                                {
-                                    openedForcedModal &&
-                                    openedForcedModal
-                                }
-                                <Routes>
-                                    <Route path="/" element={<Home/>} />
-                                    <Route path="/preparation/:key" element={<Preparation/>} />
-                                    <Route path="/battle/:key" element={<Battle/>} />
-                                    <Route path="/join/:key" element={<Join/>} />
-                                </Routes>
-                            </BrowserRouter>
-
-                        </WindowFrame>
+                            {
+                                openedForcedModal &&
+                                openedForcedModal
+                            }
+                            <Routes>
+                                <Route path="/" element={<Home/>} />
+                                <Route path="/preparation/:key" element={<Preparation/>} />
+                                <Route path="/battle/:key" element={<Battle/>} />
+                                <Route path="/join/:key" element={<Join/>} />
+                                <Route path="/add-card" element={<AdminRoute element={<AddCard/>} />} />
+                            </Routes>
+                        </BrowserRouter>
                     </FriendsContext.Provider>
                 </UserContext.Provider>
             </ModalContext.Provider>
