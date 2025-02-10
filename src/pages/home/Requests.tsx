@@ -1,11 +1,12 @@
 import {FC, useContext, useEffect, useState} from "react";
 import {IMatch, ISender} from "../../interfaces.ts";
-import {acceptFriendRequest, declineFriendRequest, declineMatch, joinMatch} from "../../api/homePageRequests.ts";
+import {acceptFriendRequest, declineFriendRequest} from "../../api/friend.ts";
 import {Friend, getFriendById} from "./FriendsPanel.tsx";
 import {ForcedModal} from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {FriendsContext, ModalContext} from "../../Context.tsx";
 import {useNavigate} from "react-router-dom";
+import {declineMatch, joinMatch} from "../../api/match.ts";
 
 export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sender, onResolve}) => {
 

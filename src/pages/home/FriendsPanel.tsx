@@ -5,11 +5,13 @@ import {
     useState
 } from "react";
 import { Button, IconButton } from "../../components/Button.tsx";
-import { findFriendByUsername, getOnlineFriends, getUnseenMsg, sendFriendInvite } from "../../api/homePageRequests.ts";
+import {getOnlineFriends, sendFriendInvite } from "../../api/friend.ts";
+import { findByUsername } from "../../api/user.ts";
 import Modal from "../../components/Modal.tsx";
 import { CustomResponse } from "../../api/api.ts";
 import {FriendsContext, ModalContext} from "../../Context.tsx";
 import CreateGame from "./CreateGame.tsx";
+import {getUnseenMsg} from "../../api/chat.ts";
 
 export interface Friends {
     friends: Friend[];
@@ -134,7 +136,7 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
         const findFriend = async () => {
             if (searchQuery.trim()) {
                 setLoading(true);
-                findFriendByUsername(searchQuery).then(result => {
+                findByUsername(searchQuery).then(result => {
                     if (result.ok && result.body) {
                         setSearchResult(result.body as Friend);
                         setFound(true);

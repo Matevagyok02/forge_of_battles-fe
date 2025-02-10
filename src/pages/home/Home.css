@@ -1,5 +1,5 @@
 main.home {
-    background-image: url("../../assets/home_bg.jpg");
+    background-image: url("../../assets/background/home_bg.jpg");
     box-shadow: inset 0 0 70px 20px black;
 }
 
@@ -127,7 +127,7 @@ main.home {
     filter: drop-shadow(0 0 4px goldenrod) drop-shadow(0 0 8px white);
 }
 
-img {
+main.home img, #preparation img {
     aspect-ratio: 1/1;
     width: 40px;
     height: auto;
@@ -223,15 +223,15 @@ img {
 }
 
 #joinGame {
-    background-image: url("../../assets/join_game.jpg");
+    background-image: url("../../assets/background/join_game.jpg");
 }
 
 #createGame {
-    background-image: url("../../assets/create_game.jpg");
+    background-image: url("../../assets/background/create_game.jpg");
 }
 
 #tutorialAndCards {
-    background-image: url("../../assets/tutorial_and_cards.jpg");
+    background-image: url("../../assets/background/tutorial_and_cards.jpg");
 }
 
 /* TutorialAndCards */
@@ -304,8 +304,7 @@ img {
 
 .join-game-bg {
     @apply create-join-bg;
-    background-image: url("../../assets/join_game.jpg");
-    background-position: center;
+    background-image: url("../../assets/background/join_game.jpg");
 }
 
 .key-input {
@@ -383,8 +382,7 @@ img {
 
 .create-game-bg {
     @apply create-join-bg;
-    background-image: url("../../assets/create_game.jpg");
-    background-position: center;
+    background-image: url("../../assets/background/create_game.jpg");
 }
 
 .create-game-player {

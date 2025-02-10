@@ -1,6 +1,16 @@
 main.preparation {
-    background-image: url("../../assets/preparation_bg.jpg");
+    background-image: url("../../assets/background/preparation_bg.jpg");
     box-shadow: inset 0 0 70px 20px black;
+}
+
+.leave-prep-btn {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+}
+
+.leave-prep-btn button span {
+    background-color: var(--bg-9);
 }
 
 .deck-selector-panel {
@@ -41,11 +51,11 @@ main.preparation {
     translate: 0 -64px;
 }
 
-.deck-selector-panel button label {
+#ready-btn button label {
     font-size: 32px;
 }
 
-.deck-selector-panel button span {
+#ready-btn button span {
     height: 56px;
     width: 256px;
 }

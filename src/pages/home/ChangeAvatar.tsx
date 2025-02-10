@@ -1,5 +1,5 @@
 import {FC, useContext, useState} from "react";
-import {changePicture} from "../../api/homePageRequests.ts";
+import {changePicture} from "../../api/user.ts";
 import Modal from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {ModalContext, UserContext} from "../../Context.tsx";
