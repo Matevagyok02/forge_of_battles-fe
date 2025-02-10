@@ -153,42 +153,35 @@
 
 .card-abilities {
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    translate: -50% 50%;
-    width: 200%;
-    height: 100%;
+    bottom: 1em;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.4em;
     align-items: center;
     text-align: center;
-    padding-block: 12px;
-    border-radius: 46%;
-    border-top: 0.1em solid goldenrod;
-    background-image: url("../../../assets/background/card_back_bg.jpg");
-    background-size: contain;
-    background-position: center top;
-    opacity: 0.9;
-    clip-path: polygon(
-        27% 0,
-        27% 48%,
-        73% 48%,
-        73% 0
-    );
+    justify-content: flex-end;
+    padding-block: 0.8em;
 }
 
 .card-abilities p {
     font-size: 0.48em;
-    width: 28%;
+    padding-block: 0.12em;
+    width: 100%;
+    background-image: url("../../../assets/background/card_back_bg.jpg");
+    background-size: cover;
+    /*border: 0.12em solid;*/
+    /*border-image: linear-gradient(to right, transparent, rgba(218, 165, 32, 0.7), transparent) 1;*/
 }
 
 .action-ability {
     filter: drop-shadow(0 0 4px red) drop-shadow(2px 2px 2px black);
+    padding-inline: 0.8em;
 }
 
 .passive-ability {
-    filter: drop-shadow(0 0 4px deepskyblue) drop-shadow(2px 2px 2px black);
+    filter: drop-shadow(0 0 4px royalblue) drop-shadow(2px 2px 2px black);
+    padding-inline: 0.8em;
 }
 
 .hand-held-card-wrapper {

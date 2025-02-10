@@ -114,7 +114,7 @@ const JoinGame: FC = () => {
                                     </h1>
                                     { activeMatch.opponent &&
                                         <div className="flex px-2 gap-2" >
-                                            <img src={`../avatars/${activeMatch.opponent.picture || "1"}.jpg`} alt="" />
+                                            <img className="user-avatar" src={`../avatars/${activeMatch.opponent.picture || "1"}.jpg`} alt="" />
                                             <h1 className="text-2xl" >{activeMatch.opponent.username}</h1>
                                         </div>
                                     }

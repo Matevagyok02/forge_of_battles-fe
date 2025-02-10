@@ -149,7 +149,7 @@ const Home = () => {
                             The following user has accepted your friend request:
                         </p>
                         <div className="flex items-end justify-center gap-2" >
-                            <img src={`./avatars/${acceptor.picture || "1"}.jpg`} alt="" />
+                            <img className="user-avatar" src={`./avatars/${acceptor.picture || "1"}.jpg`} alt="" />
                             <h1 className="text-2xl" >{acceptor.username}</h1>
                         </div>
                     </div>
@@ -176,7 +176,7 @@ const Home = () => {
                             The following user has declined your friend request:
                         </p>
                         <div className="flex items-end justify-center gap-2" >
-                            <img src={`./avatars/${decliner.picture || "1"}.jpg`} alt="" />
+                            <img className="user-avatar" src={`./avatars/${decliner.picture || "1"}.jpg`} alt="" />
                             <h1 className="text-2xl" >{decliner.username}</h1>
                         </div>
                     </div>
@@ -262,7 +262,7 @@ const Home = () => {
                         The following user has declined your match invite:
                     </p>
                     <div className="flex items-end justify-center gap-2" >
-                        <img src={`./avatars/${decliner.picture || "1"}.jpg`} alt="" />
+                        <img className="user-avatar" src={`./avatars/${decliner.picture || "1"}.jpg`} alt="" />
                         <h1 className="text-2xl" >{decliner.username}</h1>
                     </div>
                 </div>,

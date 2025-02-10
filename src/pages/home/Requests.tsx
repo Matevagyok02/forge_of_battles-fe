@@ -57,7 +57,7 @@ export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sen
         <ForcedModal>
             <div className="flex flex-col items-center gap-4 p-4" >
                 <div className="flex items-end gap-2" >
-                    <img src={`./avatars/${sender.picture || "1"}.jpg`} alt="" />
+                    <img className="user-avatar" src={`./avatars/${sender.picture || "1"}.jpg`} alt="" />
                     <h1 className="text-2xl" >{sender.username}</h1>
                 </div>
                 <div className="text-xl" >
@@ -162,7 +162,7 @@ export const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, 
         <ForcedModal>
             <div className="flex flex-col items-center gap-4 p-4" >
                 <div className="flex items-end gap-2" >
-                    <img src={`./avatars/${inviter.picture || "1"}.jpg`} alt="" />
+                    <img className="user-avatar" src={`./avatars/${inviter.picture || "1"}.jpg`} alt="" />
                     <h1 className="text-2xl" >{inviter.username}</h1>
                 </div>
                 <div className="text-xl" >

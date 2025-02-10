@@ -2,7 +2,7 @@ import {useParams} from "react-router-dom";
 import {FC, useCallback, useState} from "react";
 import "./Battle.css";
 import "./cards/Cards.css";
-import {IBattle, IMatch, IPlayerState} from "../../interfaces.ts";
+import {IBattle, ICard, IMatch} from "../../interfaces.ts";
 import {MatchContext} from "../../Context.tsx";
 import Board from "./Board.tsx";
 import Hud from "./Hud.tsx";
@@ -14,7 +14,7 @@ import {CardProto} from "../addCard/cardCreationInterfaces.ts";
 const Battle: FC = () => {
 
     const key = useParams().key;
-    const [match, setMatch] = useState<IMatch>(sampleMatch);
+    const [match, setMatch] = useState<IMatch>(sampleMatch as IMatch);
     const [messages, setMessages] = useState<IBattleMessage[]>(sampleMessages);
 
     // const {user} = useContext(UserContext);
@@ -29,11 +29,11 @@ const Battle: FC = () => {
 
     const opponent = useCallback(() => {
         const opponentId = match.player1Id === user.sub ? match.player2Id : match.player1Id;
-        return (match.battle as IBattle).playerStates.get(opponentId)  as IPlayerState;
+        return match?.battle?.playerStates?.[opponentId]!;
     }, [match, user]);
 
     const player = useCallback(() => {
-        return (match.battle as IBattle).playerStates.get(user.sub) as IPlayerState;
+        return match?.battle?.playerStates?.[user.sub]!;
     }, [match, user]);
 
     return(
@@ -69,30 +69,62 @@ const Battle: FC = () => {
 
 export default Battle;
 
-const sampleCards: CardProto[] = [
+export const sampleCards: ICard[] = [
     {
-        name: "Grandmaster Paladin",
+        id: "light-1",
+        name: "Purifier",
         deck: "light",
-        cost: 4,
-        attack: 5,
-        pieces: 1,
-        defence: 7
-    },
-    {
-        name: "Light Priest",
-        deck: "light",
-        cost: 1,
-        attack: 2,
-        pieces: 3,
-        defence: 2
-    },
-    {
-        name: "Archbishop",
-        deck: "light",
-        cost: 2,
+        cost: 5,
         attack: 7,
+        defence: 5,
         pieces: 1,
-        defence: 3
+        actionAbility: {
+            cardId: "1",
+            description: "Increase attack by 2",
+            type: "action",
+            usageType: "turnBased",
+            subtype: "attributeModifier",
+            requirements: {
+                mana: 2
+            },
+            targetPositions: {
+                self: ["frontline"],
+                opponent: ["defender"]
+            }
+        },
+        passiveAbility: {
+            cardId: "light-1",
+            description: "Reduce damage taken by 1",
+            type: "passive",
+            usageType: "basic",
+            subtype: "attributeModifier"
+        }
+    },
+    {
+        id: "light-2",
+        name: "Thalion the Holy",
+        deck: "light",
+        cost: 3,
+        attack: 2,
+        defence: 4,
+        pieces: 1,
+        actionAbility: {
+            cardId: "2",
+            description: "Heal 3",
+            type: "action",
+            usageType: "instant",
+            subtype: "instant",
+            requirements: {
+                mana: 1
+            }
+        },
+        passiveAbility: {
+            cardId: "light-2",
+            description: "Increase defence by 1",
+            type: "passive",
+            usageType: "basic",
+            subtype: "attributeModifier"
+        }
     }
 ];
 
@@ -147,53 +179,32 @@ const sampleMatch: IMatch = {
     key: "XXXXXX",
     battle: {
         playerStates: {
-            "google-oauth2|110032521141507503978": {
-                deck: "darkness",
-                drawingDeck: [],
-                bonusHealth: [],
+            "google-oauth2|107016487388322054821": {
+                deck: "light",
+                drawingDeck: ["Grandmaster Paladin", "Light Priest", "Archbishop"],
+                bonusHealth: [0],
                 casualties: [],
                 onHand: [],
                 mana: 0,
                 manaCards: [],
                 deployedCards: {},
-                timeLeft: {
-                    turnStartedAt: 0,
-                    timeLeft: 2700000
-                },
                 turnStage: 0,
-                drawsPerTurn: 0
+                drawsPerTurn: 1
             },
-            "google-oauth2|107016487388322054821": {
-                deck: "light",
-                drawingDeck: [],
-                bonusHealth: [],
+            "google-oauth2|110032521141507503978": {
+                deck: "darkness",
+                drawingDeck: ["Grandmaster Paladin", "Light Priest", "Archbishop"],
+                bonusHealth: [0],
                 casualties: [],
                 onHand: [],
                 mana: 0,
                 manaCards: [],
-                deployedCards: {
-                    defender: {
-                        id: "0",
-                        name: "Grandmaster Paladin",
-                        deck: "light",
-                        cost: 4,
-                        attack: 5,
-                        defense: 7,
-                        piecesInDeck: 1
-                    }
-                },
-                timeLeft: {
-                    turnStartedAt: 0,
-                    timeLeft: 2700000
-                },
+                deployedCards: {},
                 turnStage: 0,
-                drawsPerTurn: 0
+                drawsPerTurn: 1
             }
         },
         turnOfPlayer: "google-oauth2|110032521141507503978",
-        abilities: {
-            activatedAbilities: []
-        },
         timeLimit: 2700000,
         turn: 0
     },

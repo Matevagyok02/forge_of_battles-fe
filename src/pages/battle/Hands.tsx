@@ -3,7 +3,7 @@ import {ICard} from "../../interfaces.ts";
 import HandHeldCard from "./cards/HandHeldCard.tsx";
 import {CardProto} from "../addCard/cardCreationInterfaces.ts";
 
-export const PlayerHand: FC<{ cards: ICard[] | CardProto[] }> = ({ cards }) => {
+export const PlayerHand: FC<{ cards: ICard[] }> = ({ cards }) => {
 
     const [cardRotations, setCardRotations] = useState<number[]>([]);
 

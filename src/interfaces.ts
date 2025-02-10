@@ -119,14 +119,16 @@ export interface IPlayerState {
 
 export interface IBattle {
     timeLimit?: number;
-    playerStates: Map<string, IPlayerState>;
+    playerStates: Record<string, IPlayerState>;
+    turnOfPlayer: string;
+    turn: number;
 }
 
 export interface IMatch {
     key: string;
     player1Id: string;
     player2Id: string;
-    battle: object;
+    battle: IBattle;
     randomMatch: boolean;
     stage: string;
 }

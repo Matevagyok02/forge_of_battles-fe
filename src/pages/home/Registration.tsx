@@ -94,7 +94,7 @@ const Registration: FC = () => {
                                     onClick={() => setPicture(avatar)}
                                     className={picture === avatar ? "selected" : ""}
                                 >
-                                    <img src={`./avatars/${avatar}.jpg`} alt="" />
+                                    <img className="user-avatar" src={`./avatars/${avatar}.jpg`} alt="" />
                                 </li>
                             )}
                         </ul>

@@ -39,7 +39,7 @@ export interface InstantAblProto extends AbilityBaseProto {
     args?: object | string;
 }
 
-export interface EventDrivenAblProto extends AbilityBaseProto {
+export interface EventDrivenAblProto extends InstantAblProto {
     event: TriggerEvent[];
     selfTriggered: boolean;
 }

@@ -1,6 +1,6 @@
 import {Dispatch, FC, SetStateAction, useEffect, useState} from "react";
 import {AblReqProto, TargetablePosesProto} from "./cardCreationInterfaces.ts";
-import {formatNumber} from "./AddCard.tsx";
+import {AbilityType, formatNumber} from "./AddCard.tsx";
 import TargetPositionsForm from "./TargetPositionsForm.tsx";
 
 const emptySelectablePositions = {
@@ -11,9 +11,10 @@ const emptySelectablePositions = {
 }
 
 const AbilityRequirementForm: FC<{
+    type: string,
     requirements: AblReqProto,
     setRequirements: Dispatch<SetStateAction<AblReqProto>>
-}> = ({ requirements, setRequirements }) => {
+}> = ({ type, requirements, setRequirements }) => {
 
     const [targetPositions, setTargetPositions] = useState<TargetablePosesProto>(emptySelectablePositions);
 
@@ -55,19 +56,21 @@ const AbilityRequirementForm: FC<{
 
     return(
         <>
-            <tr>
-                <th>
-                    <label htmlFor="mana-cost" >Mana Cost:</label>
-                </th>
-                <td>
-                    <input
-                        id="mana-cost"
-                        type="number"
-                        onChange={setManaCost}
-                        value={requirements.mana || 0}
-                    />
-                </td>
-            </tr>
+            { type === AbilityType.passive &&
+                <tr>
+                    <th>
+                        <label htmlFor="mana-cost" >Mana Cost:</label>
+                    </th>
+                    <td>
+                        <input
+                            id="mana-cost"
+                            type="number"
+                            onChange={setManaCost}
+                            value={requirements.mana || 0}
+                        />
+                    </td>
+                </tr>
+            }
             <tr>
                 <th>
                     <label htmlFor="sacrifice" >Sacrifice:</label>

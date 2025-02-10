@@ -83,7 +83,7 @@
     height: 100%;
 }
 
-.friends-panel .user-avatar-container {
+.friends-panel .friend-avatar-container {
     position: relative;
     width: 40px;
     height: 40px;
@@ -261,7 +261,7 @@
     border: 1px solid var(--silver);
 }
 
-.in-game  {
+.busy  {
     .status-indicator {
         background-color: orangered;
     }

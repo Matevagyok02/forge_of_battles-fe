@@ -1,5 +1,6 @@
 import {ICard} from "../../../interfaces.ts";
 import {FC, useEffect, useState} from "react";
+import img from "../../../../public/cards/light/battle_protector.jpg";
 
 const CardContent: FC<{ card: ICard }> = ({ card }) => {
 
@@ -7,13 +8,14 @@ const CardContent: FC<{ card: ICard }> = ({ card }) => {
 
     useEffect(() => {
         setImageLoaded(true);
+
     }, [card.deck, card.name]);
 
     return(
         <>
             { imageLoaded ?
                 <img
-                    src={`cards/${card.deck}/${card.name.toLowerCase().replace(/ /g, "_")}.jpg`}
+                    src={`../cards/${card.deck}/${card.name.toLowerCase().replace(/ /g, "_")}.jpg`}
                     alt=""
                     onError={() => setImageLoaded(false)}
                 />
@@ -42,12 +44,21 @@ const CardContent: FC<{ card: ICard }> = ({ card }) => {
             </div>
             <div className="card-abilities" >
                 <p className="action-ability" >
-                    {card.actionAbility.description}
+                    {card.actionAbility?.description}
                 </p>
                 <p className="passive-ability" >
-                    {card.passiveAbility.description}
+                    {card.passiveAbility?.description}
                 </p>
             </div>
+        </>
+    )
+}
+
+const FormatDescription: FC<{ description: string }> = ({description}) => {
+
+    return(
+        <>
+            {description.replace(/<M>/g, '<i class="mana-icon"></i>')}
         </>
     )
 }

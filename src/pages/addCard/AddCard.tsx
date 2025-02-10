@@ -38,9 +38,9 @@ const AddCard: FC = () => {
     }, [cardBase, actionAbility, passiveAbility]);
 
     const reset = () => {
-        setCardBase(JSON.parse(JSON.stringify(emptyCard)));
-        setActionAbility(JSON.parse(JSON.stringify({...emptyAbility, type: AbilityType.action})));
-        setPassiveAbility(JSON.parse(JSON.stringify({...emptyAbility, type: AbilityType.passive})));
+        setCardBase({...emptyCard});
+        setActionAbility({...emptyAbility, type: AbilityType.action});
+        setPassiveAbility({...emptyAbility, type: AbilityType.passive});
     };
 
     const save = useCallback(() => {
@@ -98,7 +98,7 @@ const CardPreview: FC<{ card: ICard }> = ({ card }) => {
 
 export const formatNumber = (numberString: string): number => {
     const num = Number(numberString);
-    return isNaN(num) ? 0 : Math.abs(Math.floor(num));
+    return isNaN(num) ? 0 : Math.floor(num);
 };
 
 export const formatVariableName = (name: string): string => {

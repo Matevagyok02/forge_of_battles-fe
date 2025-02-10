@@ -17,6 +17,8 @@ const groups: { [key: string]: { [key: string]: any } } = {
         args: {}
     },
     eventDriven: {
+        name: "",
+        args: {},
         event: [],
         selfTriggered: false
     }

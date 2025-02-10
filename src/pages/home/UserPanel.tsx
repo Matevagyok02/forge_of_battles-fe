@@ -1,5 +1,4 @@
 import {FC, useContext} from "react";
-import {IUser} from "../../interfaces.ts";
 import {IconButton} from "../../components/Button.tsx";
 import {AuthContext, ModalContext, UserContext} from "../../Context.tsx";
 import ChangeAvatar from "./ChangeAvatar.tsx";
@@ -8,18 +7,18 @@ const UserPanel: FC = () => {
 
     const { openModal } = useContext(ModalContext);
     const { logout } = useContext(AuthContext);
-    const user: IUser | undefined = useContext(UserContext)._user;
+    const { _user } = useContext(UserContext);
 
     return(
-        user &&
+        _user &&
         <div className="user-panel" >
             <div className="user-name" >
                 <h1 className="min-w-28 text-center" >
-                    {user.username}
+                    {_user.username}
                 </h1>
             </div>
             <div className="user-avatar-container" >
-                <img src={`./avatars/${user.picture}.jpg`} alt="" />
+                <img className="user-avatar" src={`./avatars/${_user.picture}.jpg`} alt="" />
                 <IconButton
                     text="Edit"
                     icon="edit"
