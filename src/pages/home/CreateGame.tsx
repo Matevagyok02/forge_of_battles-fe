@@ -75,7 +75,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
         } else {
             openInfoModal(
                 <p>
-                    Something went worng, press "OK" to refresh the page and try again
+                    Something went wrong, press "OK" to refresh the page and try again
                 </p>,
                 refresh
             );

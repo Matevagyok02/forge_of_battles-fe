@@ -305,6 +305,7 @@ img {
 .join-game-bg {
     @apply create-join-bg;
     background-image: url("../../assets/join_game.jpg");
+    background-position: center;
 }
 
 .key-input {
@@ -383,6 +384,7 @@ img {
 .create-game-bg {
     @apply create-join-bg;
     background-image: url("../../assets/create_game.jpg");
+    background-position: center;
 }
 
 .create-game-player {
