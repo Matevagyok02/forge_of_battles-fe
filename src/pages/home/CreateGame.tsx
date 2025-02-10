@@ -161,7 +161,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                     <div className="flex flex-col justify-center gap-4" >
                         <div className="flex justify-center gap-2 px-2" >
                             <div className="create-game-player justify-start" >
-                                <img src={`./avatars/${_user?.picture}.jpg`} alt="" />
+                                <img className="user-avatar" src={`./avatars/${_user?.picture}.jpg`} alt="" />
                                 <h1 className="font-bold" >
                                     {_user?.username}
                                 </h1>
@@ -180,7 +180,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                                                 <IconButton text={"Remove"} icon={"minimize"} onClick={() => setFriendToInvite(undefined)} />
                                             </div>
                                         }
-                                        <img src={`./avatars/${friendToInvite.picture}.jpg`} alt="" />
+                                        <img className="user-avatar" src={`./avatars/${friendToInvite.picture}.jpg`} alt="" />
                                     </div>
                                 </div>
                                 :

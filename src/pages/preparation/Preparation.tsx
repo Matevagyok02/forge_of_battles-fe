@@ -302,7 +302,7 @@ const Preparation: FC = () => {
                                 { opponent &&
                                     <>
                                         <div className="flex px-2 gap-2" >
-                                            <img src={`../avatars/${opponent.picture || "1"}.jpg`} alt="" />
+                                            <img className="user-avatar" src={`../avatars/${opponent.picture || "1"}.jpg`} alt="" />
                                             <h1 className="text-2xl" >{opponent.username}</h1>
                                             { opponentIsReady ?
                                                 <i id="ready" className="fa-solid fa-check" ></i>

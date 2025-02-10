@@ -1,11 +1,24 @@
 import Frame from "./Frame.tsx";
 import {Button, IconButton} from "./Button.tsx";
-import {FC, ReactElement, ReactNode, useContext} from "react";
+import {FC, ReactElement, ReactNode, useContext, useEffect} from "react";
 import {ModalContext} from "../Context.tsx";
 
 const Modal: FC<{ children: ReactNode, closeCondition?: boolean }> = ({ children, closeCondition = true}) => {
 
     const {closeModal} = useContext(ModalContext)
+
+    useEffect(() => {
+        const handleKeyDown = (e: any) => {
+            if (e.key === "Escape" && closeCondition) {
+                closeModal();
+            }
+        }
+
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        }
+    }, []);
 
     return (
         <div className="modal-container" >

@@ -75,7 +75,7 @@ const AbilityForm: FC<{
                 </td>
             </tr>
             <AbilityGroupForm ability={ability} setAbility={setAbility} />
-            <AbilityRequirementForm requirements={requirements} setRequirements={setRequirements}  />
+            <AbilityRequirementForm type={ability.type} requirements={requirements} setRequirements={setRequirements}  />
             </tbody>
         </table>
     );

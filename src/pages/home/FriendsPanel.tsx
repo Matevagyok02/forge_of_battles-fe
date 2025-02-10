@@ -63,9 +63,9 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
 
         return (
             <li key={friend.userId} className={`friend ${friend.status} ${friend.unseenMessage ? "unseen-msg" : ""}`}>
-                <div className={`user-avatar-container`}>
+                <div className={`friend-avatar-container`}>
                     <div className="status-indicator" title={friend.status}></div>
-                    <img src={`./avatars/${friend.picture || "1"}.jpg`} alt="" />
+                    <img className="user-avatar" src={`./avatars/${friend.picture || "1"}.jpg`} alt="" />
                 </div>
                 <div>
                     <h1 className="px-2">
@@ -154,7 +154,7 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
                     {searchResult && !inviteResult ?
                         <>
                             <div className="flex items-end gap-2">
-                                <img src={`./avatars/${searchResult.picture || "1"}.jpg`} alt="" />
+                                <img className="user-avatar" src={`./avatars/${searchResult.picture || "1"}.jpg`} alt="" />
                                 <h1 className="text-2xl">{searchResult.username}</h1>
                             </div>
                             <div className="hr"></div>

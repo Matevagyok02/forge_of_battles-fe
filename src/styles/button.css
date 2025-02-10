@@ -41,7 +41,12 @@
 
 .icon-btn:hover i {
     filter: drop-shadow(0 0 2px goldenrod);
-    animation: light-shake 0.3s linear infinite;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.icon-btn i {
+    display: block;
+    width: fit-content;
 }
 
 .remove i {
@@ -66,18 +71,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-@keyframes light-shake {
-    0% {
-        rotate: -5deg;
-    }
-    50% {
-        rotate: 5deg;
-    }
-    100% {
-        rotate: 0;
-    }
 }
 
 @keyframes shade-bg {

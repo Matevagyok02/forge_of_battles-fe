@@ -5,6 +5,7 @@ import "./Board.css";
 import {DiscardPile, DrawPile} from "./CardPiles.tsx";
 import {ICard} from "../../interfaces.ts";
 import DeployedCard from "./cards/DeployedCard.tsx";
+import {sampleCards} from "./Battle.tsx";
 
 const Board: FC = () => {
 
@@ -89,7 +90,7 @@ const Board: FC = () => {
                             <DrawPile cards={sampleDrawableCards} deck={getDeckColorClasses(2)} />
                         </div>
                         <div className={`discard-pile ${getDeckColorClasses(2)}`} >
-                            <DiscardPile cards={sampleDiscardedCards as ICard[]} deck={getDeckColorClasses(2)} />
+                            <DiscardPile cards={sampleCards} deck={getDeckColorClasses(2)} />
                         </div>
                     </div>
 
@@ -107,7 +108,7 @@ const Board: FC = () => {
 
                     <div className="right-card-piles" >
                         <div className={`discard-pile ${getDeckColorClasses(1)}`} >
-                            <DiscardPile cards={sampleDiscardedCards as ICard[]} deck={getDeckColorClasses(1)} />
+                            <DiscardPile cards={sampleCards} deck={getDeckColorClasses(1)} />
                         </div>
                         <div className={`draw-pile`} >
                             <DrawPile cards={sampleDrawableCards} deck={getDeckColorClasses(1)} />
@@ -118,126 +119,6 @@ const Board: FC = () => {
         </div>
     );
 }
-
-const sampleDiscardedCards = [
-    {
-        id: "0",
-        name: "1",
-        deck: "light",
-        cost: 4,
-        attack: 5,
-        defence: 7,
-        pieces: 1
-    },
-    {
-        id: "1",
-        name: "2",
-        deck: "light",
-        cost: 1,
-        attack: 2,
-        defence: 2,
-        pieces: 3
-    },
-    {
-        id: "2",
-        name: "3",
-        deck: "light",
-        cost: 2,
-        attack: 7,
-        defence: 3,
-        pieces: 1
-    },
-    {
-        id: "0",
-        name: "4",
-        deck: "light",
-        cost: 4,
-        attack: 5,
-        defence: 7,
-        pieces: 1
-    },
-    {
-        id: "1",
-        name: "5",
-        deck: "light",
-        cost: 1,
-        attack: 2,
-        defence: 2,
-        pieces: 3
-    },
-    {
-        id: "2",
-        name: "6",
-        deck: "light",
-        cost: 2,
-        attack: 7,
-        defence: 3,
-        pieces: 1
-    },
-    {
-        id: "0",
-        name: "7",
-        deck: "light",
-        cost: 4,
-        attack: 5,
-        defence: 7,
-        pieces: 1
-    },
-    {
-        id: "1",
-        name: "8 ",
-        deck: "light",
-        cost: 1,
-        attack: 2,
-        defence: 2,
-        pieces: 3
-    },
-    {
-        id: "2",
-        name: "9",
-        deck: "light",
-        cost: 2,
-        attack: 7,
-        defence: 3,
-        pieces: 1
-    },
-    {
-        id: "0",
-        name: "10",
-        deck: "light",
-        cost: 4,
-        attack: 5,
-        defence: 7,
-        pieces: 1
-    },
-    {
-        id: "1",
-        name: "11",
-        deck: "light",
-        cost: 1,
-        attack: 2,
-        defence: 2,
-        pieces: 3
-    },
-    {
-        id: "2",
-        name: "12",
-        deck: "light",
-        cost: 2,
-        attack: 7,
-        defence: 3,
-        pieces: 1
-    },
-    {
-        id: "2",
-        name: "13",
-        deck: "light",
-        cost: 2,
-        attack: 7,
-        defence: 3,
-        pieces: 1
-    }
-];
 
 const sampleDrawableCards = ['card1', 'card2', 'card3', 'card4', 'card5','card1', 'card2', 'card3', 'card4', 'card5','card1', 'card2', 'card3', 'card4', 'card5'];
 
