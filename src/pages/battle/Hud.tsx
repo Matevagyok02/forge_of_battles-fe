@@ -1,5 +1,5 @@
 import {FC, useEffect, useState} from "react";
-import "./Hud.css";
+import styles from "./Hud.module.css";
 
 const maxHealth = 34;
 
@@ -65,23 +65,23 @@ const Hud: FC = () => {
     }, []);
 
     return(
-        <div className={`hud`} style={{ transform: `scale(${scale})` }} >
-            <div className="hud-inner-container" >
-                <div className="mana-pool-container" >
-                    <div className="mana-pool" >
+        <div className={styles.hud} style={{ transform: `scale(${scale})` }} >
+            <div className={styles.hudInnerContainer} >
+                <div>
+                    <div className={styles.manaPool} >
                         {manaShards.map((mana, index) =>
                             <div
                                 key={index}
-                                className={`mana-shard ${typeof mana === "boolean" ? mana ? "active" : "used" : ""}`}
+                                className={`${styles.manaShard} ${typeof mana === "boolean" ? mana ? styles.active : styles.used : ""}`}
                             ></div>
                         )}
                     </div>
-                    <div className="mana-pool-decor" ></div>
+                    <div className={styles.manaPoolDecor} ></div>
                 </div>
-                <div className="health-container" >
-                    <div className="health-decor" ></div>
+                <div className={styles.healthContainer} >
+                    <div className={styles.healthDecor} ></div>
                     <div
-                        className="health"
+                        className={styles.health}
                         data-health={health}
                         style={{ backgroundImage: `linear-gradient(-45deg, var(--crimson), var(--dark-grey) ${calcHealthPercentage(health)}%`}}
                     >
@@ -90,16 +90,16 @@ const Hud: FC = () => {
                         </h1>
                     </div>
                 </div>
-                <div className="avatar-container" >
+                <div className={styles.avatarContainer} >
                     <img src={`../avatars/${avatar || "1"}.jpg`} alt="" />
                 </div>
-                <div className="username-container" >
+                <div className={styles.usernameContainer} >
                     <h1>
                         {username}
                     </h1>
                 </div>
                 { timeLeft &&
-                    <div className="time-container" >
+                    <div className={styles.timeContainer} >
                         <h1>
                             {calcTimeLeft(timeLeft)}
                         </h1>
