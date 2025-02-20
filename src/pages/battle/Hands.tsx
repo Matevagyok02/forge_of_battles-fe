@@ -1,11 +1,18 @@
-import {FC, useEffect, useState} from "react";
+import {FC, useContext, useEffect, useState} from "react";
 import {ICard} from "../../interfaces.ts";
 import HandHeldCard from "./cards/HandHeldCard.tsx";
-import {CardProto} from "../addCard/cardCreationInterfaces.ts";
+import {MatchContext} from "../../Context.tsx";
+import {Socket} from "socket.io-client";
 
-export const PlayerHand: FC<{ cards: ICard[] }> = ({ cards }) => {
+export const PlayerHand: FC = () => {
 
+    const { loadCards, player } = useContext(MatchContext);
+    const [cards, setCards] = useState<ICard[]>([]);
     const [cardRotations, setCardRotations] = useState<number[]>([]);
+
+    useEffect(() => {
+        loadCards(player!.onHand).then(setCards);
+    }, [player!.onHand]);
 
     useEffect(() => {
         setCardRotations(
@@ -31,19 +38,20 @@ export const PlayerHand: FC<{ cards: ICard[] }> = ({ cards }) => {
     );
 }
 
-export const OpponentHand: FC<{ cardCount: number, deck: string }> = ({ cardCount, deck }) => {
+export const OpponentHand: FC = () => {
 
+    const { player, opponent, socket } = useContext(MatchContext);
     const [cardRotations, setCardRotations] = useState<number[]>([]);
 
     useEffect(() => {
         setCardRotations(
-            getCardRotationPoints(cardCount)
+            getCardRotationPoints(opponent!.onHand.length)
         );
-    }, [cardCount]);
+    }, [opponent!.onHand.length]);
 
     return(
         <div className="opponent-hand"
-             style={ cardCount > 4 ?
+             style={ opponent!.onHand.length > 4 ?
                  { justifyContent: "space-between" }
                  :
                  { justifyContent: "center", gap: "17vh" }
@@ -52,13 +60,13 @@ export const OpponentHand: FC<{ cardCount: number, deck: string }> = ({ cardCoun
             {cardRotations.map((rotation, index) =>
                 <div className="hand-held-card-wrapper" key={index} >
                     <div
-                        className={`card-back card ${deck}`}
+                        className={`card-back card ${opponent!.deck + (opponent!.deck === player!.deck ? "-secondary" : "")}`}
                         style={{
                             rotate: `${rotation}deg`,
                             translate: `0 ${Math.abs(rotation)}%`
                         }}
                     >
-                        <div style={{ rotate: `${Math.random() * 1000}deg` }} ></div>
+                        <div style={{ rotate: `${rotation * 10}deg` }} ></div>
                     </div>
                 </div>
             )}

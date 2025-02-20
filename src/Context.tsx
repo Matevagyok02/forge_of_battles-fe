@@ -1,7 +1,8 @@
 import {createContext, Dispatch, ReactElement, SetStateAction} from "react";
-import {IMatch, IPlayerState, IUser} from "./interfaces.ts";
+import {ICard, IMatch, IPlayerState, IUser} from "./interfaces.ts";
 import {User} from "@auth0/auth0-react";
 import {Friends} from "./pages/home/FriendsPanel.tsx";
+import {Socket} from "socket.io-client";
 
 export interface IModalContext {
     openInfoModal: (content: ReactElement, onOk?: (args?: any) => void) => void;
@@ -19,6 +20,7 @@ export interface IAuthContext {
     isAuthenticated: boolean;
     login: () => Promise<void>;
     logout: () => Promise<void>;
+    isLoading: boolean;
 }
 
 export interface IUserContext {
@@ -32,10 +34,12 @@ export interface IFriendsContext {
 }
 
 export interface IMatchContext {
-    match: IMatch;
+    match?: IMatch;
     setMatch: Dispatch<SetStateAction<IMatch>>;
-    player: () => IPlayerState;
-    opponent: () => IPlayerState;
+    loadCards: (ids: string[]) => Promise<ICard[]>;
+    player?: IPlayerState;
+    opponent?: IPlayerState;
+    socket: Socket;
 }
 
 export const ModalContext = createContext<IModalContext>({} as IModalContext);

@@ -22,7 +22,7 @@ const App = () => {
     const [openedModal, setOpenedModal] = useState<ReactElement | null>(null);
     const [openedForcedModal, setOpenedForcedModal] = useState<ReactElement | null>(null);
 
-    const { user, isAuthenticated, logout, loginWithPopup } = useAuth0();
+    const { user, isAuthenticated, logout, loginWithPopup, isLoading } = useAuth0();
 
     const openModal = (modal: ReactElement) => {
         setOpenedModal(modal);
@@ -70,7 +70,8 @@ const App = () => {
                 user,
                 isAuthenticated,
                 login: customLogin,
-                logout: customLogout
+                logout: customLogout,
+                isLoading
         }}
         >
             <ModalContext.Provider

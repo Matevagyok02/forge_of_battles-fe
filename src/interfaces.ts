@@ -101,6 +101,7 @@ export interface IDeployedCard {
 
 
 export interface IPlayerState {
+    userId?: string;
     deck: string;
     drawingDeck: string[];
     bonusHealth: number[];
@@ -109,10 +110,8 @@ export interface IPlayerState {
     mana: number;
     manaCards: string[];
     deployedCards: IDeployedCard;
-    timeLeft?: {
-        turnStartedAt: number;
-        timeLeft: number;
-    };
+    timeLeft?: number;
+    turnStartedAt?: number;
     turnStage: number;
     drawsPerTurn: number;
 }

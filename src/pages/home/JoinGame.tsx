@@ -8,6 +8,8 @@ import {IBattle, IMatch, IUser} from "../../interfaces.ts";
 import {findPlayerById} from "../../api/user.ts";
 import {parseTimeLimit} from "../../utils.ts";
 
+export const keyRegex = /^[A-Z0-9]{0,6}$/;
+
 const JoinGame: FC = () => {
 
     const navigate = useNavigate();
@@ -20,7 +22,6 @@ const JoinGame: FC = () => {
 
     const {openInfoModal} = useContext(ModalContext);
 
-    const keyRegex = /^[A-Z0-9]{0,6}$/;
     const keyLength = 6;
     const keyInputs: number[] = [];
 

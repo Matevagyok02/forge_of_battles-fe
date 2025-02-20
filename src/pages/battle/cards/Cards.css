@@ -59,6 +59,7 @@
 }
 
 .hand-held-card:hover {
+    z-index: 1;
     scale: 1.1;
     filter: drop-shadow(0 0 2px black) brightness(1.2);
 }
@@ -168,10 +169,22 @@
     font-size: 0.48em;
     padding-block: 0.12em;
     width: 100%;
-    background-image: url("../../../assets/background/card_back_bg.jpg");
-    background-size: cover;
+    position: relative;
     /*border: 0.12em solid;*/
     /*border-image: linear-gradient(to right, transparent, rgba(218, 165, 32, 0.7), transparent) 1;*/
+}
+
+.card-abilities p:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../../../assets/background/card_back_bg.jpg");
+    background-size: cover;
+    opacity: 0.8;
 }
 
 .action-ability {

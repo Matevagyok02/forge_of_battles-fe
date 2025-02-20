@@ -14,6 +14,7 @@ import {ModalContext} from "../../Context.tsx";
 import LeaveMatchDialog from "./LeaveMatchDialog.tsx";
 import WindowFrame from "../../components/WindowFrame.tsx";
 import decksBaseInfo from "../../assets/decks.json";
+import {keyRegex} from "../home/JoinGame.tsx";
 
 interface IDeck {
     name: string;
@@ -50,8 +51,9 @@ const Preparation: FC = () => {
 
         return decks;
     }
+
     const { user } = useAuth0();
-    const { openForcedModal } = useContext(ModalContext);
+    const { openForcedModal, openInfoModal } = useContext(ModalContext);
 
     const [match, setMatch] = useState<IMatch>();
     const [opponent, setOpponent] = useState<IUser>();
@@ -63,16 +65,26 @@ const Preparation: FC = () => {
     const [socket, setSocket] = useState<Socket>();
 
     useEffect( () => {
-        if (user) {
-            if (key !== "test") {
-                loadMatch();
-            }
-
+        if (user && key && (key.match(keyRegex) || key === "test")) {
             if (!socket) {
-                setUpSocket();
+                setTimeout(() => setUpSocket(key), 1000);
             }
+        } else {
+            leavePage();
         }
-    }, [user]);
+    }, [user, key, socket]);
+
+    useEffect(() => {
+        if (match) {
+            processMatchData(match);
+        }
+    }, [match]);
+
+    const leavePage = () => {
+        socket?.disconnect();
+        setSocket(undefined);
+        navigate("/");
+    }
 
     useEffect(() => {
         if (isReady && opponentIsReady) {
@@ -91,65 +103,12 @@ const Preparation: FC = () => {
         }
     }, [socket, selectedDeck]);
 
-    // const loadMatch = () => {
-    //     if (key) {
-    //         getMatchByKey(key).then((result) => {
-    //             if(result.ok && result.body
-    //                 && (result.body as IMatch).stage !== "pending"
-    //             ) {
-    //                 const match = result.body as IMatch;
-    //
-    //                 if (match.stage === "preparing") {
-    //                     const match = result.body as IMatch;
-    //                     setMatch(match);
-    //
-    //                     const userId = user!.sub;
-    //
-    //                     if (userId && userId in (match.battle as IBattle).playerStates) {
-    //                         setIsReady(true);
-    //                     }
-    //
-    //                     setIsHost(userId === match.player1Id);
-    //
-    //                     const opponentId = [match.player1Id, match.player2Id].find(id => id !== userId);
-    //
-    //                     if (opponentId) {
-    //                         if (opponentId in (match.battle as IBattle).playerStates) {
-    //                             setOpponentIsReady(true);
-    //                         }
-    //
-    //                         findPlayerById(opponentId).then((result) => {
-    //                             if (result.ok && result.body) {
-    //                                 setOpponent(result.body as IUser);
-    //                             } else {
-    //                                 navigate("/");
-    //                             }
-    //                         });
-    //                     } else {
-    //                         navigate("/");
-    //                     }
-    //                 } else {
-    //                     navigate(`/battle/${key}`);
-    //                 }
-    //             } else {
-    //                 navigate("/");
-    //             }
-    //         });
-    //     } else {
-    //         navigate("/");
-    //     }
-    // }
-
-    const loadMatch = async () => {
-        if (!key) return navigate("/");
-
-        const result = await getMatchByKey(key);
-        if (!result.ok || !result.body || (result.body as IMatch).stage === "pending") {
+    const processMatchData = async (match: IMatch) => {
+        if (match.stage === "pending") {
             return navigate("/");
         }
 
-        const match = result.body as IMatch;
-        if (match.stage !== "preparing") {
+        if (match.stage === "started" && Object.keys(match.battle.playerStates).length === 2) {
             return navigate(`/battle/${key}`);
         }
 
@@ -175,17 +134,25 @@ const Preparation: FC = () => {
         }
     }
 
-    const setUpSocket = () => {
+    const setUpSocket = (matchKey: string) => {
         const socket = io(
             import.meta.env.VITE_SOCKET_URL + "/battle",
             {
                 auth: { userId: user!.sub },
-                query: { key }
+                query: { key: matchKey }
             }
         );
 
         socket.on("opponent-ready", () => {
             setOpponentIsReady(true);
+        });
+
+        socket.on("connection-fail", () => {
+            setSocket(undefined);
+        });
+
+        socket.on("connected", (data: IMatch) => {
+           setMatch(data);
         });
 
         setSocket(socket);
@@ -264,76 +231,80 @@ const Preparation: FC = () => {
         }
     }
 
+    //TODO: add loading screen
+
     return (
         <WindowFrame>
-            <main className="preparation" >
-                <div className="deck-selector-panel" >
-                    <div className="title-text" ></div>
-                    <div className="decks-container" >
-                        {decks.map((deck) =>
-                            <Deck
-                                key={deck.id}
-                                name={deck.name}
-                                id={deck.id}
-                                pos={deck.pos!}
-                                animation={deck.animation!}
-                                onClick={handleOnClick}
-                            />
-                        )}
-                    </div>
-                    <div className="h-40 flex flex-col gap-5 items-center" >
-                        { !isReady ?
-                            <span id="ready-btn">
+            { match && match.stage === "preparing" &&
+                <main className="preparation" >
+                    <div className="deck-selector-panel" >
+                        <div className="title-text" ></div>
+                        <div className="decks-container" >
+                            {decks.map((deck) =>
+                                <Deck
+                                    key={deck.id}
+                                    name={deck.name}
+                                    id={deck.id}
+                                    pos={deck.pos!}
+                                    animation={deck.animation!}
+                                    onClick={handleOnClick}
+                                />
+                            )}
+                        </div>
+                        <div className="h-40 flex flex-col gap-5 items-center" >
+                            { !isReady ?
+                                <span id="ready-btn">
                             <Button text={"Ready"} onClick={confirmReady} disabled={selectedDeck.id === "venom"} />
                         </span>
-                            :
-                            <h1 className="text-4xl animate-pulse" >
-                                Waiting for opponent...
-                            </h1>
-                        }
-                        <Button
-                            text={isHost ? "Abandon" : "Leave"}
-                            onClick={() => openForcedModal(<LeaveMatchDialog matchKey={key} isHost={!!isHost} />)}
-                        />
-                    </div>
-                    <div className="game-info-container" >
-                        <Frame>
-                            <div className="game-info-panel" >
-                                { opponent &&
-                                    <>
-                                        <div className="flex px-2 gap-2" >
-                                            <img className="user-avatar" src={`../avatars/${opponent.picture || "1"}.jpg`} alt="" />
-                                            <h1 className="text-2xl" >{opponent.username}</h1>
-                                            { opponentIsReady ?
-                                                <i id="ready" className="fa-solid fa-check" ></i>
-                                                :
-                                                <i id="not-ready" className="fa-solid fa-spinner" ></i>
-                                            }
-                                        </div>
-                                        <div className="hr" ></div>
-                                    </>
-                                }
-                                { match && parseTimeLimit(match) &&
-                                    <>
-                                        <div className="text-xl px-2" >
-                                            Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
-                                        </div>
-                                        <div className="hr" ></div>
-                                    </>
-                                }
-                                <div className="px-2" >
-                                    <h1 className="text-2xl" >
-                                        {selectedDeck.name}
-                                    </h1>
-                                    <p>
-                                        {selectedDeck.description}
-                                    </p>
+                                :
+                                <h1 className="text-4xl animate-pulse" >
+                                    Waiting for opponent...
+                                </h1>
+                            }
+                            <Button
+                                text={isHost ? "Abandon" : "Leave"}
+                                onClick={() => openForcedModal(<LeaveMatchDialog matchKey={key} isHost={!!isHost} />)}
+                            />
+                        </div>
+                        <div className="game-info-container" >
+                            <Frame>
+                                <div className="game-info-panel" >
+                                    { opponent &&
+                                        <>
+                                            <div className="flex px-2 gap-2" >
+                                                <img className="user-avatar" src={`../avatars/${opponent.picture || "1"}.jpg`} alt="" />
+                                                <h1 className="text-2xl" >{opponent.username}</h1>
+                                                { opponentIsReady ?
+                                                    <i id="ready" className="fa-solid fa-check" ></i>
+                                                    :
+                                                    <i id="not-ready" className="fa-solid fa-spinner" ></i>
+                                                }
+                                            </div>
+                                            <div className="hr" ></div>
+                                        </>
+                                    }
+                                    { match && parseTimeLimit(match) &&
+                                        <>
+                                            <div className="text-xl px-2" >
+                                                Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
+                                            </div>
+                                            <div className="hr" ></div>
+                                        </>
+                                    }
+                                    <div className="px-2" >
+                                        <h1 className="text-2xl" >
+                                            {selectedDeck.name}
+                                        </h1>
+                                        <p>
+                                            {selectedDeck.description}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        </Frame>
+                            </Frame>
+                        </div>
                     </div>
-                </div>
-            </main>
+                </main>
+            }
         </WindowFrame>
     );
 }

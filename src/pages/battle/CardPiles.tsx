@@ -1,27 +1,49 @@
-import {FC, useEffect, useState} from "react";
+import {FC, useContext, useEffect, useState} from "react";
 import {ICard} from "../../interfaces.ts";
 import CardContent from "./cards/CardContent.tsx";
 import {createPortal} from "react-dom";
 import {IconButton} from "../../components/Button.tsx";
+import {MatchContext} from "../../Context.tsx";
 
-export const DrawPile: FC<{ cards: string[], deck: string }> = ({ cards, deck }) => {
+export const DrawPile: FC<{
+    cardIds: string[],
+    deck: string
+}> = ({ cardIds, deck}) => {
+
+    const [rotations, setRotations] = useState<number[]>([]);
+
+    useEffect(() => {
+        setRotations(generateRotations(cardIds, rotations));
+    }, [cardIds]);
 
     return (
-        cards.map((card, index) => (
+        cardIds.map((card, index) => (
             <div
                 className={`card-back card ${deck}`}
-                style={{ rotate: `${Math.random() * 10}deg` }}
-                key={`${index}-${card}`}
+                style={{ rotate: `${rotations[index]}deg` }}
+                key={index}
             >
-                <div style={{ rotate: `${Math.random() * 1000}deg` }} ></div>
+                <div style={{ rotate: `${rotations[index] * 1000}deg` }} ></div>
             </div>
         ))
     )
 }
 
-export const DiscardPile: FC<{ cards: ICard[], deck: string }> = ({ cards, deck }) => {
+export const DiscardPile: FC<{ cardIds: string[], deck: string }> = ({ cardIds, deck }) => {
 
+    const [rotations, setRotations] = useState<number[]>([]);
+
+    useEffect(() => {
+        setRotations(generateRotations(cardIds, rotations));
+    }, [cardIds]);
+
+    const { loadCards } = useContext(MatchContext);
     const [showOverview, setShowOverview] = useState(false);
+    const [cards, setCards] = useState<ICard[]>([]);
+
+    useEffect(() => {
+        loadCards(cardIds).then(setCards);
+    }, [cardIds]);
 
     const DiscardOverview: FC = () => {
 
@@ -66,7 +88,7 @@ export const DiscardPile: FC<{ cards: ICard[], deck: string }> = ({ cards, deck 
                 <div
                     onClick={() => setShowOverview(true)}
                     className={`discarded-card card ${deck}`}
-                    style={{ rotate: `${Math.random() * 10}deg` }}
+                    style={{ rotate: `${rotations[index]}deg` }}
                     key={index}
                 >
                     <CardContent card={card} />
@@ -75,4 +97,21 @@ export const DiscardPile: FC<{ cards: ICard[], deck: string }> = ({ cards, deck 
             {showOverview && <DiscardOverview />}
         </>
     );
+}
+
+const generateRotations = (cardIds: string[], rotations?: number[]) => {
+    if (rotations) {
+        if (rotations.length < cardIds.length) {
+            const newRotations = cardIds.slice(rotations.length).map(() => Math.random() * 10);
+            return [...rotations, ...newRotations];
+        }
+        else if (rotations.length > cardIds.length) {
+            return rotations.slice(0, cardIds.length);
+        }
+        else {
+            return rotations;
+        }
+    } else {
+        return cardIds.map(() => Math.random() * 10);
+    }
 }

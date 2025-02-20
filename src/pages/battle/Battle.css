@@ -176,3 +176,13 @@
     font-size: 3.6vh;
     animation: discard-overview-replace 0.1s linear forwards;
 }
+
+.redrawable-card {
+    position: relative;
+    height: 40vh !important;
+    font-size: 3.6vh !important;
+}
+
+.redrawable-card.selected {
+    filter: drop-shadow(0 0 4px goldenrod);
+}
