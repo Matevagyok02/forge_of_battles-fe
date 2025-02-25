@@ -71,11 +71,11 @@
     mask-image: linear-gradient(to bottom, transparent 4px, black 8px, black calc(100% - 8px), transparent calc(100% - 4px));
 }
 
-.battle-chat .icon-btn.minimize {
+.battle-chat .iconBtn.minimize {
     height: 12px;
     scale: 1.5;
 }
 
-.battle-chat-container .icon-btn.message {
+.battle-chat-container .iconBtn.message {
     scale: 2;
 }

@@ -7,6 +7,8 @@ import {useNavigate} from "react-router-dom";
 import {IBattle, IMatch, IUser} from "../../interfaces.ts";
 import {findPlayerById} from "../../api/user.ts";
 import {parseTimeLimit} from "../../utils.ts";
+import styles from "./Home.module.css";
+import appStyles from "../../styles/App.module.css";
 
 const JoinGame: FC = () => {
 
@@ -104,7 +106,7 @@ const JoinGame: FC = () => {
     return(
         <Modal>
             <div className="flex min-w-[112vh] min-h-[64vh]" >
-                <div className="flex flex-col gap-4 p-8 justify-center items-center" >
+                <div className="flex flex-col gap-4 p-8 justify-center items-center w-1/2" >
                     { !loading &&
                         <>
                             { activeMatch ?
@@ -118,7 +120,7 @@ const JoinGame: FC = () => {
                                             <h1 className="text-2xl" >{activeMatch.opponent.username}</h1>
                                         </div>
                                     }
-                                    <div className="hr" ></div>
+                                    <div className={appStyles.hr} ></div>
                                     {
                                         (activeMatch.match.battle as IBattle).timeLimit &&
                                         <div className="text-xl px-2" >
@@ -143,7 +145,7 @@ const JoinGame: FC = () => {
                                         </p>
                                         <Button text="Queue Up" onClick={joinRandom} loading={loading} />
                                     </div>
-                                    <span className="hr" ></span>
+                                    <span className={appStyles.hr} ></span>
                                     <div className="flex flex-col gap-4 items-center">
                                         <h1 className="text-3xl font-amarante" >
                                             Key
@@ -151,7 +153,7 @@ const JoinGame: FC = () => {
                                         <p className="text-center" >
                                             Enter a key to join a game with a friend
                                         </p>
-                                        <label htmlFor={"key-input"} className="key-input" >
+                                        <label htmlFor={"key-input"} className={styles.keyInput} >
                                             <input
                                                 id={"key-input"}
                                                 type="text"
@@ -160,7 +162,7 @@ const JoinGame: FC = () => {
                                                 onFocus={e => handleFocus(e)}
                                                 onBlur={() => setFocused(false)}
                                             />
-                                            <ul className={`key-input-display ${focused ? "focused" : ""}`} >
+                                            <ul className={`${focused ? "focused" : ""}`} >
                                                 {keyInputs.map(i =>
                                                     <li
                                                         key={i}
@@ -171,7 +173,7 @@ const JoinGame: FC = () => {
                                             </ul>
                                         </label>
                                         { errorMsg &&
-                                            <p className="error-text" >
+                                            <p className={appStyles.errorText} >
                                                 {errorMsg}
                                             </p>
                                         }
@@ -187,7 +189,7 @@ const JoinGame: FC = () => {
                         </>
                     }
                 </div>
-                <div className="join-game-bg" ></div>
+                <div className={styles.joinGameBg} ></div>
             </div>
         </Modal>
     );

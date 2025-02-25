@@ -1,14 +1,15 @@
 import {FC} from "react";
 import Modal from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
+import styles from "./Home.module.css";
 
 const TutorialAndCards: FC = () => {
 
     return(
         <Modal>
-            <div className="tutorial-and-cards-panel" >
+            <div className={styles.tutorialAndCardsPanel} >
                 <div>
-                    <div className="decorative-hex" id="tutorial" >
+                    <div className={`${styles.decorativeHex} ${styles.tutorial}`} >
 
                     </div>
                     <p>
@@ -18,7 +19,7 @@ const TutorialAndCards: FC = () => {
                 </div>
                 <span className="vr" ></span>
                 <div>
-                    <div className="decorative-hex" id="rules" >
+                    <div className={`${styles.decorativeHex} ${styles.cards}`} >
 
                     </div>
                     <p>
@@ -28,7 +29,7 @@ const TutorialAndCards: FC = () => {
                 </div>
                 <span className="vr" ></span>
                 <div>
-                    <div className="decorative-hex" id="cards" >
+                    <div className={`${styles.decorativeHex} ${styles.rules}`} >
                     </div>
                     <p>
                         Browse cards from each deck, learn their about their abilities and how to use them

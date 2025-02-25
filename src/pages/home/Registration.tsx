@@ -4,6 +4,8 @@ import {ForcedModal} from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../Context.tsx";
 import avatarList from "../../assets/avatars.json";
+import styles from "./Home.module.css";
+import appStyles from "../../styles/App.module.css";
 
 const Registration: FC = () => {
 
@@ -87,7 +89,7 @@ const Registration: FC = () => {
 
                         <div className="hr" ></div>
 
-                        <ul className="avatar-selector" >
+                        <ul className={styles.avatarSelector} >
                             {avatarList.map(avatar =>
                                 <li
                                     key={avatar}
@@ -116,7 +118,7 @@ const Registration: FC = () => {
                         <div className="hr" ></div>
 
                         { errorMsg &&
-                            <p className="error-text text-center w-72 px-4" >
+                            <p className={`${appStyles.errorText} text-center w-72 px-4`} >
                                 {errorMsg}
                             </p>
                         }
@@ -145,7 +147,7 @@ const Registration: FC = () => {
                             </>
                             :
                             <>
-                                <p className="error-text text-center w-72 px-4" >
+                                <p className={`${appStyles.errorText} text-center w-72 px-4`} >
                                     Something went wrong, please try again later
                                 </p >
                                 <div className="hr" ></div>

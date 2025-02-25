@@ -1,17 +1,15 @@
-import {
-    FC,
-    useContext,
-    useEffect,
-    useState
-} from "react";
-import { Button, IconButton } from "../../components/Button.tsx";
-import {getOnlineFriends, sendFriendInvite } from "../../api/friend.ts";
-import { findByUsername } from "../../api/user.ts";
+import {FC, useContext, useEffect, useState} from "react";
+import {Button, IconBtnDecoration, IconButton} from "../../components/Button.tsx";
+import {getOnlineFriends, sendFriendInvite} from "../../api/friend.ts";
+import {findByUsername} from "../../api/user.ts";
 import Modal from "../../components/Modal.tsx";
-import { CustomResponse } from "../../api/api.ts";
+import {CustomResponse} from "../../api/api.ts";
 import {FriendsContext, ModalContext} from "../../Context.tsx";
 import CreateGame from "./CreateGame.tsx";
 import {getUnseenMsg} from "../../api/chat.ts";
+import friendsPanelStyles from "./FriendsPanel.module.css";
+import appStyles from "../../styles/App.module.css";
+import chatTabStyles from "./ChatTab.module.css";
 
 export interface Friends {
     friends: Friend[];
@@ -38,6 +36,7 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
 
     const [open, setOpen] = useState(false);
     const [unseenMessages, setUnseenMessages] = useState(false);
+    const [showOptions, setShowOptions] = useState(false);
 
     const ListedFriend: FC<Friend> = ((friend) => {
 
@@ -61,22 +60,43 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
             openChat(friend);
         }
 
+        const getStatusClass = (status: string | undefined) => {
+            switch (status) {
+                case FriendStatus.Online:
+                    return friendsPanelStyles.online;
+                case FriendStatus.Busy:
+                    return friendsPanelStyles.busy;
+                case FriendStatus.Offline:
+                    return friendsPanelStyles.offline;
+                case FriendStatus.Pending:
+                    return friendsPanelStyles.pending;
+                default:
+                    return "";
+            }
+        }
+
+        const handleHover = () => {
+            setShowOptions(true);
+        }
+
         return (
-            <li key={friend.userId} className={`friend ${friend.status} ${friend.unseenMessage ? "unseen-msg" : ""}`}>
-                <div className={`friend-avatar-container`}>
-                    <div className="status-indicator" title={friend.status}></div>
-                    <img className="user-avatar" src={`./avatars/${friend.picture || "1"}.jpg`} alt="" />
+            <li
+                key={friend.userId}
+                className={`${friendsPanelStyles.friend} ${getStatusClass(friend.status)} ${friend.unseenMessage ? chatTabStyles.unseenMsg : ""}`}
+                onMouseEnter={handleHover}
+                onMouseLeave={() => setShowOptions(false)}
+            >
+                <div className={friendsPanelStyles.friendAvatarContainer}>
+                    <div className={`${friendsPanelStyles.fixedStatusIndicator} ${friendsPanelStyles.statusIndicator}`} title={friend.status}></div>
+                    <img className={appStyles.userAvatar} src={`./avatars/${friend.picture || "1"}.jpg`} alt="" />
                 </div>
                 <div>
                     <h1 className="px-2">
                         {friend.username}
                     </h1>
                     <div className="flex mt-1 ml-2 relative">
-                        <small className="status-title">
-                            {friend.status}
-                        </small>
-                        {friend.status !== FriendStatus.Pending &&
-                            <div className="friend-options">
+                        { friend.status !== FriendStatus.Pending && showOptions ?
+                            <div className={friendsPanelStyles.friendOptions}>
                                 <IconButton text="Message" icon="message" onClick={openChatWithFriend} />
                                 { friend.status === "online" &&
                                     <IconButton
@@ -86,6 +106,10 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
                                     />
                                 }
                             </div>
+                            :
+                            <small className={friendsPanelStyles.statusTitle}>
+                                {friend.status}
+                            </small>
                         }
                     </div>
                 </div>
@@ -157,7 +181,7 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
                                 <img className="user-avatar" src={`./avatars/${searchResult.picture || "1"}.jpg`} alt="" />
                                 <h1 className="text-2xl">{searchResult.username}</h1>
                             </div>
-                            <div className="hr"></div>
+                            <div className={appStyles.hr}></div>
                             <div className="flex gap-4">
                                 <Button text="Back" onClick={() => setSearchResult(null)} />
                                 <Button text="Invite" onClick={inviteFriend} />
@@ -168,11 +192,11 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
                             {inviteResult ?
                                 <>
                                     {inviteResult.body && "message" in inviteResult.body &&
-                                        <p className={`text-center max-w-80 px-4 ${inviteResult.ok ? "" : "error-text"}`}>
+                                        <p className={`text-center max-w-80 px-4 ${inviteResult.ok ? "" : appStyles.errorText}`}>
                                             {inviteResult.body.message}
                                         </p>
                                     }
-                                    <div className="hr"></div>
+                                    <div className={appStyles.hr}></div>
                                     <Button text={"Close"} onClick={closeModal} />
                                 </>
                                 :
@@ -180,9 +204,9 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
                                     <p className="text-center px-4">
                                         Enter the username of the friend you want to add
                                     </p>
-                                    <div className="hr"></div>
+                                    <div className={appStyles.hr}></div>
                                     {!found &&
-                                        <p className="error-text text-sm text-center px-4">
+                                        <p className={`${appStyles.errorText} text-sm text-center px-4`}>
                                             The user you are looking for was not found
                                         </p>
                                     }
@@ -272,22 +296,22 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
     }, [friends]);
 
     return (
-        <div className={`friends-panel-container ${open ? "friends-open" : "friends-closed"}`}>
+        <div className={`${friendsPanelStyles.friendsPanelContainer} ${open ? friendsPanelStyles.friendsOpen : ""}`}>
             {!unseenMessages ?
-                <IconButton text="Friends" icon="friends" decorated onClick={() => setOpen(!open)} />
+                <IconButton text="Friends" icon="friends" decorated={IconBtnDecoration.horizontal} onClick={() => setOpen(!open)} />
                 :
                 <button
                     title="Check unseen messages"
-                    className={`decorative-hex icon-btn`}
+                    className={`${friendsPanelStyles.decorativeHex} ${friendsPanelStyles.iconBtn}`}
                     onClick={() => setOpen(!open)}
                 >
-                    <div className="unseen-msg-icon" ></div>
-                    <i className={`fa-solid fa-envelope text-gold`} ></i>
+                    <div className={friendsPanelStyles.unseenMsgIcon} ></div>
+                    <i className={`flex w-full justify-center items-center p-2`} ></i>
                 </button>
             }
-            <div className="friends-panel">
-                <div className="friends-panel-frame"></div>
-                <div className="friends-panel-content">
+            <div className={friendsPanelStyles.friendsPanel}>
+                <div className={friendsPanelStyles.friendsPanelFrame}></div>
+                <div className={friendsPanelStyles.friendsPanelContent}>
                     <div className="flex w-full justify-center"></div>
                     <ul>
                         {friends &&

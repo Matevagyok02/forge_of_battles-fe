@@ -1,6 +1,5 @@
-import "./Home.css";
-import "./FriendsPanel.css";
-import "./ChatTab.css";
+import styles from "./Home.module.css";
+import appStyles from "../../styles/App.module.css";
 import {Button, IconButton} from "../../components/Button.tsx";
 import {FC, useCallback, useEffect, useRef, useState, useContext, ReactElement} from "react";
 import {getUser} from "../../api/user.ts";
@@ -318,9 +317,9 @@ const Home = () => {
 
         return(
             content &&
-            <div id={id} className="option-card-btn" onClick={openOption} >
+            <div id={id} className={`${styles.optionCardBtn} ${styles[id + "BtnBg"]}`} onClick={openOption} >
                 <div>
-                    <h1 className="gold-text" >
+                    <h1 className={appStyles.goldText} >
                         {content.title}
                     </h1>
                     <p>
@@ -360,14 +359,14 @@ const Home = () => {
 
     return(
         <WindowFrame>
-            <main className="home" >
+            <main className={styles.home} >
                 <div>
                     <div className="h-[100vh] w-fit" >
-                        <div className="title-text" ></div>
+                        <div className={styles.titleText} ></div>
                         { openedModal ?
                             openedModal
                             :
-                            <div className="option-card-btn-container">
+                            <div className={styles.optionCardBtnContainer}>
                                 <OptionCardButton id="createGame" />
                                 <OptionCardButton id="joinGame" />
                                 <OptionCardButton id="tutorialAndCards" />
@@ -382,7 +381,7 @@ const Home = () => {
                                     <FriendsPanel
                                         openChat={openChat}
                                     />
-                                    <div className="chat-panel" >
+                                    <div className={styles.chatPanel} >
                                         {chatPartners.map(partner => (
                                             <ChatTab
                                                 key={partner.userId}
@@ -403,7 +402,7 @@ const Home = () => {
                             }
                         </>
                         :
-                        <div className="auth-panel" >
+                        <div className={styles.authPanel} >
                             { !isAuthenticated &&
                                 <Button
                                     text="Log In &nbsp; Register"

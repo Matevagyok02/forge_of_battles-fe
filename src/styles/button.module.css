@@ -1,15 +1,14 @@
-.decorative-hex {
+.decorativeHex {
     aspect-ratio: 27/31;
-    font-size: 100%;
     height: auto;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    @apply hex-frame;
+    width: 32px;
 }
 
-.hex-frame::after {
+.decorativeHex::after {
     position: absolute;
     top: 0;
     left: 0;
@@ -35,16 +34,27 @@
     );
 }
 
-.decorative-hex i {
+.decorativeHexHorizontal {
+    @apply decorativeHex;
+    rotate: 90deg;
+}
+
+.decorativeHexHorizontal i {
+    padding: 8px;
+    rotate: -90deg;
+}
+
+.decorativeHex i, .decorativeHexHorizontal i {
+    padding: 8px;
     color: goldenrod;
 }
 
-.icon-btn:hover i {
+.iconBtn:hover i {
     filter: drop-shadow(0 0 2px goldenrod);
     animation: pulse 1.5s ease-in-out infinite;
 }
 
-.icon-btn i {
+.iconBtn i {
     display: block;
     width: fit-content;
 }
@@ -82,7 +92,7 @@
     }
 }
 
-.framed-button:hover span {
+.framedButton:hover span {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -91,15 +101,15 @@ button:active {
     filter: brightness(1.2);
 }
 
-.framed-button:hover label {
+.framedButton:hover label {
     filter: drop-shadow(0 0 4px goldenrod);
 }
 
-.framed-button:hover label.red-text {
+.framedButton:hover label.redText {
     filter: drop-shadow(0 0 4px crimson);
 }
 
-.framed-button:hover .inner-frame-container div {
+.framedButton:hover .inner-frame-container div {
     animation: connect-borders 0.4s ease forwards;
 }
 

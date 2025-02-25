@@ -1,4 +1,4 @@
-.chat-panel {
+.chatPanel {
     position: absolute;
     bottom: 0;
     width: calc(100vw - 2 * var(--window-decor-size));
@@ -8,7 +8,7 @@
     font-size: 14px;
 }
 
-.unseen-msg::after {
+.unseenMsg::after {
     pointer-events: none;
     content: "";
     position: absolute;
@@ -16,10 +16,10 @@
     left: -50%;
     width: 200%;
     height: 100%;
-    animation: chat-unseen linear 1.5s infinite;
+    animation: chatUnseen linear 1.5s infinite;
 }
 
-.chat-min {
+.chatMin {
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -32,7 +32,7 @@
     background-image: linear-gradient(to right, var(--bg-6), var(--bg-3));
 }
 
-.chat-min:hover {
+.chatMin:hover {
     background-image: linear-gradient(to right, rgba(255, 255, 255, 0.2), var(--bg-3));
 }
 
@@ -49,7 +49,7 @@
     border: 1px solid grey;
 }
 
-.chat .icon-btn.cancel {
+.chat .iconBtn.cancel {
     position: static;
 }
 
@@ -63,15 +63,15 @@
     resize: none;
 }
 
-.chat-textarea:focus {
+.chatTextarea:focus {
     outline: none;
 }
 
-.chat .icon-btn i {
+.chat .iconBtn i {
     font-size: 16px;
 }
 
-.chat .input-container {
+.chat .inputContainer {
     display: flex;
     align-items: end;
     gap: 8px;
@@ -114,7 +114,7 @@
     overflow-inline: hidden;
 }
 
-@keyframes chat-unseen {
+@keyframes chatUnseen {
     0% {
         background-image: linear-gradient(to right, transparent, var(--warm-light), transparent var(--light-width));
     }

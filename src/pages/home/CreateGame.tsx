@@ -6,6 +6,8 @@ import Modal from "../../components/Modal.tsx";
 import {Button, IconButton} from "../../components/Button.tsx";
 import {FriendsContext, ModalContext, UserContext} from "../../Context.tsx";
 import {useNavigate} from "react-router-dom";
+import styles from "./Home.module.css";
+import appStyles from "../../styles/App.module.css";
 
 const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
 
@@ -149,7 +151,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
     return(
         <Modal closeCondition={!key} >
             <div className="flex min-w-[112vh] min-h-[64vh]" >
-                <div className="flex flex-col justify-between items-center p-8" >
+                <div className="flex flex-col justify-between items-center p-8 w-1/2">
                     <div className="w-1 min-w-full" >
                         <h1 className="text-center font-amarante text-4xl" >
                             Create a game
@@ -160,23 +162,23 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                     </div>
                     <div className="flex flex-col justify-center gap-4" >
                         <div className="flex justify-center gap-2 px-2" >
-                            <div className="create-game-player justify-start" >
+                            <div className= {`${styles.createGamePlayer} justify-start`} >
                                 <img className="user-avatar" src={`./avatars/${_user?.picture}.jpg`} alt="" />
                                 <h1 className="font-bold" >
                                     {_user?.username}
                                 </h1>
                             </div>
-                            <h1 className="gold-text text-5xl" >
+                            <h1 className={`${appStyles.goldText} text-5xl`} >
                                 VS
                             </h1>
                             { friendToInvite ?
-                                <div className="create-game-player justify-end" >
+                                <div className={`${styles.createGamePlayer} justify-end`} >
                                     <h1 className="font-bold" >
                                         {friendToInvite.username}
                                     </h1>
-                                    <div className="create-game-friend-avatar-container" >
+                                    <div className={styles.createGameFriendAvatarContainer} >
                                         { !key &&
-                                            <div className="remove-friend-inv" >
+                                            <div className={styles.removeFriendInv} >
                                                 <IconButton text={"Remove"} icon={"minimize"} onClick={() => setFriendToInvite(undefined)} />
                                             </div>
                                         }
@@ -184,8 +186,8 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                                     </div>
                                 </div>
                                 :
-                                <div className="create-game-player justify-end" >
-                                    <div className="img-frame-placeholder" >
+                                <div className={`${styles.createGamePlayer} justify-end`} >
+                                    <div className={styles.imgFramePlaceholder} >
                                         <IconButton icon="add" text="Select friend" onClick={openSelect} />
                                         <select
                                             onChange={(e) => changeFriendToInvite(e.target.value)}
@@ -215,7 +217,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                                     </small>
                                 </div>
                                 <div className="flex flex-col pt-1 flex-grow" >
-                                    <div className="slider" >
+                                    <div className={styles.slider} >
                                         <input
                                             type="range"
                                             min={minTimeLimit}
@@ -276,7 +278,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                         :
                         <div className="flex flex-col justify-end items-center gap-2 w-1 min-w-full" >
                             { errorMsg &&
-                                <p className="error-text text-center" >
+                                <p className={`${appStyles.errorText} text-center`} >
                                     {errorMsg}
                                 </p>
                             }
@@ -284,7 +286,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                         </div>
                     }
                 </div>
-                <div className="create-game-bg" ></div>
+                <div className={styles.createGameBg} ></div>
             </div>
         </Modal>
     );

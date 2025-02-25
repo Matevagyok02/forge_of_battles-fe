@@ -1,6 +1,6 @@
 import {ICard} from "../../../interfaces.ts";
 import {FC, useEffect, useState} from "react";
-import img from "../../../../public/cards/light/battle_protector.jpg";
+import appStyles from "../../../styles/App.module.css";
 
 const CardContent: FC<{ card: ICard }> = ({ card }) => {
 
@@ -23,7 +23,7 @@ const CardContent: FC<{ card: ICard }> = ({ card }) => {
                 <div className="card-image-placeholder" ></div>
             }
             <div className="card-name" >
-                <h1 className="gold-text" >
+                <h1 className={appStyles.goldText} >
                     {card.name}
                 </h1>
             </div>
@@ -50,15 +50,6 @@ const CardContent: FC<{ card: ICard }> = ({ card }) => {
                     {card.passiveAbility?.description}
                 </p>
             </div>
-        </>
-    )
-}
-
-const FormatDescription: FC<{ description: string }> = ({description}) => {
-
-    return(
-        <>
-            {description.replace(/<M>/g, '<i class="mana-icon"></i>')}
         </>
     )
 }

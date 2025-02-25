@@ -7,6 +7,7 @@ import {Button} from "../../components/Button.tsx";
 import {FriendsContext, ModalContext} from "../../Context.tsx";
 import {useNavigate} from "react-router-dom";
 import {declineMatch, joinMatch} from "../../api/match.ts";
+import appStyles from "../../styles/App.module.css";
 
 export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sender, onResolve}) => {
 
@@ -63,7 +64,7 @@ export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sen
                 <div className="text-xl" >
                     wants to be your friend
                 </div>
-                <div className="hr" ></div>
+                <div className={appStyles.hr} ></div>
                 <div className="flex gap-4" >
                     <Button
                         text="Decline"

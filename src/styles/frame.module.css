@@ -2,7 +2,7 @@
     mask: radial-gradient(10px at 15px 15px, transparent 100%, black) -15px -15px;
 }
 
-.frame-container {
+.frameContainer {
     width: fit-content;
     height: fit-content;
     min-height: 40px;
@@ -12,7 +12,7 @@
     /*filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));*/
 }
 
-.frame-decor-container {
+.frameDecorContainer {
     pointer-events: none;
     position: absolute;
     top: 0;
@@ -30,34 +30,34 @@
     position: absolute;
 }
 
-.top-right-corner {
+.topRightCorner {
     @apply corner-decor;
     top: 0;
     right: 0;
     transform: scaleX(-1);
 }
 
-.top-left-corner {
+.topLeftCorner {
     @apply corner-decor;
     top: 0;
     left: 0;
 }
 
-.bottom-right-corner {
+.bottomRightCorner {
     @apply corner-decor;
     bottom: 0;
     right: 0;
     rotate: 180deg;
 }
 
-.bottom-left-corner {
+.bottomLeftCorner {
     @apply corner-decor;
     bottom: 0;
     left: 0;
     transform: scaleY(-1);
 }
 
-.frame-border {
+.frameBorder {
     @apply cut-corners;
     position: absolute;
     border: var(--silver-border);
@@ -65,7 +65,7 @@
     width: 100%;
 }
 
-.inner-frame-container {
+.innerFrameContainer {
     position: absolute;
     height: 100%;
     width: 100%;
@@ -78,7 +78,7 @@
     animation: disconnect-borders 0.2s ease forwards;
 }
 
-.top-left-inner-border {
+.topLeftInnerBorder {
     @apply inner-frame;
     top: 3px;
     left: 3px;
@@ -86,7 +86,7 @@
     border-left: var(--thin-silver-border);
 }
 
-.top-right-inner-border {
+.topRightInnerBorder {
     @apply inner-frame;
     top: 3px;
     right: 3px;
@@ -94,7 +94,7 @@
     border-right: var(--thin-silver-border);
 }
 
-.bottom-left-inner-border {
+.bottomLeftInnerBorder {
     @apply inner-frame;
     bottom: 3px;
     left: 3px;
@@ -102,7 +102,7 @@
     border-left: var(--thin-silver-border);
 }
 
-.bottom-right-inner-border {
+.bottomRightInnerBorder {
     @apply inner-frame;
     bottom: 3px;
     right: 3px;
@@ -110,7 +110,7 @@
     border-right: var(--thin-silver-border);
 }
 
-.frame-content {
+.frameContent {
     @apply cut-corners;
     position: relative;
     z-index: 0;

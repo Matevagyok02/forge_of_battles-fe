@@ -4,6 +4,8 @@ import Modal from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {ModalContext, UserContext} from "../../Context.tsx";
 import avatarList from "../../assets/avatars.json";
+import styles from "./Home.module.css";
+import appStyles from "../../styles/App.module.css";
 
 const ChangeAvatar: FC = () => {
 
@@ -37,10 +39,10 @@ const ChangeAvatar: FC = () => {
 
     return(
         <Modal>
-            <div className="change-avatar" >
+            <div className={styles.changeAvatar} >
                 { typeof changed === "undefined" ?
                     <>
-                        <ul className="avatar-selector" >
+                        <ul className={styles.avatarSelector} >
                             {avatarList.map(avatar =>
                                 <li
                                     key={avatar}
@@ -71,7 +73,7 @@ const ChangeAvatar: FC = () => {
                             </>
                             :
                             <>
-                                <p className="error-text px-4" >
+                                <p className={`${appStyles.errorText} px-4`} >
                                     Something went wrong, please try again
                                 </p >
                                 <div className="hr" ></div>

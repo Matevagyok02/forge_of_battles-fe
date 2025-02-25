@@ -3,7 +3,7 @@ main.home {
     box-shadow: inset 0 0 70px 20px black;
 }
 
-.title-text {
+.titleText {
     width: 100%;
     height: 112px;
     background: url("../../assets/svg/title.svg") center/cover no-repeat;
@@ -12,7 +12,7 @@ main.home {
 
 /* UserPanel */
 
-.user-panel {
+.userPanel {
     position: absolute;
     right: 0;
     top: 0;
@@ -23,7 +23,7 @@ main.home {
     flex-direction: column;
 }
 
-.user-name {
+.userName {
     width: fit-content;
     padding-right: 64px;
     padding-left: 36px;
@@ -33,7 +33,7 @@ main.home {
     /*filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));*/
 }
 
-.user-panel .settings {
+.userPanel .settings {
     position: absolute;
     top: 34px;
     right: 60px;
@@ -41,15 +41,15 @@ main.home {
     gap: 10px;
 }
 
-.user-panel .settings .decorative-hex::after {
+.userPanel .settings .decorativeHex::after {
     rotate: 90deg;
 }
 
-.user-panel .settings .decorative-hex {
+.userPanel .settings .decorativeHex {
     width: 32px;
 }
 
-.user-name::before {
+.userName::before {
     content: "";
     position: absolute;
     top: 0;
@@ -69,7 +69,7 @@ main.home {
     );
 }
 
-.user-avatar-container {
+.userAvatarContainer {
     position: absolute;
     top: 0;
     right: 0;
@@ -80,7 +80,7 @@ main.home {
     border-radius: 50%;
 }
 
-.user-avatar-container button {
+.userAvatarContainer button {
     position: absolute;
     z-index: 2;
     left: 0;
@@ -89,20 +89,23 @@ main.home {
     height: 100%;
     font-size: 32px;
     opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.user-avatar-container:hover button {
+.userAvatarContainer:hover button {
     opacity: 1;
 }
 
 
-.user-avatar-container img {
+.userAvatarContainer img {
     position: absolute;
-    width: 60px !important;
-    height: 60px !important;
+    width: 56px !important;
+    height: 56px !important;
 }
 
-.change-avatar {
+.changeAvatar {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -112,33 +115,25 @@ main.home {
 
 /* ChangeAvatar */
 
-.avatar-selector {
+.avatarSelector {
     display: grid;
     padding-inline: 16px;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
 }
 
-.avatar-selector img {
+.avatarSelector img {
     width: 56px !important;
     height: 56px !important;
 }
 
-.avatar-selector .selected {
+.avatarSelector .selected {
     filter: drop-shadow(0 0 4px goldenrod) drop-shadow(0 0 8px white);
-}
-
-img.user-avatar {
-    display: block;
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    border: 2px solid grey;
 }
 
 /* AuthPanel */
 
-.auth-panel {
+.authPanel {
     position: absolute;
     right: 5.6vh;
     top: 3.8vh;
@@ -146,17 +141,17 @@ img.user-avatar {
     gap: 16px
 }
 
-.auth-panel .settings .decorative-hex {
-    width: 32px;
-}
+/*.authPanel .settings .decorativeHex {*/
+/*    width: 32px;*/
+/*}*/
 
-.auth-panel .settings {
+.authPanel .settings {
     display: flex;
     height: fit-content;
     gap: 8px;
 }
 
-.auth-panel .frame-container::after {
+.authPanel .frameContainer::after {
     content: "";
     position: absolute;
     top: 50%;
@@ -169,11 +164,11 @@ img.user-avatar {
 
 /* OptionCard */
 
-.option-card-btn-container {
+.optionCardBtnContainer {
     @apply inline-flex gap-8 w-fit pt-5;
 }
 
-.option-card-btn {
+.optionCardBtn {
     @apply option-card-background;
     width: 18vw;
     height: 66vh;
@@ -184,23 +179,23 @@ img.user-avatar {
     justify-content: end;
 }
 
-.option-card-btn:hover {
-    animation: option-card-hover 0.2s ease forwards;
+.optionCardBtn:hover {
+    animation: optionCardHover 0.2s ease forwards;
 }
 
-.option-card-btn div {
+.optionCardBtn div {
     padding: 12px 12px 32px 12px;
     border-radius: 6px;
     background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 1));
     min-height: 30%;
 }
 
-.option-card-btn h1 {
+.optionCardBtn h1 {
     min-width: fit-content;
     font-size: 28px;
 }
 
-.option-card-btn p {
+.optionCardBtn p {
     filter:
             drop-shadow(1px 1px 4px black)
             drop-shadow(-1px -1px 4px black)
@@ -215,7 +210,7 @@ img.user-avatar {
     background-repeat: no-repeat;
 }
 
-@keyframes option-card-hover {
+@keyframes optionCardHover {
     0% {}
     100% {
         scale: 1.05;
@@ -223,28 +218,28 @@ img.user-avatar {
     }
 }
 
-#joinGame {
+.joinGameBtnBg {
     background-image: url("../../assets/background/join_game.jpg");
 }
 
-#createGame {
+.createGameBtnBg {
     background-image: url("../../assets/background/create_game.jpg");
 }
 
-#tutorialAndCards {
+.tutorialAndCardsBtnBg {
     background-image: url("../../assets/background/tutorial_and_cards.jpg");
 }
 
 /* TutorialAndCards */
 
-.tutorial-and-cards-panel {
+.tutorialAndCardsPanel {
     padding: 64px;
     padding-inline: 32px;
     display: flex;
     gap: 32px;
 }
 
-.tutorial-and-cards-panel > div {
+.tutorialAndCardsPanel > div {
     display: flex;
     flex-direction: column;
     gap: 32px;
@@ -252,25 +247,26 @@ img.user-avatar {
     justify-content: space-between;
 }
 
-.tutorial-and-cards-panel p {
+.tutorialAndCardsPanel p {
     text-align: center;
     width: 1px;
     min-width: 100%;
 }
 
-.tutorial-and-cards-panel .decorative-hex {
-    width: 128px;
+.decorativeHex {
+    width: 128px !important;
     filter: drop-shadow(0 0 4px goldenrod);
     background-size: 60% 60%;
     background-position: center;
     background-repeat: no-repeat;
+    composes: decorativeHex from "/src/styles/button.module.css";
 }
 
-.tutorial-and-cards-panel .decorative-hex::after {
-    background-color: goldenrod;
+.decorativeHex::after {
+    background-color: goldenrod !important;
 }
 
-.tutorial-and-cards-panel .decorative-hex::before {
+.decorativeHex::before {
     position: absolute;
     content: "";
     border-left: 2px solid goldenrod;
@@ -280,15 +276,15 @@ img.user-avatar {
     translate: 0 -50%;
 }
 
-#tutorial {
+.tutorial {
     background-image: url("../../assets/svg/tutorial_icon.svg");
 }
 
-#cards {
+.cards {
     background-image: url("../../assets/svg/cards_icon.svg");
 }
 
-#rules {
+.rules {
     background-image: url("../../assets/svg/rules_icon.svg");
 }
 
@@ -303,22 +299,23 @@ img.user-avatar {
     flex-grow: 1;
 }
 
-.join-game-bg {
+.joinGameBg {
     @apply create-join-bg;
     background-image: url("../../assets/background/join_game.jpg");
+    background-position: center;
 }
 
-.key-input {
+.keyInput {
     cursor: pointer;
 }
 
-.key-input input {
+.keyInput input {
     position: fixed;
     z-index: -1;
     opacity: 0;
 }
 
-.key-input-display {
+.keyInput ul {
     display: flex;
     justify-content: center;
     gap: 4px;
@@ -326,7 +323,7 @@ img.user-avatar {
     cursor: pointer;
 }
 
-.key-input-display li {
+.keyInputDisplay li {
     cursor: pointer;
     width: 24px;
     height: 28px;
@@ -337,11 +334,11 @@ img.user-avatar {
     background-image: linear-gradient(to bottom, transparent 2px, rgba(255, 255, 255, 0.1));
 }
 
-.key-input-display.focused li {
+.keyInputDisplay.focused li {
     animation: focus 1.5s linear infinite;
 }
 
-.key-input-display li.filled {
+.keyInputDisplay li.filled {
     animation: none;
 }
 
@@ -381,19 +378,20 @@ img.user-avatar {
     }
 }
 
-.create-game-bg {
+.createGameBg {
     @apply create-join-bg;
     background-image: url("../../assets/background/create_game.jpg");
+    background-position: center;
 }
 
-.create-game-player {
+.createGamePlayer {
     display: flex;
     align-items: end;
     gap: 8px;
     width: 176px;
 }
 
-.img-frame-placeholder {
+.imgFramePlaceholder {
     position: relative;
     height: 40px;
     width: 40px;
@@ -404,11 +402,11 @@ img.user-avatar {
     align-items: center;
 }
 
-.img-frame-placeholder .icon-btn {
+.imgFramePlaceholder .iconBtn {
     font-size: 24px;
 }
 
-.icon-btn {
+.iconBtn {
     display: block;
     aspect-ratio: 1/1;
     width: fit-content;
@@ -550,13 +548,13 @@ select:focus {
     position: relative;
 }
 
-.create-game-friend-avatar-container {
+.createGameFriendAvatarContainer {
     height: 40px;
     width: 40px;
     position: relative;
 }
 
-.remove-friend-inv {
+.removeFriendInv {
     opacity: 0;
     position: absolute;
     top: 0;
@@ -572,18 +570,18 @@ select:focus {
     border: 2px solid grey;
 }
 
-.remove-friend-inv:hover {
+.removeFriendInv:hover {
     opacity: 1;
 }
 
 /* Other */
 
 @media screen and (max-height: 702px) {
-    .friends-panel-container .decorative-hex {
+    .friendsPanelContainer .decorativeHex {
         translate: -8px 0;
     }
 
-    .friends-panel-container.friends-open .decorative-hex {
+    .friendsPanelContainer.friendsOpen .decorativeHex {
         translate: 0 0;
     }
 }
@@ -599,7 +597,7 @@ main > div {
         display: none;
     }
 
-    .option-card-btn-container {
+    .optionCardBtnContainer {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -607,7 +605,7 @@ main > div {
         padding-block: 56px;
     }
 
-    .option-card-btn {
+    .optionCardBtn {
         width: calc(100vw - 2 * (var(--window-decor-size) + 16px ));
         min-width: 254px;
         max-width: 384px;
@@ -619,7 +617,7 @@ main > div {
         background-position: center;
     }
 
-    .option-card-btn div {
+    .optionCardBtn div {
         padding: 12px;
         height: 100%;
         width: 100%;
@@ -627,7 +625,7 @@ main > div {
         background-image: linear-gradient(to right, black, black 50%, transparent);
     }
 
-    .option-card-btn p {
+    .optionCardBtn p {
         max-width: 256px;
     }
 }

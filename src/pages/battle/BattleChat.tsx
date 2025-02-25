@@ -1,7 +1,7 @@
 import Frame from "../../components/Frame.tsx";
 import {ChangeEvent, FC, KeyboardEvent, useState} from "react";
 import {IconButton} from "../../components/Button.tsx";
-import "./BattleChat.css";
+import "./BattleChat.module.css";
 
 export interface IBattleMessage {
     emitter?: string;

@@ -10,6 +10,9 @@ import {
 import {Friend} from "./FriendsPanel.tsx";
 import {IconButton} from "../../components/Button.tsx";
 import {getChatMessages, sendChatMessage} from "../../api/chat.ts";
+import chatTabStyles from "./ChatTab.module.css";
+import friendsPanelStyles from "./FriendsPanel.module.css";
+import appStyles from "../../styles/App.module.css";
 
 export interface Message {
     senderId: string;
@@ -112,26 +115,26 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
     }
 
     return(
-        <div className={`chat-container`} >
+        <div className="" >
             { minimized ?
                 status && unseenMessages !== null &&
                 <div
                     onClick={minimizeChat}
-                    className={`chat-min ${status} ${unseenMessages ? "unseen-msg" : ""}`}
+                    className={`${chatTabStyles.chatMin} ${status} ${unseenMessages ? chatTabStyles.unseenMsg : ""}`}
                 >
-                    <div className="status-indicator" title={status}></div>
+                    <div className={friendsPanelStyles.statusIndicator} title={status}></div>
                     <h1>
                         {props.friend.username}
                     </h1>
                 </div>
                 :
                 <div
-                    className="chat"
+                    className={chatTabStyles.chat}
                 >
                 <div className="flex justify-between items-center px-2" >
                     {status &&
                         <div className={`flex items-center gap-2 ${status}`}>
-                            <div className="status-indicator" title={props.friend.status}></div>
+                            <div className={friendsPanelStyles.statusIndicator} title={props.friend.status}></div>
                             <h1>
                                 {props.friend.username}
                             </h1>
@@ -150,16 +153,16 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
                         />
                     </div>
                 </div>
-                    <div className="hr" ></div>
+                    <div className={appStyles.hr} ></div>
                     <ul>
                         { messages && messages.map((message, index) => (
-                            <li key={index} className={`message ${message.selfWritten ? "self" : "partner"}`}>
+                            <li key={index} className={`${chatTabStyles.message} ${message.selfWritten ? chatTabStyles.self : chatTabStyles.partner}`}>
                                 {message.messageText}
                             </li>
                         ))}
                         <div ref={chatEndRef} ></div>
                     </ul>
-                    <div className="input-container" >
+                    <div className={chatTabStyles.inputContainer} >
                         <textarea
                             rows={1}
                             placeholder="..."

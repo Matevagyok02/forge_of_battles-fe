@@ -1,6 +1,7 @@
 import Frame from "./Frame.tsx";
 import {FC} from "react";
-import "../styles/button.css"
+import buttonStyles from "../styles/button.module.css"
+import appStyles from "../styles/app.module.css"
 
 interface ButtonProps {
     text: string;
@@ -9,10 +10,15 @@ interface ButtonProps {
     loading?: boolean;
 }
 
+export enum IconBtnDecoration {
+    horizontal = 1,
+    vertical = 2
+}
+
 interface IconButtonProps {
     text: string;
     icon: string;
-    decorated?: boolean;
+    decorated?: IconBtnDecoration;
     onClick?: () => void;
 }
 
@@ -54,7 +60,7 @@ export const Button: FC<ButtonProps> = (props) => {
         <button
             onClick={handleClick}
             disabled={props.disabled}
-            className={`h-fit w-fit framed-button cursor-pointer ${props.disabled ? 'grayscale' : ''} ${props.disabled || props.loading ? 'pointer-events-none' : ''}`}
+            className={`h-fit w-fit ${appStyles.framedButton} cursor-pointer ${props.disabled ? 'grayscale' : ''} ${props.disabled || props.loading ? 'pointer-events-none' : ''}`}
             style={{pointerEvents: props.disabled || props.loading ? 'none' : 'auto'}}
         >
             <Frame>
@@ -63,7 +69,7 @@ export const Button: FC<ButtonProps> = (props) => {
                         <div className="loader absolute" ></div>
                         :
                         <label
-                            className={`absolute font-bold text-xl cursor-pointer ${isNegative(props.text) ? "red-text" : "btn-text"}`}
+                            className={`absolute font-bold text-xl cursor-pointer ${isNegative(props.text) ? buttonStyles.redText : "btn-text"}`}
                         >
                             {props.text}
                         </label>
@@ -102,7 +108,7 @@ export const IconButton: FC<IconButtonProps> = (props) => {
         icon &&
         <button
             title={props.text}
-            className={`${props.decorated ? "decorative-hex" : ""} icon-btn ${props.icon}`}
+            className={`${props.decorated ? (props.decorated === IconBtnDecoration.horizontal ? buttonStyles.decorativeHex : buttonStyles.decorativeHexHorizontal) : ""} ${buttonStyles.iconBtn} ${props.icon}`}
             onClick={props.onClick}
         >
             <i className={`fa-solid fa-${icon} ${isNegative(props.text) ? "text-red-600" : "btn-text"}`} ></i>

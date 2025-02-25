@@ -1,4 +1,4 @@
-.friends-panel-container {
+.friendsPanelContainer {
     position: absolute;
     right: 8px;
     top: calc(50% - 65vh / 2);
@@ -8,15 +8,15 @@
     justify-content: end;
 }
 
-.friends-panel {
+.friendsPanel {
     position: relative;
     height: 100%;
-    animation: friends-panel-close 0.2s ease forwards;
+    animation: friendsPanelClose 0.2s ease forwards;
     display: flex;
     align-items: center;
 }
 
-.friends-panel::after {
+.friendsPanel::after {
     content: "";
     z-index: -1;
     position: absolute;
@@ -40,16 +40,16 @@
     mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent);
 }
 
-.friends-panel-container .decorative-hex {
+.friendsPanelContainer .decorativeHex {
     width: 40px;
     font-size: 16px;
 }
 
-.friends-panel-container.friends-open .friends-panel {
-    animation: friends-panel-open 0.2s ease forwards;
+.friendsPanelContainer.friendsOpen .friendsPanel {
+    animation: friendsPanelOpen 0.2s ease forwards;
 }
 
-.friends-panel-frame::before {
+.friendsPanelFrame::before {
     content: "";
     position: absolute;
     top: 0;
@@ -78,12 +78,12 @@
     );
 }
 
-.friends-panel-frame {
+.friendsPanelFrame {
     padding-right: 8px;
     height: 100%;
 }
 
-.friends-panel .friend-avatar-container {
+.friendAvatarContainer {
     position: relative;
     width: 40px;
     height: 40px;
@@ -102,11 +102,11 @@
     background-image: linear-gradient(to right ,rgba(255, 255, 255, 0.1) 60%, transparent);
 }
 
-.friend:hover .status-title {
+.friend:hover .statusTitle {
     display: none;
 }
 
-.friends-panel-content {
+.friendsPanelContent {
     height: 100%;
     position: relative;
     display: flex;
@@ -114,7 +114,7 @@
     justify-content: space-between;
 }
 
-.friends-panel-content ul {
+.friendsPanelContent ul {
     height: 100%;
     margin-block: 8px;
     overflow: scroll;
@@ -127,23 +127,11 @@
     line-height: 16px;
 }
 
-.friend .icon-btn {
-    opacity: 0;
-}
-
-.friend:hover .status-title {
-    opacity: 0;
-}
-
-.friend:hover .icon-btn {
-    opacity: 1;
-}
-
-.friend .user-avatar-frame {
+.friend .userAvatarFrame {
     border-width: 1px;
 }
 
-.unseen-msg-icon {
+.unseenMsgIcon {
     position: absolute;
     top: 0;
     right: 0;
@@ -161,7 +149,7 @@
     animation: highlight 1.2s infinite;
 }
 
-@keyframes friends-panel-open {
+@keyframes friendsPanelOpen {
     0% {
         width: 0;
         opacity: 0;
@@ -178,7 +166,7 @@
     }
 }
 
-@keyframes friends-panel-close {
+@keyframes friendsPanelClose {
     0% {
         width: 100%;
     }
@@ -231,7 +219,7 @@
     }
 }
 
-.status-title {
+.statusTitle {
     position: absolute;
     left: 0;
     opacity: 1;
@@ -239,7 +227,7 @@
     font-size: 12px;
 }
 
-.friend-options {
+.friendOptions {
     position: absolute;
     left: -8px;
     top: -4px;
@@ -247,14 +235,14 @@
     gap: 4px;
 }
 
-.friend .status-indicator {
+.fixedStatusIndicator {
     position: absolute;
     z-index: 1;
     bottom: 0;
     left: 0;
 }
 
-.status-indicator {
+.statusIndicator {
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -262,37 +250,37 @@
 }
 
 .busy  {
-    .status-indicator {
+    .statusIndicator {
         background-color: orangered;
     }
-    .status-title {
+    .statusTitle {
         color: orangered;
     }
 }
 
 .online  {
-    .status-indicator {
+    .statusIndicator {
         background-color: limegreen;
     }
-    .status-title {
+    .statusTitle {
         color: limegreen;
     }
 }
 
 .offline  {
-    .status-indicator {
+    .statusIndicator {
         background-color: dimgrey;
     }
-    .status-title {
+    .statusTitle {
         color: darkgrey;
     }
 }
 
 .pending  {
-    .status-indicator {
+    .statusIndicator {
         background-color: orange;
     }
-    .status-title {
+    .statusTitle {
         color: orange;
     }
 

@@ -2,6 +2,7 @@ import Frame from "./Frame.tsx";
 import {Button, IconButton} from "./Button.tsx";
 import {FC, ReactElement, ReactNode, useContext, useEffect} from "react";
 import {ModalContext} from "../Context.tsx";
+import buttonStyles from "../styles/button.module.css"
 
 const Modal: FC<{ children: ReactNode, closeCondition?: boolean }> = ({ children, closeCondition = true}) => {
 
@@ -21,7 +22,7 @@ const Modal: FC<{ children: ReactNode, closeCondition?: boolean }> = ({ children
     }, []);
 
     return (
-        <div className="modal-container" >
+        <div className={buttonStyles.modalContainer} >
             <div className="modal" >
                 <Frame>
                     { closeCondition &&
@@ -64,7 +65,7 @@ export const InfoModal: FC<{
     }
 
     return(
-        <div className="modal-container info" >
+        <div className={`${buttonStyles.modalContainer} info`} >
             <div className="modal" >
                 <Frame>
                     <div className="flex flex-col gap-4 items-center p-4" >

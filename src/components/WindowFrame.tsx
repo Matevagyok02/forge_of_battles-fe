@@ -1,17 +1,17 @@
-import "../styles/window_frame.css";
+import styles from "../styles/window_frame.module.css";
 import {FC, ReactNode} from "react";
 
 const WindowFrame: FC<{children: ReactNode}> = ({children}) => {
 
     return (
-        <div className="window-container" >
-            <div className="window-inner-container" >
+        <div className={styles.windowContainer} >
+            <div className={styles.windowInnerContainer} >
                 {children}
-                <div className="window-decor-container" >
-                    <div className="window-top-left-corner" ></div>
-                    <div className="window-top-right-corner" ></div>
-                    <div className="window-bottom-left-corner" ></div>
-                    <div className="window-bottom-right-corner" ></div>
+                <div className={styles.windowDecorContainer} >
+                    <div className={styles.windowTopLeftCorner} ></div>
+                    <div className={styles.windowTopRightCorner} ></div>
+                    <div className={styles.windowBottomLeftCorner} ></div>
+                    <div className={styles.windowBottomRightCorner} ></div>
                 </div>
             </div>
         </div>

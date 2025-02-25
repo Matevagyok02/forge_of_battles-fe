@@ -1,4 +1,4 @@
-.window-container {
+.windowContainer {
     position: fixed;
     left: 0;
     top: 0;
@@ -9,7 +9,7 @@
     padding: 4px;
 }
 
-.window-inner-container {
+.windowInnerContainer {
     width: 100%;
     height: 100%;
     position: relative;
@@ -23,7 +23,7 @@ main{
     position: absolute;
 }
 
-.window-decor-container {
+.windowDecorContainer {
     width: 100%;
     height: 100%;
     display: grid;
@@ -39,22 +39,22 @@ main{
     height: 100%;
 }
 
-.window-top-left-corner {
+.windowTopLeftCorner {
     @apply window-decor;
     scale: 1 1;
 }
 
-.window-top-right-corner {
+.windowTopRightCorner {
     @apply window-decor;
     scale: -1 1;
 }
 
-.window-bottom-left-corner {
+.windowBottomLeftCorner {
     @apply window-decor;
     scale: 1 -1;
 }
 
-.window-bottom-right-corner {
+.windowBottomRightCorner {
     @apply window-decor;
     scale: -1 -1;
 }
