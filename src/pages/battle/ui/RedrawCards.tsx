@@ -16,9 +16,6 @@ const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
         const drawnCardsAmount = match?.battle.turn === 1 ? 1 : 2;
         const drawnCards = player!.onHand.slice(player!.onHand.length - drawnCardsAmount, player!.onHand.length);
 
-        // const drawnCards = player!.onHand.slice(0, drawnCardsAmount);
-        console.log(drawnCards);
-
         loadCards(drawnCards).then(setCards);
     }, [player?.onHand.length, match?.battle.turn]);
 

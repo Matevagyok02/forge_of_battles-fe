@@ -54,6 +54,8 @@
     right: 0;
     bottom: 0;
     margin: 1.6vw;
+    display: flex;
+    gap: 16px;
 }
 
 .battle-overlay {
@@ -183,6 +185,8 @@
     font-size: 3.6vh !important;
 }
 
-.redrawable-card.selected {
-    filter: drop-shadow(0 0 4px goldenrod);
+.sacrifice-card {
+    position: relative;
+    height: 28vh !important;
+    font-size: 2.4vh !important;
 }

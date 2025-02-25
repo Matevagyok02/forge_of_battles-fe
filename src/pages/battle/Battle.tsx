@@ -12,6 +12,7 @@ import {getCardsById} from "../../api/cards.ts";
 import {io, Socket} from "socket.io-client";
 import {keyRegex} from "../home/JoinGame.tsx";
 import HudContainer from "./Hud.tsx";
+import Tips from "./Tips.tsx";
 
 const Battle: FC = () => {
 
@@ -22,6 +23,7 @@ const Battle: FC = () => {
     const [opponent, setOpponent] = useState<IPlayerState>();
     const [cards, setCards] = useState<ICard[]>([]);
     const [socket, setSocket] = useState<Socket>();
+    const [tip, setTip] = useState<string>(null);
 
     const {user, isLoading} = useContext(AuthContext);
 
@@ -176,7 +178,9 @@ const Battle: FC = () => {
                     loadCards,
                     player,
                     opponent,
-                    socket
+                    socket,
+                    tip,
+                    setTip
                 }} >
                     <div id="battle-container" >
                         <HudContainer />
@@ -195,6 +199,7 @@ const Battle: FC = () => {
                                 { player?.turnStage === 3 &&
                                     <Button text="End Turn" onClick={endTurn} />
                                 }
+                                <Tips />
                             </div>
                         }
                     </div>

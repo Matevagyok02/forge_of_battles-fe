@@ -58,6 +58,15 @@
     animation: inspect-hand-held-card 0.1s linear forwards;
 }
 
+.deploy-card-tip {
+    position: absolute;
+    z-index: 2;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .hand-held-card:hover {
     z-index: 1;
     scale: 1.1;
@@ -249,4 +258,26 @@
             drop-shadow(0.4vh -0.4vh 2px black)
             drop-shadow(-0.4vh -0.4vh 2px black)
             !important;
+}
+
+.card-small {
+    position: relative;
+    height: 28vh !important;
+    font-size: 2.4vh !important;
+}
+
+.card-medium {
+    position: relative;
+    height: 34vh !important;
+    font-size: 3vh !important;
+}
+
+.card-large {
+    position: relative;
+    height: 40vh !important;
+    font-size: 3.6vh !important;
+}
+
+.card.selected {
+    filter: drop-shadow(0 0 4px goldenrod);
 }

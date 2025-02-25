@@ -1,14 +1,9 @@
-import {
-    FC,
-    useContext,
-    useEffect,
-    useState
-} from "react";
-import { Button, IconButton } from "../../components/Button.tsx";
-import {getOnlineFriends, sendFriendInvite } from "../../api/friend.ts";
-import { findByUsername } from "../../api/user.ts";
+import {FC, useContext, useEffect, useState} from "react";
+import {Button, Icon, IconButton} from "../../components/Button.tsx";
+import {getOnlineFriends, sendFriendInvite} from "../../api/friend.ts";
+import {findByUsername} from "../../api/user.ts";
 import Modal from "../../components/Modal.tsx";
-import { CustomResponse } from "../../api/api.ts";
+import {CustomResponse} from "../../api/api.ts";
 import {FriendsContext, ModalContext} from "../../Context.tsx";
 import CreateGame from "./CreateGame.tsx";
 import {getUnseenMsg} from "../../api/chat.ts";
@@ -77,11 +72,11 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
                         </small>
                         {friend.status !== FriendStatus.Pending &&
                             <div className="friend-options">
-                                <IconButton text="Message" icon="message" onClick={openChatWithFriend} />
+                                <IconButton icon={Icon.message} onClick={openChatWithFriend} />
                                 { friend.status === "online" &&
                                     <IconButton
-                                        text="Invite"
-                                        icon="add"
+                                        text={"Invite"}
+                                        icon={Icon.add}
                                         onClick={() => openModal(<CreateGame friend={friend} />)}
                                     />
                                 }
@@ -274,7 +269,7 @@ const FriendsPanel: FC<{ openChat: (friend: Friend) => void }> = ({ openChat }) 
     return (
         <div className={`friends-panel-container ${open ? "friends-open" : "friends-closed"}`}>
             {!unseenMessages ?
-                <IconButton text="Friends" icon="friends" decorated onClick={() => setOpen(!open)} />
+                <IconButton icon={Icon.friends} decorated onClick={() => setOpen(!open)} />
                 :
                 <button
                     title="Check unseen messages"

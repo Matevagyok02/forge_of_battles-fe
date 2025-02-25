@@ -6,6 +6,7 @@ import {AuthContext, MatchContext, UserContext} from "../../Context.tsx";
 
 const maxMana = 10;
 const maxHealth = 8;
+const criticalTime = 1000 * 30;
 
 const HudContainer: FC = () => {
 
@@ -48,6 +49,7 @@ const Hud: FC<{
 
         if (playerState.turnStage > 0 && playerState.timeLeft > 0) {
             intervalId = window.setInterval(countdown, 1000);
+            setCountdownInterval(intervalId);
         } else {
             setTimeLeft(playerState.timeLeft);
         }
@@ -60,7 +62,7 @@ const Hud: FC<{
     }, [playerState.turnStage, playerState.timeLeft, playerState.turnStartedAt]);
 
     useEffect(() => {
-        if (timeLeft === 0 && countownInterval) {
+        if (timeLeft !== undefined && timeLeft < 1000 && countownInterval) {
             clearInterval(countownInterval);
             setCountdownInterval(undefined);
             //TODO: socket.emit("endTurn", { playerId: playerState.userId });
@@ -120,7 +122,7 @@ const Hud: FC<{
     }
 
     const calcTimeLeft = (time: number) => {
-        const timeInSeconds = time / 1000;
+        const timeInSeconds = time / 1000 > 0 ? time / 1000 : 0;
         const minutes = Math.floor(timeInSeconds / 60);
         const seconds = Math.floor(timeInSeconds % 60);
         return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
@@ -179,7 +181,7 @@ const Hud: FC<{
                 </div>
                 { playerState.timeLeft &&
                     <div className={styles.timeContainer} >
-                        <h1>
+                        <h1 className={timeLeft <= criticalTime || playerState.timeLeft <= criticalTime ? "error-text" : ""} >
                             { timeLeft && playerState.turnStage > 0  ?
                                 calcTimeLeft(timeLeft)
                                 :

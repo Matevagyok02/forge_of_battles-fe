@@ -2,7 +2,7 @@ import {FC, useContext, useEffect, useState} from "react";
 import {ICard} from "../../interfaces.ts";
 import CardContent from "./cards/CardContent.tsx";
 import {createPortal} from "react-dom";
-import {IconButton} from "../../components/Button.tsx";
+import {Icon, IconButton} from "../../components/Button.tsx";
 import {MatchContext} from "../../Context.tsx";
 
 export const DrawPile: FC<{
@@ -62,7 +62,7 @@ export const DiscardPile: FC<{ cardIds: string[], deck: string }> = ({ cardIds, 
                 <div className="battle-overlay" >
                     <div className="discard-overview" >
                         <div className="cancel-discard-overview-btn" >
-                            <IconButton text="Cancel" icon="cancel" onClick={() => setShowOverview(false)} />
+                            <IconButton icon={Icon.cancel} onClick={() => setShowOverview(false)} />
                         </div>
                         <div className="discard-overview-cards" >
                             {cards.map((card, index) => (

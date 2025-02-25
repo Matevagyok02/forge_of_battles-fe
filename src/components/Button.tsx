@@ -2,6 +2,8 @@ import Frame from "./Frame.tsx";
 import {FC} from "react";
 import "../styles/button.css"
 
+//TODO: Add prop for button width
+
 interface ButtonProps {
     text: string;
     onClick?: () => void;
@@ -10,10 +12,30 @@ interface ButtonProps {
 }
 
 interface IconButtonProps {
-    text: string;
-    icon: string;
+    icon: Icon;
+    text?: string;
     decorated?: boolean;
     onClick?: () => void;
+    deactivated?: boolean;
+}
+
+export enum Icon {
+    logout = "right-from-bracket",
+    music = "music",
+    sound = "volume-high",
+    friends = "user-group",
+    settings = "gear",
+    notification = "bell",
+    cancel = "xmark",
+    edit = "pen-to-square",
+    options = "ellipsis-vertical",
+    remove = "trash-can",
+    add = "plus",
+    message = "comment-dots",
+    minimize = "minus",
+    send = "paper-plane",
+    copy = "copy",
+    question = "circle-question",
 }
 
 const isNegative = (text: string) => {
@@ -76,36 +98,17 @@ export const Button: FC<ButtonProps> = (props) => {
 
 export const IconButton: FC<IconButtonProps> = (props) => {
 
-    const icons: { [key: string]: string } = {
-        logout: "right-from-bracket",
-        music: "music",
-        sound: "volume-high",
-        friends: "user-group",
-        settings: "gear",
-        notification: "bell",
-        cancel: "xmark",
-        edit: "pen-to-square",
-        options: "ellipsis-vertical",
-        remove: "trash-can",
-        add: "plus",
-        message: "comment-dots",
-        minimize: "minus",
-        send: "paper-plane",
-        copy: "copy",
-        arrowRight: "arrow-right",
-        arrowLeft: "arrow-left",
-    }
+    const iconName = Object.keys(Icon).find(key => Icon[key] === props.icon);
 
-    const icon = icons[props.icon];
+    const text = props.text ? props.text : iconName[0].toUpperCase() + iconName.slice(1);
 
     return(
-        icon &&
         <button
             title={props.text}
-            className={`${props.decorated ? "decorative-hex" : ""} icon-btn ${props.icon}`}
+            className={`${props.decorated ? "decorative-hex" : ""} icon-btn ${iconName} ${props.deactivated ? "deactivated" : ""}`}
             onClick={props.onClick}
         >
-            <i className={`fa-solid fa-${icon} ${isNegative(props.text) ? "text-red-600" : "btn-text"}`} ></i>
+            <i className={`fa-solid fa-${props.icon} ${isNegative(text) ? "text-red-600" : "btn-text"}`} ></i>
         </button>
     )
 }

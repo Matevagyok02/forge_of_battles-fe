@@ -40,6 +40,8 @@ export interface IMatchContext {
     player?: IPlayerState;
     opponent?: IPlayerState;
     socket: Socket;
+    tip: string | null;
+    setTip: Dispatch<SetStateAction<string | null>>;
 }
 
 export const ModalContext = createContext<IModalContext>({} as IModalContext);

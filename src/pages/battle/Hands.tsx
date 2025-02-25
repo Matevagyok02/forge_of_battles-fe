@@ -2,7 +2,6 @@ import {FC, useContext, useEffect, useState} from "react";
 import {ICard} from "../../interfaces.ts";
 import HandHeldCard from "./cards/HandHeldCard.tsx";
 import {MatchContext} from "../../Context.tsx";
-import {Socket} from "socket.io-client";
 
 export const PlayerHand: FC = () => {
 
@@ -30,7 +29,9 @@ export const PlayerHand: FC = () => {
             }
         >
             {cardRotations && cards.map((card, index) => (
-                <div className="hand-held-card-wrapper" key={index} >
+                <div
+                    className="hand-held-card-wrapper" key={index}
+                >
                    <HandHeldCard card={card} rotation={cardRotations[index]} />
                 </div>
             ))}

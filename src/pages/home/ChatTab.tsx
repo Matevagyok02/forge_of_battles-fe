@@ -1,14 +1,6 @@
-import {
-    forwardRef,
-    useEffect,
-    useImperativeHandle,
-    useRef,
-    useState,
-    KeyboardEvent,
-    ChangeEvent,
-} from "react";
+import {ChangeEvent, forwardRef, KeyboardEvent, useEffect, useImperativeHandle, useRef, useState,} from "react";
 import {Friend} from "./FriendsPanel.tsx";
-import {IconButton} from "../../components/Button.tsx";
+import {Icon, IconButton} from "../../components/Button.tsx";
 import {getChatMessages, sendChatMessage} from "../../api/chat.ts";
 
 export interface Message {
@@ -112,7 +104,7 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
     }
 
     return(
-        <div className={`chat-container`} >
+        <div>
             { minimized ?
                 status && unseenMessages !== null &&
                 <div
@@ -139,13 +131,12 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
                     }
                     <div className="flex items-center gap-2" >
                         <IconButton
-                            text="Minimize"
-                            icon="minimize"
+                            icon={Icon.minimize}
                             onClick={() => setMinimized(true)}
                         />
                         <IconButton
-                            text="Close"
-                            icon="cancel"
+                            text={"Close"}
+                            icon={Icon.cancel}
                             onClick={() => props.closeChat(props.friend.userId)}
                         />
                     </div>
@@ -167,7 +158,7 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
                             onChange={e => input(e)}
                             onKeyDown={(e) => handleEnterPress(e)}
                         ></textarea>
-                        <IconButton text="Send" icon="send" onClick={sendMessage} />
+                        <IconButton icon={Icon.send} onClick={sendMessage} />
                     </div>
                 </div>
             }

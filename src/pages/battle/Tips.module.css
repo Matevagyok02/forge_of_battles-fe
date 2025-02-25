@@ -1,0 +1,27 @@
+.toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toggle i {
+    font-size: 32px;
+}
+
+.display {
+    position: fixed;
+    z-index: 10;
+    top: 2vw;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.display p {
+    font-size: 20px;
+    text-align: center;
+    padding-block: 8px;
+    padding-inline: 64px;
+    max-width: 48vw;
+    background-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.6) 10%, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6) 90%, transparent);
+}

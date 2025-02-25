@@ -6,11 +6,9 @@ import {Button} from "../../components/Button.tsx";
 import Frame from "../../components/Frame.tsx";
 import {IBattle, IMatch, IUser} from "../../interfaces.ts";
 import {io, Socket} from "socket.io-client";
-import {useAuth0} from "@auth0/auth0-react";
 import {parseTimeLimit} from "../../utils.ts";
 import {findPlayerById} from "../../api/user.ts";
-import {getMatchByKey} from "../../api/match.ts";
-import {ModalContext} from "../../Context.tsx";
+import {AuthContext, ModalContext} from "../../Context.tsx";
 import LeaveMatchDialog from "./LeaveMatchDialog.tsx";
 import WindowFrame from "../../components/WindowFrame.tsx";
 import decksBaseInfo from "../../assets/decks.json";
@@ -52,8 +50,8 @@ const Preparation: FC = () => {
         return decks;
     }
 
-    const { user } = useAuth0();
-    const { openForcedModal, openInfoModal } = useContext(ModalContext);
+    const { user, isLoading } = useContext(AuthContext);
+    const { openForcedModal } = useContext(ModalContext);
 
     const [match, setMatch] = useState<IMatch>();
     const [opponent, setOpponent] = useState<IUser>();
@@ -65,12 +63,14 @@ const Preparation: FC = () => {
     const [socket, setSocket] = useState<Socket>();
 
     useEffect( () => {
-        if (user && key && (key.match(keyRegex) || key === "test")) {
-            if (!socket) {
-                setTimeout(() => setUpSocket(key), 1000);
+        if (key && !isLoading) {
+            if (key.match(keyRegex) && user) {
+                if (!socket) {
+                    setUpSocket(key, user.sub!)
+                }
+            } else {
+                leavePage();
             }
-        } else {
-            leavePage();
         }
     }, [user, key, socket]);
 
@@ -99,7 +99,6 @@ const Preparation: FC = () => {
     const confirmReady = useCallback(() => {
         if (socket) {
             socket.emit("ready", {deck: selectedDeck.id});
-            setIsReady(true);
         }
     }, [socket, selectedDeck]);
 
@@ -134,12 +133,12 @@ const Preparation: FC = () => {
         }
     }
 
-    const setUpSocket = (matchKey: string) => {
+    const setUpSocket = (key: string, userId: string) => {
         const socket = io(
             import.meta.env.VITE_SOCKET_URL + "/battle",
             {
-                auth: { userId: user!.sub },
-                query: { key: matchKey }
+                auth: { userId },
+                query: { key }
             }
         );
 
@@ -148,11 +147,15 @@ const Preparation: FC = () => {
         });
 
         socket.on("connection-fail", () => {
-            setSocket(undefined);
+            leavePage();
         });
 
         socket.on("connected", (data: IMatch) => {
            setMatch(data);
+        });
+
+        socket.on("ready", () => {
+            setIsReady(true);
         });
 
         setSocket(socket);

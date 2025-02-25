@@ -1,10 +1,10 @@
 import "./Home.css";
 import "./FriendsPanel.css";
 import "./ChatTab.css";
-import {Button, IconButton} from "../../components/Button.tsx";
-import {FC, useCallback, useEffect, useRef, useState, useContext, ReactElement} from "react";
+import {Button, Icon, IconButton} from "../../components/Button.tsx";
+import {FC, ReactElement, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {getUser} from "../../api/user.ts";
-import {IUser, IMatch, ISender, IUserResponseBody, IReceiver} from "../../interfaces.ts";
+import {IMatch, IReceiver, ISender, IUser, IUserResponseBody} from "../../interfaces.ts";
 import FriendsPanel, {Friend, FriendStatus} from "./FriendsPanel.tsx";
 import {io} from "socket.io-client";
 import ChatTab, {ChatRef, Message} from "./ChatTab.tsx";
@@ -15,7 +15,7 @@ import Registration from "./Registration.tsx";
 import AuthRequiredDialog from "../../components/AuthRequiredDialog.tsx";
 import CreateGame from "./CreateGame.tsx";
 import TutorialAndCards from "./TutorialAndCards.tsx";
-import {GameRequest, FriendRequest} from "./Requests.tsx";
+import {FriendRequest, GameRequest} from "./Requests.tsx";
 import {useNavigate} from "react-router-dom";
 import WindowFrame from "../../components/WindowFrame.tsx";
 
@@ -411,8 +411,8 @@ const Home = () => {
                                 />
                             }
                             <div className="settings" >
-                                <IconButton text="Music" icon="music" decorated onClick={() => alert("TODO")} />
-                                <IconButton text="Sound" icon="sound" decorated onClick={() => alert("TODO")} />
+                                <IconButton icon={Icon.music} decorated onClick={() => alert("TODO")} />
+                                <IconButton icon={Icon.sound} decorated onClick={() => alert("TODO")} />
                             </div>
                         </div>
                     }

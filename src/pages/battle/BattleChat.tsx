@@ -1,6 +1,6 @@
 import Frame from "../../components/Frame.tsx";
 import {ChangeEvent, FC, KeyboardEvent, useCallback, useContext, useEffect, useState} from "react";
-import {IconButton} from "../../components/Button.tsx";
+import {Icon, IconButton} from "../../components/Button.tsx";
 import "./BattleChat.css";
 import {MatchContext, UserContext} from "../../Context.tsx";
 
@@ -65,11 +65,11 @@ const BattleChat: FC = () => {
         <div className="battle-chat-container" >
             {
                 minimized ?
-                    <IconButton text="Chat" icon="message" onClick={() => setMinimized(false)} />
+                    <IconButton text="Chat" icon={Icon.message} onClick={() => setMinimized(false)} />
                     :
                     <Frame>
                         <div className="battle-chat" >
-                            <IconButton text={"Minimize"} icon="minimize" onClick={() => setMinimized(true)} />
+                            <IconButton icon={Icon.minimize} onClick={() => setMinimized(true)} />
                             <ul className="battle-chat-messages" >
                                 { messages.map((msg, i) =>
                                     <li key={i} className={!msg.emitter ? "event-log" : ""} >
@@ -86,7 +86,7 @@ const BattleChat: FC = () => {
                                     onChange={e => input(e)}
                                     onKeyDown={(e) => handleEnterPress(e)}
                                 ></textarea>
-                                <IconButton text="Send" icon="send" onClick={send} />
+                                <IconButton icon={Icon.send} onClick={send} />
                             </div>
                         </div>
                     </Frame>
