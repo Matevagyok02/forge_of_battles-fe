@@ -10,7 +10,7 @@ const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
     const { match, socket, player, loadCards } = useContext(MatchContext);
     const [cardToChange, setCardToChange] = useState<{ id: string, index: number }>();
 
-    const [cards, setCards] = useState<ICard[]>();
+    const [cards, setCards] = useState<ICard[]>([]);
 
     useEffect(() => {
         const drawnCardsAmount = match?.battle.turn === 1 ? 1 : 2;
@@ -45,7 +45,7 @@ const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
     }, [cardToChange]);
 
     const isSelected = useCallback((id: string, index: number) => {
-        return cardToChange && cardToChange.id === id && cardToChange.index === index && cards?.length > 1;
+        return cardToChange && cardToChange.id === id && cardToChange.index === index && cards.length > 1;
     }, [cardToChange, cards]);
 
     return (

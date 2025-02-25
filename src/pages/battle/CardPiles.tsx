@@ -17,11 +17,11 @@ export const DrawPile: FC<{
     }, [cardIds]);
 
     return (
-        cardIds.map((card, index) => (
+        cardIds.map((cardId , index) => (
             <div
                 className={`card-back card ${deck}`}
                 style={{ rotate: `${rotations[index]}deg` }}
-                key={index}
+                key={index + "-" + cardId}
             >
                 <div style={{ rotate: `${rotations[index] * 1000}deg` }} ></div>
             </div>

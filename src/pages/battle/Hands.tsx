@@ -44,6 +44,8 @@ export const OpponentHand: FC = () => {
     const { player, opponent, socket } = useContext(MatchContext);
     const [cardRotations, setCardRotations] = useState<number[]>([]);
 
+    console.log(socket.id); //TODO: remove
+
     useEffect(() => {
         setCardRotations(
             getCardRotationPoints(opponent!.onHand.length)

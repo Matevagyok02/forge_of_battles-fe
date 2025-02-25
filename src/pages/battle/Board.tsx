@@ -3,10 +3,9 @@ import cardSlots from "../../assets/card_slots.json";
 import {MatchContext} from "../../Context.tsx";
 import "./Board.css";
 import {DiscardPile, DrawPile} from "./CardPiles.tsx";
-import {ICard} from "../../interfaces.ts";
+import {ICard, IPlayerState} from "../../interfaces.ts";
 import DeployedCard from "./cards/DeployedCard.tsx";
 import RedrawCards from "./ui/RedrawCards.tsx";
-import {createPortal} from "react-dom";
 import VirtualParent from "../../components/VirtualParent.tsx";
 
 const Board: FC = () => {
@@ -20,9 +19,25 @@ const Board: FC = () => {
 
     const posNames: { [key: string]: string } = cardSlots.posNames;
 
+    const getCanDraw = (player: IPlayerState | undefined) => {
+        if (player) {
+            return player?.drawsPerTurn < 1 && player.turnStage === 1 && player.drawingDeck.length > 0;
+        } else {
+            return false;
+        }
+    }
+
+    const getCanRedraw = (player: IPlayerState | undefined) => {
+        if (player) {
+            return player?.drawsPerTurn === 1 && player?.turnStage === 1 && player?.drawingDeck.length > 0;
+        } else {
+            return false;
+        }
+    }
+
     const [colors, setColors] = useState<{ player: string, opponent: string }>();
-    const [canDraw, setCanDraw] = useState<boolean>(player?.drawsPerTurn < 1 && player?.turnStage === 1 && player?.drawingDeck.length > 0);
-    const [canRedraw, setCanRedraw] = useState<boolean>(player?.drawsPerTurn === 1 && player?.turnStage === 1 && player?.drawingDeck.length > 0);
+    const [canDraw, setCanDraw] = useState<boolean>(getCanRedraw(player));
+    const [canRedraw, setCanRedraw] = useState<boolean>(getCanRedraw(player));
     const [openRedraw, setOpenRedraw] = useState<boolean>(false);
     const [drawPileHovered, setDrawPileHovered] = useState<boolean>(false);
 
@@ -55,6 +70,7 @@ const Board: FC = () => {
         card?: ICard,
         slotId: string,
         slotName: string,
+        owner: number
     }> = ({card, slotId, slotName, owner}) => {
 
         const getColor = (owner: number) => {
@@ -84,8 +100,8 @@ const Board: FC = () => {
     }
 
     useEffect(() => {
-        setCanDraw(player?.drawsPerTurn < 1 && player?.turnStage === 1 && player?.drawingDeck.length > 0);
-        setCanRedraw(player?.drawsPerTurn === 1 && player?.turnStage === 1 && player?.drawingDeck.length > 0);
+        setCanDraw(getCanDraw(player));
+        setCanRedraw(getCanRedraw(player));
     }, [player?.drawsPerTurn, player?.turnStage, player?.drawingDeck.length]);
 
     const drawCards = useCallback(() => {
@@ -168,7 +184,5 @@ const Board: FC = () => {
         </div>
     );
 }
-
-const sampleDrawableCards = ['card1', 'card2', 'card3', 'card4', 'card5','card1', 'card2', 'card3', 'card4', 'card5','card1', 'card2', 'card3', 'card4', 'card5'];
 
 export default Board;

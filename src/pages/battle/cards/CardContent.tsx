@@ -1,6 +1,5 @@
 import {ICard} from "../../../interfaces.ts";
 import {FC, useEffect, useState} from "react";
-import img from "../../../../public/cards/light/battle_protector.jpg";
 
 const CardContent: FC<{ card: ICard }> = ({ card }) => {
 
@@ -50,15 +49,6 @@ const CardContent: FC<{ card: ICard }> = ({ card }) => {
                     {card.passiveAbility?.description}
                 </p>
             </div>
-        </>
-    )
-}
-
-const FormatDescription: FC<{ description: string }> = ({description}) => {
-
-    return(
-        <>
-            {description.replace(/<M>/g, '<i class="mana-icon"></i>')}
         </>
     )
 }

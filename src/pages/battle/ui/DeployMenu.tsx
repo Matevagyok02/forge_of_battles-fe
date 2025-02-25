@@ -25,7 +25,7 @@ const DeployMenu: FC<{ cardToDeploy: ICard, cancel: () => void }> = ({  cardToDe
             sacrificeCards
         };
 
-        if (socket && sacrificeCards.length && player?.mana >= cardToDeploy.cost) {
+        if (socket && sacrificeCards.length && player?.mana && player.mana >= cardToDeploy.cost) {
             socket.emit("deploy", data);
         }
     }, [sacrificeCards]);

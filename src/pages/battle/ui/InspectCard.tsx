@@ -8,6 +8,8 @@ const InspectCard: FC<{ card: ICard, cancel: () => void }> = ({ card, cancel }) 
 
     const { player, socket } = useContext(MatchContext);
 
+    console.log(player?.userId, socket.id); //TODO: remove
+
     useEffect(() => {
         document.onkeydown = (e => {
             if (e.key === "Escape") {

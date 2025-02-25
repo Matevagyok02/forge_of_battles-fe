@@ -25,7 +25,7 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
         }
     }, [inspect, cardRef]);
 
-    const handleDrag = (e: any, data: any) => {
+    const handleDrag = (data: any) => {
         if (data.y <= 0) {
             setY(data.y);
         }

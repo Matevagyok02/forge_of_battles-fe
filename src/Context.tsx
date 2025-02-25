@@ -35,7 +35,7 @@ export interface IFriendsContext {
 
 export interface IMatchContext {
     match?: IMatch;
-    setMatch: Dispatch<SetStateAction<IMatch>>;
+    setMatch: Dispatch<SetStateAction<IMatch | undefined>>;
     loadCards: (ids: string[]) => Promise<ICard[]>;
     player?: IPlayerState;
     opponent?: IPlayerState;

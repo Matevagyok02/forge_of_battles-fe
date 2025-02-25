@@ -98,9 +98,9 @@ export const Button: FC<ButtonProps> = (props) => {
 
 export const IconButton: FC<IconButtonProps> = (props) => {
 
-    const iconName = Object.keys(Icon).find(key => Icon[key] === props.icon);
+    const iconName = Object.keys(Icon).find(key => Icon[key as keyof typeof Icon] === props.icon);
 
-    const text = props.text ? props.text : iconName[0].toUpperCase() + iconName.slice(1);
+    const text = props.text ? props.text : iconName ? iconName[0].toUpperCase() + iconName.slice(1) : "";
 
     return(
         <button

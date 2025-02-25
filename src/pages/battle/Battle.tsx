@@ -23,7 +23,7 @@ const Battle: FC = () => {
     const [opponent, setOpponent] = useState<IPlayerState>();
     const [cards, setCards] = useState<ICard[]>([]);
     const [socket, setSocket] = useState<Socket>();
-    const [tip, setTip] = useState<string>(null);
+    const [tip, setTip] = useState<string | null>(null);
 
     const {user, isLoading} = useContext(AuthContext);
 
@@ -84,7 +84,7 @@ const Battle: FC = () => {
 
     const loadCards = useCallback(async (ids: string[]) => {
         const requestedCards: ICard[] = [];
-        const cardStore = [];
+        const cardStore: ICard[] = [];
         const notFoundCards: string[] = [];
 
         ids.forEach(id => {
@@ -98,9 +98,10 @@ const Battle: FC = () => {
 
         if (notFoundCards.length > 0) {
             const response = await getCardsById(notFoundCards);
-            if (response?.ok && response?.body) {
-                cardStore.push(...response.body);
-                setCards(prevState => [...prevState, ...response.body]);
+            if (response?.ok && response?.body && Array.isArray(response.body)) {
+                const newCards = [...response.body];
+                cardStore.push(...newCards);
+                setCards(prevState => [...prevState, ...newCards]);
             }
         }
 
@@ -115,7 +116,7 @@ const Battle: FC = () => {
     }, [cards]);
 
     useEffect(() => {
-        if (match && user) {
+        if (match && user?.sub) {
             const opponentId = match.player1Id === user.sub ? match.player2Id : match.player1Id;
 
             const player = match.battle?.playerStates[user.sub];

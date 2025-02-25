@@ -13,6 +13,8 @@ const HudContainer: FC = () => {
     const { player, opponent, socket } = useContext(MatchContext);
     const { _user } = useContext(UserContext);
 
+    console.log(socket.id); //TODO: remove
+
     return( opponent && player &&
         <div className="hud-container" >
             <Hud
@@ -44,10 +46,12 @@ const Hud: FC<{
         let intervalId: number | undefined;
 
         const countdown = () => {
-            setTimeLeft(playerState?.timeLeft - (Date.now() - playerState?.turnStartedAt));
+            if (playerState.timeLeft && playerState.turnStartedAt) {
+                setTimeLeft(playerState.timeLeft - (Date.now() - playerState.turnStartedAt));
+            }
         };
 
-        if (playerState.turnStage > 0 && playerState.timeLeft > 0) {
+        if (playerState.turnStage > 0 && playerState.timeLeft && playerState.timeLeft > 0) {
             intervalId = window.setInterval(countdown, 1000);
             setCountdownInterval(intervalId);
         } else {
@@ -70,7 +74,7 @@ const Hud: FC<{
     }, [timeLeft]);
 
     useEffect(() => {
-        if (playerState.turnStage === 0 && playerState.timeLeft > 0) {
+        if (playerState.turnStage === 0 && playerState.timeLeft && playerState.timeLeft > 0) {
             setTimeLeft(playerState.timeLeft);
         }
     }, [playerState.turnStage, playerState.timeLeft]);
@@ -181,7 +185,7 @@ const Hud: FC<{
                 </div>
                 { playerState.timeLeft &&
                     <div className={styles.timeContainer} >
-                        <h1 className={timeLeft <= criticalTime || playerState.timeLeft <= criticalTime ? "error-text" : ""} >
+                        <h1 className={timeLeft && timeLeft <= criticalTime || playerState.timeLeft <= criticalTime ? "error-text" : ""} >
                             { timeLeft && playerState.turnStage > 0  ?
                                 calcTimeLeft(timeLeft)
                                 :
