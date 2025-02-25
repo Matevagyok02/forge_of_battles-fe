@@ -10,6 +10,9 @@ body {
     place-items: center;
     min-width: 320px;
     min-height: 100vh;
+
+    scrollbar-width: thin;
+    scrollbar-color: grey transparent;
 }
 
 .gold-text {
@@ -22,18 +25,14 @@ body {
 }
 
 .red-text {
-    font-family: "Amarante", serif;
-    background: linear-gradient(red 40%, crimson 50%, firebrick 60%);
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    filter: drop-shadow(0 0 8px black);
+    color: red;
 }
 
 #empty-screen {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 100;
+    z-index: 10;
     height: 100vh;
     width: 100vw;
     background-color: var(--bg-color);

@@ -3,7 +3,7 @@ import {Friend, getAvailableFriends, getFriendById} from "./FriendsPanel.tsx";
 import {IMatch} from "../../interfaces.ts";
 import {abandonMatch, createGame, getLastCreatedGame} from "../../api/match.ts";
 import Modal from "../../components/Modal.tsx";
-import {Button, IconButton} from "../../components/Button.tsx";
+import {Button, Icon, IconButton} from "../../components/Button.tsx";
 import {FriendsContext, ModalContext, UserContext} from "../../Context.tsx";
 import {useNavigate} from "react-router-dom";
 
@@ -177,7 +177,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                                     <div className="create-game-friend-avatar-container" >
                                         { !key &&
                                             <div className="remove-friend-inv" >
-                                                <IconButton text={"Remove"} icon={"minimize"} onClick={() => setFriendToInvite(undefined)} />
+                                                <IconButton text={"Remove Friend"} icon={Icon.cancel} onClick={() => setFriendToInvite(undefined)} />
                                             </div>
                                         }
                                         <img className="user-avatar" src={`./avatars/${friendToInvite.picture}.jpg`} alt="" />
@@ -186,7 +186,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                                 :
                                 <div className="create-game-player justify-end" >
                                     <div className="img-frame-placeholder" >
-                                        <IconButton icon="add" text="Select friend" onClick={openSelect} />
+                                        <IconButton text={"Select Friend"} icon={Icon.add} onClick={openSelect} />
                                         <select
                                             onChange={(e) => changeFriendToInvite(e.target.value)}
                                             defaultValue={undefined}
@@ -255,13 +255,13 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                                 <h1 className="text-2xl font-bold" >
                                     {key}
                                 </h1>
-                                <IconButton text="Copy" icon="copy" onClick={() => navigator.clipboard.writeText(key as string)} />
+                                <IconButton icon={Icon.copy} onClick={() => navigator.clipboard.writeText(key as string)} />
                             </div>
                             <div className="flex gap-2" >
                                 <h1 className="underline" >
                                     {getLink(key)}
                                 </h1>
-                                <IconButton text="Copy" icon="copy" onClick={() => navigator.clipboard.writeText(getLink(key))} />
+                                <IconButton icon={Icon.copy} onClick={() => navigator.clipboard.writeText(getLink(key))} />
                             </div>
                             { matchStage === "pending" ?
                                 <div className="mt-4" >

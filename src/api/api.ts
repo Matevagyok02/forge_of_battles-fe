@@ -1,4 +1,4 @@
-const apiUrl =  import.meta.env.VITE_API_URL; //"https://forge-of-battles-be.onrender.com"
+const apiUrl =  import.meta.env.VITE_API_URL;
 const accessTokenKey = "@@auth0spajs@@::RAwUMFRHSVMcEUzNXc9PrBAMPZ2KQz57::https://forge-of-battles-be.onrender.com::openid profile email";
 
 export interface CustomResponse {

@@ -1,5 +1,5 @@
 import Frame from "./Frame.tsx";
-import {Button, IconButton} from "./Button.tsx";
+import {Button, Icon, IconButton} from "./Button.tsx";
 import {FC, ReactElement, ReactNode, useContext, useEffect} from "react";
 import {ModalContext} from "../Context.tsx";
 
@@ -25,7 +25,7 @@ const Modal: FC<{ children: ReactNode, closeCondition?: boolean }> = ({ children
             <div className="modal" >
                 <Frame>
                     { closeCondition &&
-                        <IconButton text="" icon="cancel" onClick={closeModal} />
+                        <IconButton icon={Icon.cancel} onClick={closeModal} />
                     }
                     {children}
                 </Frame>

@@ -1,5 +1,5 @@
 import {FC, useContext} from "react";
-import {IconButton} from "../../components/Button.tsx";
+import {Icon, IconButton} from "../../components/Button.tsx";
 import {AuthContext, ModalContext, UserContext} from "../../Context.tsx";
 import ChangeAvatar from "./ChangeAvatar.tsx";
 
@@ -20,15 +20,14 @@ const UserPanel: FC = () => {
             <div className="user-avatar-container" >
                 <img className="user-avatar" src={`./avatars/${_user.picture}.jpg`} alt="" />
                 <IconButton
-                    text="Edit"
-                    icon="edit"
+                    icon={Icon.edit}
                     onClick={() => openModal(<ChangeAvatar/>)}
                 />
             </div>
             <div className="settings" >
-                <IconButton text="Music" icon="music" decorated onClick={() => alert("TODO")} />
-                <IconButton text="Sound" icon="sound" decorated onClick={() => alert("TODO")} />
-                <IconButton text="Log Out" icon="logout" decorated onClick={logout} />
+                <IconButton icon={Icon.music} decorated onClick={() => alert("TODO")} />
+                <IconButton icon={Icon.sound} decorated onClick={() => alert("TODO")} />
+                <IconButton text={"Log Out"} icon={Icon.logout} decorated onClick={logout} />
             </div>
         </div>
     );

@@ -116,5 +116,8 @@
     z-index: 0;
 }
 
+.frame-content .icon-btn {
+    color: goldenrod !important;
+}
 
 

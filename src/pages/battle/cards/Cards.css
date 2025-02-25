@@ -58,7 +58,17 @@
     animation: inspect-hand-held-card 0.1s linear forwards;
 }
 
+.deploy-card-tip {
+    position: absolute;
+    z-index: 2;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .hand-held-card:hover {
+    z-index: 1;
     scale: 1.1;
     filter: drop-shadow(0 0 2px black) brightness(1.2);
 }
@@ -168,10 +178,22 @@
     font-size: 0.48em;
     padding-block: 0.12em;
     width: 100%;
-    background-image: url("../../../assets/background/card_back_bg.jpg");
-    background-size: cover;
+    position: relative;
     /*border: 0.12em solid;*/
     /*border-image: linear-gradient(to right, transparent, rgba(218, 165, 32, 0.7), transparent) 1;*/
+}
+
+.card-abilities p:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../../../assets/background/card_back_bg.jpg");
+    background-size: cover;
+    opacity: 0.8;
 }
 
 .action-ability {
@@ -236,4 +258,26 @@
             drop-shadow(0.4vh -0.4vh 2px black)
             drop-shadow(-0.4vh -0.4vh 2px black)
             !important;
+}
+
+.card-small {
+    position: relative;
+    height: 28vh !important;
+    font-size: 2.4vh !important;
+}
+
+.card-medium {
+    position: relative;
+    height: 34vh !important;
+    font-size: 3vh !important;
+}
+
+.card-large {
+    position: relative;
+    height: 40vh !important;
+    font-size: 3.6vh !important;
+}
+
+.card.selected {
+    filter: drop-shadow(0 0 4px goldenrod);
 }
