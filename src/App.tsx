@@ -12,6 +12,7 @@ import Battle from "./pages/battle/Battle.tsx";
 import Join from "./pages/Join.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
 import AddCard from "./pages/addCard/AddCard.tsx";
+import LoadingScreen from "./components/LoadingScreen.tsx";
 
 const App = () => {
 
@@ -74,6 +75,7 @@ const App = () => {
                 isLoading
         }}
         >
+            <LoadingScreen/>
             <ModalContext.Provider
                 value={{
                     openInfoModal,

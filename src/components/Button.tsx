@@ -108,7 +108,7 @@ export const IconButton: FC<IconButtonProps> = (props) => {
             className={`${props.decorated ? "decorative-hex" : ""} icon-btn ${iconName} ${props.deactivated ? "deactivated" : ""}`}
             onClick={props.onClick}
         >
-            <i className={`fa-solid fa-${props.icon} ${isNegative(text) ? "text-red-600" : "btn-text"}`} ></i>
+            <i className={`fa-solid fa-${props.icon} ${isNegative(text) ? "" : "btn-text"}`} ></i>
         </button>
     )
 }

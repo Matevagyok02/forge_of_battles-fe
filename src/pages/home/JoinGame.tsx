@@ -105,7 +105,7 @@ const JoinGame: FC = () => {
     return(
         <Modal>
             <div className="flex min-w-[112vh] min-h-[64vh]" >
-                <div className="flex flex-col gap-4 p-8 justify-center items-center" >
+                <div className="flex flex-col gap-4 p-8 justify-center items-center w-1/2" >
                     { !loading &&
                         <>
                             { activeMatch ?
