@@ -1,6 +1,6 @@
 import {FC, useContext} from "react";
 import {ForcedModal} from "../../components/Modal.tsx";
-import {ModalContext} from "../../Context.tsx";
+import {ModalContext} from "../../context.tsx";
 import {Button} from "../../components/Button.tsx";
 import {useNavigate} from "react-router-dom";
 import {abandonMatch, leaveMatch} from "../../api/match.ts";

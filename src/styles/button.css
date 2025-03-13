@@ -35,10 +35,6 @@
     );
 }
 
-.decorative-hex i {
-    color: goldenrod;
-}
-
 .icon-btn:hover i {
     filter: drop-shadow(0 0 2px goldenrod);
     animation: pulse 1.5s ease-in-out infinite;
@@ -54,28 +50,33 @@
     width: fit-content;
 }
 
-.remove i {
-    color: orangered;
-}
-
-.btn-text {
+.icon-btn, .framed-button {
     color: goldenrod;
+    font-weight: 500;
 }
 
-.deactivated i {
+.negative-btn {
+    color: red;
+}
+
+.deactivated {
     color: dimgrey !important;
 }
 
-.cancel {
+.close-btn-container {
     position: absolute;
-    z-index: 1;
-    width: 20px;
-    height: 20px;
     top: 8px;
     right: 8px;
+    z-index: 10;
+    width: 20px;
+    height: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .negative-btn {
+        color: goldenrod !important;
+    }
 }
 
 @keyframes shade-bg {
@@ -100,8 +101,8 @@ button:active {
     filter: drop-shadow(0 0 4px goldenrod);
 }
 
-.framed-button:hover label.red-text {
-    filter: drop-shadow(0 0 4px crimson);
+.framed-button:hover label.negative-btn {
+    filter: drop-shadow(0 0 4px red) !important;
 }
 
 .framed-button:hover .inner-frame-container div {
@@ -130,8 +131,6 @@ button:active {
     animation: loading 1s ease 0.5s infinite;
 }
 
-/* HTML: <div class="loader"></div> */
-
 .loader {
     width: 25px;
     height: 25px;
@@ -141,20 +140,113 @@ button:active {
     animation: rotate 1s linear infinite;
 }
 
-@keyframes rotate {
-    0% {
-        rotate: 0deg;
-    }
-    25% {
-        rotate: 90deg;
-    }
-    50% {
-        rotate: 180deg;
-    }
-    75% {
-        rotate: 270deg;
-    }
-    100% {
-        rotate: 360deg;
-    }
+/*---multiple options button---*/
+
+.multipleOptionsBtnList {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    cursor: pointer;
+}
+
+.multipleOptionsBtnList li {
+    font-size: 1.4em;
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.multipleOptionsBtnList li:hover .hint {
+    visibility: visible;
+}
+
+.multipleOptionsBtnList li .hint {
+    visibility: hidden;
+    color: grey;
+    font-size: 0.8em;
+    position: relative;
+}
+
+.multipleOptionsBtnList li .hint p {
+    position: absolute;
+    top: 1.2em;
+    left: 1.2em;
+    color: lightgrey;
+    font-size: 0.8em;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 8px;
+    text-align: justify;
+    width: 256px;
+    visibility: hidden;
+    clip-path: polygon(
+        0 0,
+        8px 4px,
+        calc(100% - 4px) 4px,
+        calc(100% - 4px) calc(100% - 4px),
+        4px calc(100% - 4px),
+        4px 8px
+    );
+}
+
+.multipleOptionsBtnList li .hint:hover p {
+    visibility: visible;
+}
+
+.multipleOptionsBtnList > ul > h1 {
+    font-size: 1.4em;
+}
+
+.multipleOptionsBtnList > li, .multipleOptionsBtnList > ul {
+    width: 100%;
+    padding-block: 2px;
+    padding-inline: 32px;
+    border: 2px solid transparent;
+}
+
+.multipleOptionsBtnList > li:hover, .multipleOptionsBtnList > ul:hover {
+    background-image: linear-gradient(
+            to right,
+            transparent,
+            rgba(0, 0, 0, 0.2) 10%,
+            rgba(0, 0, 0, 0.4),
+            rgba(0, 0, 0, 0.2) 90%,
+            transparent
+    );
+    border-image: linear-gradient(to right, transparent, goldenrod 40%, goldenrod 60%, transparent) 1;
+}
+
+.multipleOptionsBtnList > ul {
+    display: flex;
+    align-items: center;
+}
+
+.multipleOptionsBtnList > ul:hover > ul {
+    display: block;
+    width: 100%;
+}
+
+.multipleOptionsBtnList > ul > ul {
+    display: none;
+}
+
+.multipleOptionsBtnList > ul li {
+    font-size: 1.2em;
+    padding-left: 8px;
+    color: darkgrey;
+    padding-right: 8px;
+}
+
+.multipleOptionsBtnList > ul li:hover {
+    color: lightgrey;
+    background-image: linear-gradient(
+            to right,
+            transparent,
+            rgba(255, 255, 255, 0.1) 10%,
+            rgba(255, 255, 255, 0.2),
+            rgba(255, 255, 255, 0.1) 90%,
+            transparent
+    );
 }

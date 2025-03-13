@@ -1,12 +1,13 @@
 import {FC, useContext, useEffect, useState} from "react";
-import {MatchContext} from "../../../Context.tsx";
+import {MatchContext} from "../../../context.tsx";
 import {ICard} from "../../../interfaces.ts";
 import CardContent from "../cards/CardContent.tsx";
-import {createPortal} from "react-dom";
 import {Button} from "../../../components/Button.tsx";
+import BattlePortalWrap from "../../../components/BattlePortalWrap.tsx";
+import BattleInterfaceOverlay from "../../../components/BattleInterfaceOverlay.tsx";
 
 const SelectSacrifice: FC<{
-    cardToBeUsed: string,
+    cardToBeUsed?: string,
     setSacrifice: (sacrifice: string[]) => void,
     cancel: () => void
 }> = ({ setSacrifice, cardToBeUsed, cancel }) => {
@@ -14,7 +15,15 @@ const SelectSacrifice: FC<{
     const { player, loadCards } = useContext(MatchContext);
 
     const initSelectableCards = (cardIds: string[]) => {
-        loadCards(cardIds).then(cards => {
+        let cardsToLoad = cardIds;
+
+        if (cardToBeUsed && cardIds.includes(cardToBeUsed)) {
+            const cleanCardIds = [...cardIds];
+            cleanCardIds.splice(cleanCardIds.indexOf(cardToBeUsed), 1);
+            cardsToLoad = cleanCardIds;
+        }
+
+        loadCards(cardsToLoad).then(cards => {
             setSelectedCards(
                 cards.map(card => {
                     return {
@@ -30,12 +39,18 @@ const SelectSacrifice: FC<{
 
     useEffect(() => {
         if (player) {
-            initSelectableCards(player.onHand.splice(player.onHand.indexOf(cardToBeUsed), 1));
+            initSelectableCards(player.onHand);
         }
     }, [player?.onHand]);
 
-    const confirmSelection = () => {
+    const handleAcceptClick = () => {
         setSacrifice(selectedCards.filter(card => card.selected).map(e => e.card.id));
+        cancel();
+    }
+
+    const handleCancelClick = () => {
+        setSacrifice([]);
+        cancel();
     }
 
     const handleCardClick = (index: number) => {
@@ -55,30 +70,34 @@ const SelectSacrifice: FC<{
         });
     }
 
+    const countSelected = (arr: { card: ICard, selected: boolean }[]) => arr.filter(card => card.selected).length;
+
     return (
-        createPortal(
-            <div className="battle-overlay" >
+        <BattlePortalWrap>
+            <BattleInterfaceOverlay>
                 <div className="flex flex-col gap-4" >
-                    <div className="flex flex-wrap justify-center items-center gap-4 max-w-[60vw] px-4">
+                    <div className="flex flex-wrap justify-center items-center gap-4 max-w-[56vw] max-h-[80vh] px-4">
                         {selectedCards.map(({ card, selected }, index) =>
                             <div
                                 key={index}
                                 onClick={() => handleCardClick(index)}
-                                className={`card-small card ${selected ? "selected" : ""}`}
+                                className={`card-min card ${selected ? "selected" : ""}`}
                             >
                                 <CardContent card={card} />
                             </div>
                         )}
                     </div>
+                    <div className="w-full text-center" >
+                        Click on the cards you are willing to sacrifice to select them
+                    </div>
                     <div className="hr" ></div>
                     <div className="flex justify-center gap-4 px-4" >
-                        <Button text="Cancel" onClick={cancel} />
-                        <Button text="Accept" onClick={confirmSelection} />
+                        <Button text="Cancel" onClick={handleCancelClick} />
+                        <Button text={`Accept${countSelected(selectedCards) > 0 ? " (" + countSelected(selectedCards) + ")" : "    "}`} onClick={handleAcceptClick} />
                     </div>
                 </div>
-            </div>,
-            document.getElementById("battle-container") as HTMLElement
-        )
+            </BattleInterfaceOverlay>
+        </BattlePortalWrap>
     );
 }
 

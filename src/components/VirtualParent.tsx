@@ -1,35 +1,21 @@
-import {CSSProperties, FC, ReactNode, useEffect, useState} from "react";
+import {CSSProperties, FC, ReactNode, useContext, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
+import {MatchContext} from "../context.tsx";
+import {parseElementRectStyles} from "../utils.ts";
 
 const VirtualParent: FC<{
-    virtualParent: HTMLElement,
-    actualParent: HTMLElement,
+    virtualParent: Element,
     children: ReactNode
-}> = ({ virtualParent, actualParent, children }) => {
+}> = ({ virtualParent, children }) => {
 
     const [styles, setStyles] = useState<CSSProperties>();
-
-    const genStyles = (virtualParent: HTMLElement) => {
-        if (virtualParent) {
-            const rect = virtualParent.getBoundingClientRect();
-
-            setStyles({
-                position: "fixed",
-                top: rect.top + "px",
-                left: rect.left + "px",
-                width: rect.width + "px",
-                height: rect.height + "px"
-            } as CSSProperties);
-        }
-    }
+    const actualParent = useContext(MatchContext).containerRef;
 
     useEffect(() => {
-        genStyles(virtualParent);
-    }, [virtualParent]);
+        setStyles(parseElementRectStyles(virtualParent));
 
-    useEffect(() => {
         const handleResize = () => {
-            genStyles(virtualParent);
+            setStyles(parseElementRectStyles(virtualParent));
         }
 
         window.addEventListener("resize", handleResize);
@@ -39,7 +25,12 @@ const VirtualParent: FC<{
         };
     }, [virtualParent]);
 
-    return virtualParent && actualParent && styles && createPortal(<div style={styles}>{children}</div>, actualParent);
+    return virtualParent && actualParent && styles && createPortal(
+        <div style={styles} className="pointer-events-none" >
+            {children}
+        </div>,
+        actualParent
+    );
 }
 
 export default VirtualParent;

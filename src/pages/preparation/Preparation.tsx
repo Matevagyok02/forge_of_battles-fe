@@ -1,18 +1,19 @@
 import "./Preparation.css";
 import {useNavigate, useParams} from "react-router-dom";
 import Deck from "./Deck.tsx";
-import {FC, useCallback, useContext, useEffect, useState} from "react";
+import {FC, Suspense, useCallback, useContext, useEffect, useState} from "react";
 import {Button} from "../../components/Button.tsx";
 import Frame from "../../components/Frame.tsx";
 import {IBattle, IMatch, IUser} from "../../interfaces.ts";
 import {io, Socket} from "socket.io-client";
 import {parseTimeLimit} from "../../utils.ts";
 import {findPlayerById} from "../../api/user.ts";
-import {AuthContext, ModalContext} from "../../Context.tsx";
+import {AuthContext, ModalContext} from "../../context.tsx";
 import LeaveMatchDialog from "./LeaveMatchDialog.tsx";
 import WindowFrame from "../../components/WindowFrame.tsx";
 import decksBaseInfo from "../../assets/decks.json";
 import {keyRegex} from "../home/JoinGame.tsx";
+import LoadingScreen from "../../components/LoadingScreen.tsx";
 
 interface IDeck {
     name: string;
@@ -32,6 +33,8 @@ const Preparation: FC = () => {
 
     const key = useParams().key;
     const navigate = useNavigate();
+
+    const [loading, setLoading] = useState(true);
 
     const initDecks = (base: {name: string, id: string, description: string}[]) => {
         const decks: IDeck[] = [];
@@ -76,7 +79,10 @@ const Preparation: FC = () => {
 
     useEffect(() => {
         if (match) {
-            processMatchData(match);
+            processMatchData(match).then(() =>
+                setTimeout(() =>
+                    setLoading(false), 2000)
+            );
         }
     }, [match]);
 
@@ -104,7 +110,8 @@ const Preparation: FC = () => {
 
     const processMatchData = async (match: IMatch) => {
         if (match.stage === "pending") {
-            return navigate("/");
+            leavePage();
+            return;
         }
 
         if (match.stage === "started" && Object.keys(match.battle.playerStates).length === 2) {
@@ -119,7 +126,10 @@ const Preparation: FC = () => {
 
         setIsHost(userId === match.player1Id);
         const opponentId = [match.player1Id, match.player2Id].find(id => id !== userId);
-        if (!opponentId) return navigate("/");
+        if (!opponentId) {
+            leavePage();
+            return;
+        }
 
         if (opponentId in (match.battle as IBattle).playerStates) {
             setOpponentIsReady(true);
@@ -129,7 +139,8 @@ const Preparation: FC = () => {
         if (opponentResult.ok && opponentResult.body) {
             setOpponent(opponentResult.body as IUser);
         } else {
-            navigate("/");
+            leavePage();
+            return;
         }
     }
 
@@ -238,7 +249,8 @@ const Preparation: FC = () => {
 
     return (
         <WindowFrame>
-            { match && match.stage === "preparing" &&
+            <LoadingScreen loading={loading} />
+            <Suspense fallback={<LoadingScreen />} >
                 <main className="preparation" >
                     <div className="deck-selector-panel" >
                         <div className="title-text" ></div>
@@ -307,7 +319,7 @@ const Preparation: FC = () => {
                         </div>
                     </div>
                 </main>
-            }
+            </Suspense>
         </WindowFrame>
     );
 }

@@ -1,6 +1,6 @@
 import {FC, useContext} from "react";
 import {Icon, IconButton} from "../../components/Button.tsx";
-import {AuthContext, ModalContext, UserContext} from "../../Context.tsx";
+import {AuthContext, ModalContext, UserContext} from "../../context.tsx";
 import ChangeAvatar from "./ChangeAvatar.tsx";
 
 const UserPanel: FC = () => {

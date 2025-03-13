@@ -1,4 +1,5 @@
-import {customFetch} from "./api.ts";
+import {customFetch, HttpMethod} from "./api.ts";
+
 const namespace = "/match";
 
 export const createGame = async (timeLimit?: number, invite?: string) => {
@@ -12,7 +13,7 @@ export const createGame = async (timeLimit?: number, invite?: string) => {
 
     return await customFetch(
         namespace + "/create" + query,
-        "POST",
+        HttpMethod.post,
     );
 }
 
@@ -24,19 +25,19 @@ export const getLastCreatedGame = async () =>
 export const abandonMatch = async (key: string) =>
     await customFetch(
         namespace + "/abandon?key=" + key,
-        "DELETE"
+        HttpMethod.delete
     );
 
 export const declineMatch = async (key: string) =>
     await customFetch(
         namespace + "/decline?key=" + key,
-        "DELETE"
+        HttpMethod.delete
     );
 
 export const joinMatch = async (key: string) =>
     await customFetch(
         namespace + "/join?key=" + key,
-        "PUT"
+        HttpMethod.put
     );
 
 export const getActiveMatch = async () =>
@@ -52,5 +53,17 @@ export const getMatchByKey = async (key: string) =>
 export const leaveMatch = async () =>
     await customFetch(
         namespace + "/leave",
-        "DELETE"
+        HttpMethod.delete
+    );
+
+export const joinQueue = async () =>
+    await customFetch(
+        namespace + "/random",
+        HttpMethod.put
+    );
+
+export const leaveQueue = async () =>
+    await customFetch(
+        namespace + "/leave-random",
+        HttpMethod.delete
     );

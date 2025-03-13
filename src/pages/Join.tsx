@@ -2,7 +2,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {FC, useContext, useEffect} from "react";
 import {joinMatch} from "../api/match.ts";
 import {keyRegex} from "./home/JoinGame.tsx";
-import {AuthContext, ModalContext} from "../Context.tsx";
+import {AuthContext, ModalContext} from "../context.tsx";
 import {Button} from "../components/Button.tsx";
 import {ForcedModal} from "../components/Modal.tsx";
 

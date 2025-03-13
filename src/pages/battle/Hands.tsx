@@ -1,7 +1,7 @@
 import {FC, useContext, useEffect, useState} from "react";
 import {ICard} from "../../interfaces.ts";
 import HandHeldCard from "./cards/HandHeldCard.tsx";
-import {MatchContext} from "../../Context.tsx";
+import {MatchContext} from "../../context.tsx";
 
 export const PlayerHand: FC = () => {
 
@@ -9,9 +9,12 @@ export const PlayerHand: FC = () => {
     const [cards, setCards] = useState<ICard[]>([]);
     const [cardRotations, setCardRotations] = useState<number[]>([]);
 
+    const [interacting, setInteracting] = useState(false);
+    const [cancelInteractionTimeout, setCancelInteractionTimeout] = useState<number>();
+
     useEffect(() => {
-        loadCards(player!.onHand).then(setCards);
-    }, [player!.onHand]);
+        loadCards(player.onHand).then(setCards);
+    }, [player.onHand]);
 
     useEffect(() => {
         setCardRotations(
@@ -19,42 +22,63 @@ export const PlayerHand: FC = () => {
         );
     }, [cards]);
 
+    const startInteraction = () => {
+        if (cancelInteractionTimeout) {
+            clearTimeout(cancelInteractionTimeout);
+            setCancelInteractionTimeout(undefined);
+        }
+        setInteracting(true);
+    }
+
+    const cancelInteraction = () => {
+        const timeout = setTimeout(() => {
+            setInteracting(false);
+            setCancelInteractionTimeout(undefined);
+        }, 400);
+        setCancelInteractionTimeout(timeout);
+    }
+
     return(
         <div
-            className="player-hand"
-            style={ cards.length > 4 ?
-                { justifyContent: "space-between" }
-                :
-                { justifyContent: "center", gap: "17vh" }
-            }
+            onMouseEnter={startInteraction}
+            onMouseLeave={cancelInteraction}
+            className="player-hand-container"
+            style={ interacting ? { zIndex: 10 } : {} }
         >
-            {cardRotations && cards.map((card, index) => (
-                <div
-                    className="hand-held-card-wrapper" key={index}
-                >
-                   <HandHeldCard card={card} rotation={cardRotations[index]} />
-                </div>
-            ))}
+            <div
+                className="player-hand"
+                style={ cards.length > 4 ?
+                    { justifyContent: "space-between" }
+                    :
+                    { justifyContent: "center", gap: "17vh" }
+                }
+            >
+                {cardRotations && cards.map((card, index) => (
+                    <div
+                        className="hand-held-card-wrapper" key={index}
+                    >
+                        <HandHeldCard card={card} rotation={cardRotations[index]} />
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
 
 export const OpponentHand: FC = () => {
 
-    const { player, opponent, socket } = useContext(MatchContext);
+    const { player, opponent } = useContext(MatchContext);
     const [cardRotations, setCardRotations] = useState<number[]>([]);
-
-    console.log(socket.id); //TODO: remove
 
     useEffect(() => {
         setCardRotations(
-            getCardRotationPoints(opponent!.onHand.length)
+            getCardRotationPoints(opponent.onHand.length)
         );
-    }, [opponent!.onHand.length]);
+    }, [opponent.onHand.length]);
 
     return(
         <div className="opponent-hand"
-             style={ opponent!.onHand.length > 4 ?
+             style={ opponent.onHand.length > 4 ?
                  { justifyContent: "space-between" }
                  :
                  { justifyContent: "center", gap: "17vh" }
@@ -63,10 +87,10 @@ export const OpponentHand: FC = () => {
             {cardRotations.map((rotation, index) =>
                 <div className="hand-held-card-wrapper" key={index} >
                     <div
-                        className={`card-back card ${opponent!.deck + (opponent!.deck === player!.deck ? "-secondary" : "")}`}
+                        className={`card-back card ${opponent.deck + (opponent.deck === player.deck ? "-secondary" : "")}`}
                         style={{
-                            rotate: `${rotation}deg`,
-                            translate: `0 ${Math.abs(rotation)}%`
+                            rotate: `${rotation * 2}deg`,
+                            translate: `0 ${Math.abs(rotation * 1.5)}%`
                         }}
                     >
                         <div style={{ rotate: `${rotation * 10}deg` }} ></div>

@@ -43,14 +43,26 @@ const CardContent: FC<{ card: ICard }> = ({ card }) => {
             </div>
             <div className="card-abilities" >
                 <p className="action-ability" >
-                    {card.actionAbility?.description}
+                    <FormatAbilityText text={card.actionAbility.description} />
                 </p>
                 <p className="passive-ability" >
-                    {card.passiveAbility?.description}
+                    <FormatAbilityText text={card.passiveAbility.description} />
                 </p>
             </div>
         </>
     )
+}
+
+export const FormatAbilityText: FC<{ text?: string }> = ({ text }) => {
+
+    return (
+        text && text.split(" ").map((word, index) =>
+            word === "MANA" ?
+                <span key={index} className="mana-icon" >&nbsp;&nbsp;&nbsp;</span>
+                :
+                " " + word
+        )
+    );
 }
 
 export default CardContent;

@@ -1,18 +1,16 @@
 import {Dispatch, FC, SetStateAction, useEffect, useState} from "react";
 import {TargetablePos, TargetablePosesProto} from "./cardCreationInterfaces.ts";
-import cardSlots from "../../assets/card_slots.json";
 import {formatNumber} from "./AddCard.tsx";
+import {WarTrackPos} from "../battle/cards/CardSlot.tsx";
 
 const TargetPositionsForm: FC<{
     targetPositions: TargetablePosesProto,
     setTargetPositions: Dispatch<SetStateAction<TargetablePosesProto>>
 }> = ({ targetPositions, setTargetPositions }) => {
 
-    const positions = cardSlots.posNames;
-
     const initPosTable = () => {
         const posTable: TargetablePos[]  = [];
-        Object.keys(positions).forEach(key => {
+        Object.keys(WarTrackPos).forEach(key => {
             posTable.push({ position: key, self: false, opponent: false });
         });
         return posTable;

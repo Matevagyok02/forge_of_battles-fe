@@ -4,7 +4,7 @@ import {getOnlineFriends, sendFriendInvite} from "../../api/friend.ts";
 import {findByUsername} from "../../api/user.ts";
 import Modal from "../../components/Modal.tsx";
 import {CustomResponse} from "../../api/api.ts";
-import {FriendsContext, ModalContext} from "../../Context.tsx";
+import {FriendsContext, ModalContext} from "../../context.tsx";
 import CreateGame from "./CreateGame.tsx";
 import {getUnseenMsg} from "../../api/chat.ts";
 

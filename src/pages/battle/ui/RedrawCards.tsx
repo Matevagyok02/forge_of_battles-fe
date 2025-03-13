@@ -1,9 +1,11 @@
 import {FC, useCallback, useContext, useEffect, useState} from "react";
-import {createPortal} from "react-dom";
 import {Button} from "../../../components/Button.tsx";
-import {MatchContext} from "../../../Context.tsx";
+import {MatchContext} from "../../../context.tsx";
 import {ICard} from "../../../interfaces.ts";
 import CardContent from "../cards/CardContent.tsx";
+import BattlePortalWrap from "../../../components/BattlePortalWrap.tsx";
+import {OutgoingBattleEvent} from "../Battle.tsx";
+import BattleInterfaceOverlay from "../../../components/BattleInterfaceOverlay.tsx";
 
 const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
 
@@ -36,9 +38,9 @@ const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
     const redraw = useCallback(() => {
         if (socket) {
             if (cardToChange) {
-                socket.emit("redraw", { cardId: cardToChange.id });
+                socket.emit(OutgoingBattleEvent.redraw, { cardId: cardToChange.id });
             } else {
-                socket.emit("redraw");
+                socket.emit(OutgoingBattleEvent.redraw);
             }
             close();
         }
@@ -49,8 +51,8 @@ const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
     }, [cardToChange, cards]);
 
     return (
-        createPortal(
-            <div className="battle-overlay" >
+        <BattlePortalWrap>
+            <BattleInterfaceOverlay>
                 <div className="flex flex-col gap-4 items-center" >
                     <div className="flex gap-4 px-4" >
                         {cards?.map((card, index) =>
@@ -72,9 +74,8 @@ const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
                         <Button text={"Redraw"} onClick={redraw} />
                     </div>
                 </div>
-            </div>,
-            document.getElementById("battle-container") as HTMLElement
-        )
+            </BattleInterfaceOverlay>
+        </BattlePortalWrap>
     )
 }
 
