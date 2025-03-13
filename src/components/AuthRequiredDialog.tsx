@@ -1,7 +1,7 @@
 import Modal from "./Modal.tsx";
 import {Button} from "./Button.tsx";
 import {FC, ReactElement, useContext} from "react";
-import {AuthContext, ModalContext} from "../Context.tsx";
+import {AuthContext, ModalContext} from "../context.tsx";
 
 const AuthRequiredDialog: FC<{ modalToBeOpened: ReactElement | undefined }> = ({ modalToBeOpened }) => {
 

@@ -4,7 +4,7 @@ import {acceptFriendRequest, declineFriendRequest} from "../../api/friend.ts";
 import {Friend, getFriendById} from "./FriendsPanel.tsx";
 import {ForcedModal} from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
-import {FriendsContext, ModalContext} from "../../Context.tsx";
+import {FriendsContext, ModalContext} from "../../context.tsx";
 import {useNavigate} from "react-router-dom";
 import {declineMatch, joinMatch} from "../../api/match.ts";
 

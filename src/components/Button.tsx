@@ -1,8 +1,8 @@
 import Frame from "./Frame.tsx";
-import {FC} from "react";
+import {FC, ReactNode} from "react";
 import "../styles/button.css"
 
-//TODO: Add prop for button width
+const negativeTexts = ["cancel", "decline", "remove", "abandon", "delete", "no", "leave"];
 
 interface ButtonProps {
     text: string;
@@ -17,6 +17,19 @@ interface IconButtonProps {
     decorated?: boolean;
     onClick?: () => void;
     deactivated?: boolean;
+}
+
+export interface OptionButton {
+    text: string;
+    callback?: (args?: any) => void;
+    hint?: string;
+    subOptions?: SubOptionButton[];
+}
+
+export interface SubOptionButton {
+    text: string;
+    callback: (args?: any) => void;
+    hint?: string;
 }
 
 export enum Icon {
@@ -38,19 +51,16 @@ export enum Icon {
     question = "circle-question",
 }
 
-const isNegative = (text: string) => {
-    switch (text) {
-        case "Cancel":
-        case "Decline":
-        case "Remove":
-        case "Abandon":
-        case "Delete":
-        case "No":
-        case "Leave":
-            return true;
-        default:
-            return false;
-    }
+const deactivated = (state: boolean | undefined) => {
+    return state ? "deactivated" : "";
+}
+
+const negative = (text: string) => {
+    return negativeTexts.includes(text.toLowerCase()) ? "negative-btn" : "";
+}
+
+const decorated = (decorated: boolean | undefined) => {
+    return decorated ? "decorative-hex" : "";
 }
 
 export const Button: FC<ButtonProps> = (props) => {
@@ -85,7 +95,7 @@ export const Button: FC<ButtonProps> = (props) => {
                         <div className="loader absolute" ></div>
                         :
                         <label
-                            className={`absolute font-bold text-xl cursor-pointer ${isNegative(props.text) ? "red-text" : "btn-text"}`}
+                            className={`absolute text-xl cursor-pointer ${negative(props.text)}`}
                         >
                             {props.text}
                         </label>
@@ -105,10 +115,95 @@ export const IconButton: FC<IconButtonProps> = (props) => {
     return(
         <button
             title={props.text}
-            className={`${props.decorated ? "decorative-hex" : ""} icon-btn ${iconName} ${props.deactivated ? "deactivated" : ""}`}
+            className={`icon-btn ${decorated(props.decorated)} ${iconName} ${deactivated(props.deactivated)} ${negative(text)}`}
             onClick={props.onClick}
         >
-            <i className={`fa-solid fa-${props.icon} ${isNegative(text) ? "text-red-600" : "btn-text"}`} ></i>
+            <i className={`fa-solid fa-${props.icon}`} ></i>
         </button>
     )
+}
+
+export const MultipleOptionsButton: FC<{ options: OptionButton[] }> = ({ options}) => {
+
+    const formatText = (text: string): string | ReactNode => {
+        if (text.includes("#")) {
+            const textArray = text.split(" ");
+
+            return(
+                textArray.map((word, index) => {
+                    if (word.includes("#")) {
+                        const formattedWord = word.replace("#", "");
+                        let styleClass: string;
+
+                        switch (formattedWord) {
+                            case "sacrifice":
+                                styleClass = "sacrifice-icon";
+                                break;
+                            case "mana":
+                                styleClass = "mana-icon";
+                                break;
+                            default:
+                                styleClass = "";
+                        }
+
+                        return <span key={index} className={styleClass} >&nbsp;&nbsp;&nbsp;</span>;
+                    } else {
+                        return " " + word + " ";
+                    }
+                })
+            )
+        } else {
+            return text;
+        }
+    }
+
+    const Hint: FC<{ hint: string }> = ({ hint }) => {
+
+        return( hint &&
+            <span className="hint" >
+                <i className="fa-solid fa-question-circle" ></i>
+                <p>{formatText(hint)}</p>
+            </span>
+        )
+    }
+
+    return(
+        <ul className="multipleOptionsBtnList" >
+            { options.map((option, index) =>
+                option.subOptions ?
+                    <ul key={index} >
+                        <h1>
+                            {formatText(option.text)}
+                        </h1>
+                        <ul>
+                            { option.subOptions.map((subOption, index) =>
+                                <li
+                                    key={index}
+                                    className={negative(subOption.text)}
+                                    onClick={subOption.callback}
+                                >
+                                    <h1>
+                                        {formatText(subOption.text)}
+                                    </h1>
+                                    { subOption.hint && <Hint hint={subOption.hint} /> }
+                                </li>
+                            )}
+                        </ul>
+                    </ul>
+                    :
+                    option.callback && (
+                        <li
+                            key={index}
+                            className={negative(option.text)}
+                            onClick={option.callback}
+                        >
+                            <h1>
+                                {formatText(option.text)}
+                            </h1>
+                            { option.hint && <Hint hint={option.hint} /> }
+                        </li>
+                    )
+            )}
+        </ul>
+    );
 }
