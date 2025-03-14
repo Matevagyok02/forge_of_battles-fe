@@ -1,27 +1,72 @@
-.toggle {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.toggle i {
-    font-size: 32px;
-}
-
 .display {
+    user-select: none;
     position: fixed;
-    z-index: 10;
-    top: 2vw;
-    width: 100%;
-    display: flex;
-    justify-content: center;
+    z-index: 20;
+    right: 0;
+    top: 12vw;
+    pointer-events: none;
 }
 
 .display p {
-    font-size: 20px;
     text-align: center;
-    padding-block: 8px;
-    padding-inline: 64px;
-    max-width: 48vw;
+    line-height: 1.4;
+    padding: 8px 8px 8px 32px;
+    max-height: 40vw;
+    max-width: 22vw;
     background-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.6) 10%, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6) 90%, transparent);
+}
+
+.display p span {
+    white-space: nowrap;
+}
+
+.display i {
+    position: absolute;
+    top: -12px;
+    pointer-events: auto;
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+    color: goldenrod;
+    animation: vibrate 1s infinite;
+}
+
+.btn {
+    color: goldenrod;
+    padding-inline: 3px;
+    border: 1px solid dimgrey;
+    border-radius: 4px;
+}
+
+.acAbl {
+    color: var(--action-color);
+}
+
+.paAbl {
+    color: var(--passive-color);
+}
+
+.highlight {
+    color: darkgoldenrod;
+}
+
+.mana {
+    display: inline-block;
+    aspect-ratio: 1/1;
+    background-image: url("../../assets/icons/mana_shard.png");
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+@keyframes vibrate {
+    0% {
+        filter: drop-shadow(0 0 10px white);
+    }
+    50% {
+        filter: drop-shadow(0 0 8px white);
+    }
+    100% {
+        filter: drop-shadow(0 0 10px white);
+    }
 }

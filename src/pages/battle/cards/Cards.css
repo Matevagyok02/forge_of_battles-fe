@@ -2,6 +2,7 @@
     aspect-ratio: var(--card-aspect-ratio);
     border-radius: 4%;
     height: 25vh;
+    width: fit-content;
     font-size: 2.2vh;
     user-select: none;
     overflow: hidden;
@@ -32,12 +33,17 @@
     cursor: pointer;
 }
 
-.hand-held-card.cancel-inspect-hand-held-card {
+.cancel-inspect-hand-held-card {
     animation: cancel-inspect-hand-held-card 0.1s linear forwards;
 }
 
 .deployed-card {
+    position: relative;
     cursor: pointer;
+
+    .card-abilities {
+        visibility: hidden;
+    }
 }
 
 .card img, .card-image-placeholder {
@@ -54,8 +60,12 @@
     position: relative;
 }
 
-.hand-held-card.inspect-hand-held-card {
+.inspect-hand-held-card {
     animation: inspect-hand-held-card 0.1s linear forwards;
+}
+
+.inspect-hand-held-card .action-ability:hover {
+    filter: drop-shadow(2px 2px 2px black);
 }
 
 .deploy-card-tip {
@@ -120,7 +130,7 @@
 .card-attribute-icon h1 {
     color: lightgrey;
     paint-order: stroke fill;
-    -webkit-text-stroke: 0.08em black;
+    -webkit-text-stroke: 0.04em black;
     font-size: 1.2em;
 }
 
@@ -172,6 +182,7 @@
     text-align: center;
     justify-content: flex-end;
     padding-block: 0.8em;
+    overflow: hidden;
 }
 
 .card-abilities p {
@@ -197,12 +208,12 @@
 }
 
 .action-ability {
-    filter: drop-shadow(0 0 4px red) drop-shadow(2px 2px 2px black);
+    filter: drop-shadow(0 0 4px var(--action-color)) drop-shadow(2px 2px 2px black);
     padding-inline: 0.8em;
 }
 
 .passive-ability {
-    filter: drop-shadow(0 0 4px royalblue) drop-shadow(2px 2px 2px black);
+    filter: drop-shadow(0 0 4px var(--passive-color)) drop-shadow(2px 2px 2px black);
     padding-inline: 0.8em;
 }
 
@@ -260,6 +271,26 @@
             !important;
 }
 
+.card-min {
+    position: relative;
+    height: 26vh !important;
+    font-size: 2.2vh !important;
+    cursor: pointer;
+
+    .card-abilities {
+        visibility: hidden;
+    }
+}
+
+.card-min:not(.selected):hover {
+    z-index: 10;
+    scale: 1.16;
+
+    .card-abilities {
+        visibility: visible;
+    }
+}
+
 .card-small {
     position: relative;
     height: 28vh !important;
@@ -279,5 +310,42 @@
 }
 
 .card.selected {
-    filter: drop-shadow(0 0 4px goldenrod);
+    animation: select-highlight 1.6s linear infinite;
+}
+
+@keyframes select-highlight {
+    0% {
+        filter: drop-shadow(0 0 8px white) contrast(1.2);
+    }
+    25% {
+        filter: drop-shadow(0 0 6px white) contrast(1.2);
+    }
+    50% {
+        filter: drop-shadow(0 0 4px white) contrast(1.2);
+    }
+    75% {
+        filter: drop-shadow(0 0 6px white) contrast(1.2);
+    }
+    100% {
+        filter: drop-shadow(0 0 8px white) contrast(1.2);
+    }
+}
+
+.mana-icon {
+    @apply in-game-icon;
+    background-image: url("../../../assets/icons/mana_shard.png");
+    filter: drop-shadow(0 0 2px var(--cyan));
+}
+
+.sacrifice-icon {
+    @apply in-game-icon;
+    background-image: url("../../../assets/icons/sacrifice.png");
+    filter: drop-shadow(0 0 2px red);
+}
+
+.in-game-icon {
+    display: inline-block;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
 }

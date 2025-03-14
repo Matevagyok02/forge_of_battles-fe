@@ -2,7 +2,7 @@ import {FC, useContext, useState} from "react";
 import {changePicture} from "../../api/user.ts";
 import Modal from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
-import {ModalContext, UserContext} from "../../Context.tsx";
+import {ModalContext, UserContext} from "../../context.tsx";
 import avatarList from "../../assets/avatars.json";
 
 const ChangeAvatar: FC = () => {

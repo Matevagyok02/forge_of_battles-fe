@@ -1,0 +1,12 @@
+{
+  "draw_cards": "Draw new cards by clicking on the draw pile",
+  "change_cards_and_use_passive": "Change the cards you have drawn by clicking #Redraw.btn or start using the #passive.paAbl abilities of your deployed cards, then hit #Advance.btn when you are done",
+  "use_passive_and_advance": "Use the #passive.paAbl abilities of your deployed cards, then hit #Advance.btn when you are done",
+  "storm": "Click #Storm.btn then select what you want to do with your storming card",
+  "deploy_use_action_and_end_turn": "Deploy cards, use #action.acAbl abilities, then hit #End_Turn.btn when you are done",
+  "not_enough_mana": "You dont't have enough #M.mana nor sacrificable cards to use this card",
+  "use_cards": "Drag a card on the #War_Track.highlight to use it, then select what you want to do with it.",
+  "sacrifice_if_no_mana": "If you don't have enough #M.mana select sacricable cards to use this card",
+  "sacrifice_to_use_passive": "If you don't enough #M.mana select sacricable cards to use the #passive.paAbl ability of this card",
+  "not_enough_mana_to_use_passive": "You dont't have enough #M.mana nor sacrificable cards to use the #passive.paAbl ability of this card"
+}

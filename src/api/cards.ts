@@ -1,10 +1,10 @@
-import {customFetch} from "./api.ts";
+import {customFetch, HttpMethod} from "./api.ts";
 const namespace = "/cards";
 
 export const addCard = async (card: object) =>
     await customFetch(
         namespace + "/add",
-        "POST",
+        HttpMethod.post,
         card
     );
 

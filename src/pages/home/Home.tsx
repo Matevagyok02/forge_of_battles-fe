@@ -8,7 +8,7 @@ import {IMatch, IReceiver, ISender, IUser, IUserResponseBody} from "../../interf
 import FriendsPanel, {Friend, FriendStatus} from "./FriendsPanel.tsx";
 import {io} from "socket.io-client";
 import ChatTab, {ChatRef, Message} from "./ChatTab.tsx";
-import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../Context.tsx";
+import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../context.tsx";
 import JoinGame from "./JoinGame.tsx";
 import UserPanel from "./UserPanel.tsx";
 import Registration from "./Registration.tsx";
@@ -18,7 +18,7 @@ import TutorialAndCards from "./TutorialAndCards.tsx";
 import {FriendRequest, GameRequest} from "./Requests.tsx";
 import {useNavigate} from "react-router-dom";
 import WindowFrame from "../../components/WindowFrame.tsx";
-import healspell1 from "../../assets/audio/healspell1.mp3"
+import {getActiveMatch, getLastCreatedGame} from "../../api/match.ts";
 
 const Home = () => {
 
@@ -271,7 +271,11 @@ const Home = () => {
             );
         });
 
-        socket.on("match-invite-accepted", (key) => {
+        socket.on("match-invite-accepted", (key: string) => {
+            navigate("/preparation/" + key);
+        });
+
+        socket.on("random-match-found", (key: string) => {
             navigate("/preparation/" + key);
         });
     }
@@ -359,15 +363,32 @@ const Home = () => {
         }
     }, [friendRequests, gameRequests]);
 
+    useEffect(() => {
+        if (_user) {
+            getLastCreatedGame().then(result => {
+                if (result.ok && result.body) {
+                    const match = result.body as IMatch;
+
+                    openModal(<CreateGame _lastCreatedMatch={match} />);
+                } else {
+                    getActiveMatch().then(result => {
+                        if (result.ok && result.body) {
+                            if ((result.body as IMatch).key) {
+                                openModal(<JoinGame activeMatch={result.body as IMatch} />);
+                            } else {
+                                openModal(<JoinGame inQueue={true} />);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    }, [_user]);
+
     return(
         <WindowFrame>
             <main className="home" >
                 <div>
-
-                    <div className="absolute z-10 text-2xl bottom-10 border border-red-600">
-                        <button onClick={() => new Audio(healspell1).play()}>BUTTON</button>
-                    </div>
-
                     <div className="h-[100vh] w-fit" >
                         <div className="title-text" ></div>
                         { openedModal ?
@@ -420,7 +441,6 @@ const Home = () => {
                                 <IconButton icon={Icon.music} decorated onClick={() => alert("TODO")} />
                                 <IconButton icon={Icon.sound} decorated onClick={() => alert("TODO")} />
                             </div>
-
                         </div>
                     }
                 </div>

@@ -16,7 +16,7 @@ body {
 }
 
 .gold-text {
-    font-family: "Amarante", serif;
+    font-family: Amarante, serif;
     background: linear-gradient(gold 40%, darkgoldenrod 50%, goldenrod 60%);
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
@@ -142,16 +142,11 @@ input[type="text"]:invalid {
     @apply error-text;
 }
 
-#loading-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    height: 100vh;
-    width: 100vw;
-    background-color: var(--bg-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.loading-spinner {
+    aspect-ratio: 1/1;
+    min-width: 16px;
+    background-image: conic-gradient(transparent 10%, lightgrey);
+    border-radius: 50%;
+    mask: radial-gradient(circle, transparent 50%, black 50%);
+    animation: spin 2s linear infinite;
 }
-

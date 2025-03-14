@@ -12,16 +12,95 @@
     background-size: auto 100%;
 }
 
+.event-display {
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    top: 30vh;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+}
+
+@keyframes event-display-appear {
+    0% {
+        opacity: 0.4;
+    }
+    5% {
+        opacity: 0.8;
+    }
+    10% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    95% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.event-display p {
+    font-size: 2em;
+    text-align: center;
+    width: 60vw;
+    padding-block: 8px;
+    padding-inline: 64px;
+    background-image: linear-gradient(
+        to right,
+        transparent,
+        var(--bg-8) 10%,
+        var(--bg-9),
+        var(--bg-8) 90%,
+        transparent
+    );
+    border: 2px solid;
+    border-image: linear-gradient(
+        to right,
+        transparent,
+        goldenrod,
+        transparent
+    ) 1;
+}
+
+.event-display.alert p {
+    background-image: linear-gradient(
+            to right,
+            transparent,
+            rgba(100, 0, 0, 0.8) 20%,
+            rgba(100, 0, 0, 0.9),
+            rgba(100, 0, 0, 0.8) 80%,
+            transparent
+    );
+}
+
 .player-hand {
-    position: absolute;
+    position: relative;
     height: 30vh;
     width: 70vh;
-    left: 50%;
     bottom: 2vh;
-    translate: -50% 0;
     display: flex;
     align-items: center;
     animation: spread-cards 0.5s linear forwards;
+}
+
+.player-hand-container {
+    display: flex;
+    align-items: flex-end;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    translate: -50% 0;
 }
 
 @keyframes spread-cards {
@@ -40,8 +119,8 @@
 .opponent-hand {
     @apply player-hand;
     bottom: auto;
-    top: -6vh;
-    scale: -0.6 0.6;
+    top: -3vh;
+    scale: 0.4 0.4;
 }
 
 .opponent-hand .card-back:hover {
@@ -64,11 +143,17 @@
     top: 0;
     width: 100%;
     height: 100%;
+    padding-inline: 24vw;
+    padding-block: 2vh;
     display: flex;
     align-items: center;
     justify-content: center;
     background-image: radial-gradient(circle at center, var(--bg-8), var(--bg-4) 80%);
     backdrop-filter: blur(2px);
+}
+
+.battle-overlay {
+
 }
 
 .inspected-card {
@@ -87,14 +172,6 @@
 .card-usage-options li {
     width: 100%;
     padding: 8px;
-}
-
-#attack-option {
-    position: relative;
-}
-
-#cancel-inspect-option {
-    color: crimson;
 }
 
 .card-usage-options > li {
@@ -189,4 +266,103 @@
     position: relative;
     height: 28vh !important;
     font-size: 2.4vh !important;
+}
+
+.storm-btn-placeholder {
+    width: 100%;
+    font-size: 1.6em;
+    text-align: center;
+    padding-block: 4px;
+    border: 1px solid;
+    border-image: linear-gradient(to right, transparent, goldenrod, transparent) 1;
+    background-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.6) 10%, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6) 90%, transparent);
+}
+
+#stormer {
+    height: 32vh !important;
+    font-size: 2.8vh !important;
+    /*animation: new-stormer 0.4s linear forwards;*/
+}
+
+@keyframes new-stormer {
+    0% {
+        position: fixed;
+        top: 8vh;
+        left: calc(50vw + 5vh);
+        scale: 0.8
+    }
+    20% {
+        position: fixed;
+        top: 30%;
+        left: 60%;
+        scale: 0.85
+    }
+    40% {
+        position: fixed;
+        top: 40%;
+        left: 70%;
+        scale: 0.90
+    }
+    60% {
+        position: fixed;
+        top: 50%;
+        left: 80%;
+        scale: 0.95
+    }
+    80% {
+        position: fixed;
+        top: 60%;
+        left: 90%;
+    }
+    100% {
+    }
+}
+
+/*---Result Screen Styles---*/
+
+.victory {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5)) !important;
+}
+
+.defeat {
+    filter: drop-shadow(0 4px 8px darkred) !important;
+    background: linear-gradient(#141414 30%, #0a0a0a 60%, black 80%);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
+
+.draw {
+    background: linear-gradient(lightgrey, grey 70%, dimgrey 90%);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
+
+.game-result-player-statistics {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    padding-block: 32px;
+    background-image: linear-gradient(
+            -45deg,
+            transparent 5%,
+            var(--bg-9),
+            rgba(255, 255, 255, 0.1),
+            var(--bg-9),
+            transparent 95%
+    );
+}
+
+.game-result-player-statistics.loser {
+    background-image: linear-gradient(
+            -45deg,
+            transparent 5%,
+            rgba(0, 0, 0, 0.4),
+            rgba(0, 0, 0, 0.6),
+            rgb(0, 0, 0, 0.8),
+            rgba(0, 0, 0, 0.6),
+            rgba(0, 0, 0, 0.4),
+            transparent 95%
+    );
 }

@@ -1,29 +1,68 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {FC, useCallback, useContext, useEffect, useState} from "react";
+import {FC, Suspense, useCallback, useContext, useEffect, useRef, useState} from "react";
 import "./Battle.css";
 import "./cards/Cards.css";
 import {IBattle, ICard, IMatch, IPlayerState} from "../../interfaces.ts";
-import {AuthContext, MatchContext} from "../../Context.tsx";
+import {AuthContext, MatchContext} from "../../context.tsx";
 import Board from "./Board.tsx";
 import BattleChat from "./BattleChat.tsx";
 import {PlayerHand, OpponentHand} from "./Hands.tsx";
-import {Button} from "../../components/Button.tsx";
 import {getCardsById} from "../../api/cards.ts";
 import {io, Socket} from "socket.io-client";
 import {keyRegex} from "../home/JoinGame.tsx";
 import HudContainer from "./Hud.tsx";
-import Tips from "./Tips.tsx";
+import EventDisplay, {EventDisplayHandle} from "./EventDisplay.tsx";
+import LoadingScreen from "../../components/LoadingScreen.tsx";
+import BattleInterface from "./ui/BattleInterface.tsx";
+import ResultScreen, {getWinner, MatchResult} from "./ResultScreen.tsx";
+import EffectDisplay from "./EffectDisplay.tsx";
+
+export enum IncomingBattleEvent {
+    turnStarted = "turn-started",
+    turnEnded = "turn-ended",
+    drawn = "drawn",
+    redrawn = "redrawn",
+    advanced = "advanced",
+    deployed = "deployed",
+    usedAction = "used-action",
+    usedPassive = "used-passive",
+    stormed = "stormed",
+    addedMana = "added-mana",
+    movedToFront = "moved-to-front",
+}
+
+export enum OutgoingBattleEvent {
+    startTurn = "start-turn",
+    endTurn = "end-turn",
+    advance = "advance",
+    draw = "draw",
+    redraw = "redraw",
+    deploy = "deploy",
+    useAction = "use-action",
+    usePassive = "use-passive",
+    storm = "storm",
+    addMana = "add-mana",
+    moveToFront = "move-to-front"
+}
 
 const Battle: FC = () => {
 
     const navigate = useNavigate();
     const key = useParams().key;
-    const [match, setMatch] = useState<IMatch>();
-    const [player, setPlayer] = useState<IPlayerState>();
-    const [opponent, setOpponent] = useState<IPlayerState>();
+    const [match, setMatch] = useState<IMatch>({} as IMatch);
+    const [player, setPlayer] = useState<IPlayerState>({} as IPlayerState);
+    const [opponent, setOpponent] = useState<IPlayerState>({} as IPlayerState);
     const [cards, setCards] = useState<ICard[]>([]);
+
+    const [loading, setLoading] = useState<boolean>(true);
     const [socket, setSocket] = useState<Socket>();
-    const [tip, setTip] = useState<string | null>(null);
+    const [tip, setTip] = useState<string>();
+
+    const [winner, setWinner] = useState<string>();
+    const [showResult, setShowResult] = useState<boolean>(false);
+
+    const eventDisplay = useRef<EventDisplayHandle | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
     const {user, isLoading} = useContext(AuthContext);
 
@@ -35,6 +74,12 @@ const Battle: FC = () => {
                 { battle: data.battle } as IMatch
         );
     }
+
+    const displayEvent = useCallback((text: string, alert?: boolean) => {
+        if (eventDisplay.current) {
+            eventDisplay.current!.displayText(text, alert);
+        }
+    }, [eventDisplay.current]);
 
     const setUpSocket = (matchKey: string) => {
         const socket = io(
@@ -49,34 +94,30 @@ const Battle: FC = () => {
                 leavePage();
         });
 
-        socket.on("connected", (data: IMatch) => {
-            setMatch(data);
-            if (data.battle.turnOfPlayer === user?.sub && data.battle.playerStates[user.sub].turnStage === 0) {
-                socket.emit("start-turn");
-            }
+        socket.on("error", () => {
+            displayEvent("Oops! Something went wrong. Try again.", true);
         });
 
-        socket.on("turn-started", setBattleData);
+        socket.on("connected", setMatch);
 
-        socket.on("opponent-turn-started", setBattleData);
+        socket.on("match-ended", setMatch);
 
-        socket.on("drawn", setBattleData);
+        Object.values(IncomingBattleEvent).forEach(event => {
+            socket.on("opponent-" + event, event !== IncomingBattleEvent.turnEnded ?
+                setBattleData
+                :
+                (data: { battle: IBattle }) => {
+                    setBattleData(data);
+                    socket.emit(OutgoingBattleEvent.startTurn);
+                });
 
-        socket.on("opponent-drawn", setBattleData);
-
-        socket.on("redrawn", setBattleData);
-
-        socket.on("advanced", setBattleData);
-
-        socket.on("opponent-advanced", setBattleData);
-
-        socket.on("turn-ended",  (data: { battle: IBattle }) => {
-            setBattleData(data);
-        });
-
-        socket.on("opponent-turn-ended", (data: { battle: IBattle }) => {
-            setBattleData(data);
-            socket.emit("start-turn");
+            socket.on(event, event !== IncomingBattleEvent.turnStarted ?
+                setBattleData
+                :
+                (data: { battle: IBattle }) => {
+                    setBattleData(data);
+                    displayEvent("Your turn has started!");
+                });
         });
 
         setSocket(socket);
@@ -122,6 +163,7 @@ const Battle: FC = () => {
             const player = match.battle?.playerStates[user.sub];
             const opponent = match.battle?.playerStates[opponentId];
 
+            console.log(match.player1Id, match.player2Id);
             if (player && opponent) {
                 player.userId = user.sub;
                 opponent.userId = opponentId;
@@ -156,156 +198,91 @@ const Battle: FC = () => {
         navigate("/");
     }
 
-    const endTurn = useCallback(() => {
-        if (socket && player?.turnStage === 3) {
-            socket.emit("end-turn");
+    useEffect(() => {
+        if (
+            socket &&
+            player &&
+            player.turnStage === 1 &&
+            player.drawsPerTurn > 1 &&
+            Object.keys(player.deployedCards).length < 1
+        ) {
+            socket.emit(OutgoingBattleEvent.advance);
         }
-    }, [socket, player]);
+    }, [socket, player?.turnStage, player?.drawsPerTurn, player?.deployedCards]);
 
-    const advance = useCallback(() => {
-        if (socket && player?.turnStage === 1 && player?.drawsPerTurn > 0) {
-            socket.emit("advance");
+    useEffect(() => {
+        if (!loading && socket && player && match && match.battle.turnOfPlayer === player.userId && player.turnStage === 0) {
+            socket.emit(OutgoingBattleEvent.startTurn);
         }
-    }, [socket, player]);
+    }, [loading, player?.turnStage, match?.battle?.turnOfPlayer, socket]);
 
-    //TODO: add loading screen
+    useEffect(() => {
+        if (socket && match && player && opponent) {
+            setTimeout(() => setLoading(false), 1000);
+        }
+    }, [match, player, opponent, socket]);
+
+    useEffect(() => {
+        if (player && opponent && match?.stage === "finished") {
+            const _winner = match && getWinner(player, opponent);
+            if (_winner) {
+                switch (_winner) {
+                    case MatchResult.draw:
+                        displayEvent(MatchResult.draw);
+                        break;
+                    case user?.sub:
+                        displayEvent(MatchResult.victory);
+                        break;
+                    default:
+                        displayEvent(MatchResult.defeat, true);
+                        break;
+                }
+
+                setWinner(() => {
+                    setTimeout(() => setShowResult(true), 3000);
+                    return _winner;
+                });
+            }
+        }
+    }, [match?.stage]);
 
     return(
         <main id="battle" >
-            { match && socket?.connected && player && opponent &&
-                <MatchContext.Provider value={{
-                    match,
-                    setMatch,
-                    loadCards,
-                    player,
-                    opponent,
-                    socket,
-                    tip,
-                    setTip
-                }} >
-                    <div id="battle-container" >
-                        <HudContainer />
-                        <OpponentHand />
-                        <PlayerHand />
-                        <Board />
-                        <BattleChat />
-                        { match?.battle?.turnOfPlayer === user?.sub &&
-                            <div className="battle-interface" >
-                                { player?.turnStage === 1 && player?.drawsPerTurn > 0 &&
-                                    <Button text={"Advance"} onClick={advance} />
-                                }
-                                { player?.turnStage === 2 &&
-                                    <Button text={"Storm"} onClick={() => alert("TODO")} />
-                                }
-                                { player?.turnStage === 3 &&
-                                    <Button text="End Turn" onClick={endTurn} />
-                                }
-                                <Tips />
+            <LoadingScreen loading={loading} />
+            { winner && showResult ?
+                <Suspense fallback={<LoadingScreen />} >
+                    <ResultScreen match={match!} player={player!} opponent={opponent!} />
+                </Suspense>
+                :
+                <Suspense fallback={<LoadingScreen />} >
+                    { socket && match && player && opponent &&
+                        <MatchContext.Provider value={{
+                            match,
+                            loadCards,
+                            player,
+                            opponent,
+                            socket: socket!,
+                            tip,
+                            setTip,
+                            containerRef: containerRef.current ? containerRef.current as HTMLElement : undefined
+                        }} >
+                            <div id="battle-container" ref={containerRef} >
+                                <HudContainer />
+                                <OpponentHand />
+                                <PlayerHand />
+                                <Board />
+                                <BattleChat />
+                                <EventDisplay ref={eventDisplay} />
+                                <BattleInterface />
+                                <EffectDisplay />
                             </div>
-                        }
-                    </div>
-                </MatchContext.Provider>
+                        </MatchContext.Provider>
+                    }
+                </Suspense>
             }
         </main>
     );
 }
 
-export default Battle;
 
-// export const sampleCards: ICard[] = [
-//     {
-//         id: "light-1",
-//         name: "Purifier",
-//         deck: "light",
-//         cost: 5,
-//         attack: 7,
-//         defence: 5,
-//         pieces: 1,
-//         actionAbility: {
-//             cardId: "1",
-//             description: "Increase attack by 2",
-//             type: "action",
-//             usageType: "turnBased",
-//             subtype: "attributeModifier",
-//             requirements: {
-//                 mana: 2
-//             },
-//             targetPositions: {
-//                 self: ["frontline"],
-//                 opponent: ["defender"]
-//             }
-//         },
-//         passiveAbility: {
-//             cardId: "light-1",
-//             description: "Reduce damage taken by 1",
-//             type: "passive",
-//             usageType: "basic",
-//             subtype: "attributeModifier"
-//         }
-//     },
-//     {
-//         id: "light-2",
-//         name: "Thalion the Holy",
-//         deck: "light",
-//         cost: 3,
-//         attack: 2,
-//         defence: 4,
-//         pieces: 1,
-//         actionAbility: {
-//             cardId: "2",
-//             description: "Heal 3",
-//             type: "action",
-//             usageType: "instant",
-//             subtype: "instant",
-//             requirements: {
-//                 mana: 1
-//             }
-//         },
-//         passiveAbility: {
-//             cardId: "light-2",
-//             description: "Increase defence by 1",
-//             type: "passive",
-//             usageType: "basic",
-//             subtype: "attributeModifier"
-//         }
-//     }
-// ];
-//
-// const sampleMatch: IMatch = {
-//     key: "XXXXXX",
-//     battle: {
-//         playerStates: {
-//             "google-oauth2|107016487388322054821": {
-//                 deck: "light",
-//                 drawingDeck: ["Grandmaster Paladin", "Light Priest", "Archbishop"],
-//                 bonusHealth: [0],
-//                 casualties: [],
-//                 onHand: [],
-//                 mana: 0,
-//                 manaCards: [],
-//                 deployedCards: {},
-//                 turnStage: 0,
-//                 drawsPerTurn: 1
-//             },
-//             "google-oauth2|110032521141507503978": {
-//                 deck: "darkness",
-//                 drawingDeck: ["Grandmaster Paladin", "Light Priest", "Archbishop"],
-//                 bonusHealth: [0],
-//                 casualties: [],
-//                 onHand: [],
-//                 mana: 0,
-//                 manaCards: [],
-//                 deployedCards: {},
-//                 turnStage: 0,
-//                 drawsPerTurn: 1
-//             }
-//         },
-//         turnOfPlayer: "google-oauth2|110032521141507503978",
-//         timeLimit: 2700000,
-//         turn: 0
-//     },
-//     randomMatch: false,
-//     player1Id: "google-oauth2|107016487388322054821",
-//     player2Id: "google-oauth2|110032521141507503978",
-//     stage: "preparing"
-// }
+export default Battle;

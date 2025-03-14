@@ -1,4 +1,5 @@
 import {Friend} from "./pages/home/FriendsPanel.tsx";
+import {WarTrackPos} from "./pages/battle/cards/CardSlot.tsx";
 
 /*---Friend Interfaces---*/
 
@@ -83,6 +84,7 @@ export interface InstantAbility extends IAbility {
 
 export interface ICard {
     id: string;
+    tempId?: string;
     name: string;
     deck: string;
     cost: number;
@@ -96,7 +98,12 @@ export interface ICard {
 /*---Match Interfaces---*/
 
 export interface IDeployedCard {
-    [key: string]: ICard;
+    [WarTrackPos.defender]?: ICard;
+    [WarTrackPos.supporter]?: ICard;
+    [WarTrackPos.attacker]?: ICard;
+    [WarTrackPos.stormer]?: ICard;
+    [WarTrackPos.frontLiner]?: ICard;
+    [WarTrackPos.vanguard]?: ICard;
 }
 
 
@@ -120,6 +127,9 @@ export interface IBattle {
     timeLimit?: number;
     playerStates: Record<string, IPlayerState>;
     turnOfPlayer: string;
+    abilities: {
+      activatedAbilities: IAbility[];
+    };
     turn: number;
 }
 

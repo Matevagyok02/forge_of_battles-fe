@@ -1,9 +1,10 @@
 import {FC, useContext, useEffect, useState} from "react";
 import {ICard} from "../../interfaces.ts";
 import CardContent from "./cards/CardContent.tsx";
-import {createPortal} from "react-dom";
 import {Icon, IconButton} from "../../components/Button.tsx";
-import {MatchContext} from "../../Context.tsx";
+import {MatchContext} from "../../context.tsx";
+import BattlePortalWrap from "../../components/BattlePortalWrap.tsx";
+import BattleInterfaceOverlay from "../../components/BattleInterfaceOverlay.tsx";
 
 export const DrawPile: FC<{
     cardIds: string[],
@@ -58,8 +59,8 @@ export const DiscardPile: FC<{ cardIds: string[], deck: string }> = ({ cardIds, 
         }, []);
 
         return(
-            createPortal(
-                <div className="battle-overlay" >
+            <BattlePortalWrap>
+                <BattleInterfaceOverlay>
                     <div className="discard-overview" >
                         <div className="cancel-discard-overview-btn" >
                             <IconButton icon={Icon.cancel} onClick={() => setShowOverview(false)} />
@@ -76,9 +77,8 @@ export const DiscardPile: FC<{ cardIds: string[], deck: string }> = ({ cardIds, 
                             ))}
                         </div>
                     </div>
-                </div>,
-                document.getElementById("battle-container") as HTMLElement
-            )
+                </BattleInterfaceOverlay>
+            </BattlePortalWrap>
         );
     }
 

@@ -1,0 +1,12 @@
+{
+  "attack_frontliner": "Attack your oppontent's card on the 'Frontliner' position.",
+  "attack_vanguard": "Attack your oppontent's card on the 'Vanguard' position.",
+  "attack_directly": "Attack your oppontent directly. This will reduce their health points.",
+  "convert_to_mana": "Convert this card to #mana which can be used to pay the cost for card deployment and ability usage.",
+  "move_to_frontline": "Move this card to the 'Frontliner' position to use the passive ability of the card permanently.",
+  "move_to_vanguard": "Move this card to the 'Vanguard' position to use the passive ability of the card permanently. Be quick, this position can be occupied by both players.",
+  "deploy_card": "Place this card on the 'Defender' position. while it is there, it will protect you from direct attacks. Deployed cars advance to the next position each turn (their passive ability will take effect uring this phase), an after reaching the 'Attacker' position, it gets promote to 'Stormer' an you will be able to use the car once again.",
+  "use_action": "Use the action ability of this card instantly. The cost of the card must be paid (using Mana #mana or Sacrificing #sacrifice other cards) and the card will be discarded afterwards.",
+  "use_passive": "Activate the passive ability of this card for the indicated cost, which can be paid: using Mana #mana or Sacrificing #sacrifice other cards.",
+  "select_sacrifice": "Select the cards in your hand which you are willing to sacrifice. The sacrificed cards will be used to pay the cost of ability usage or card deployment and will be instantly discarded afterwards."
+}

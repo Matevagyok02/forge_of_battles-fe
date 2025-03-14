@@ -2,7 +2,7 @@ import {FC, useContext, useState} from "react";
 import {registerNewUser} from "../../api/user.ts";
 import {ForcedModal} from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
-import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../Context.tsx";
+import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../context.tsx";
 import avatarList from "../../assets/avatars.json";
 
 const Registration: FC = () => {

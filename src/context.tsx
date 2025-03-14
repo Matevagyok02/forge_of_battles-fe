@@ -34,14 +34,14 @@ export interface IFriendsContext {
 }
 
 export interface IMatchContext {
-    match?: IMatch;
-    setMatch: Dispatch<SetStateAction<IMatch | undefined>>;
+    match: IMatch;
     loadCards: (ids: string[]) => Promise<ICard[]>;
-    player?: IPlayerState;
-    opponent?: IPlayerState;
+    player: IPlayerState;
+    opponent: IPlayerState;
     socket: Socket;
-    tip: string | null;
-    setTip: Dispatch<SetStateAction<string | null>>;
+    tip: string | undefined;
+    setTip: (tip: string | undefined) => void;
+    containerRef?: HTMLElement;
 }
 
 export const ModalContext = createContext<IModalContext>({} as IModalContext);

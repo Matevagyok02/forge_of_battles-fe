@@ -1,6 +1,13 @@
 const apiUrl =  import.meta.env.VITE_API_URL;
 const accessTokenKey = "@@auth0spajs@@::RAwUMFRHSVMcEUzNXc9PrBAMPZ2KQz57::https://forge-of-battles-be.onrender.com::openid profile email";
 
+export enum HttpMethod {
+    get = "GET",
+    post = "POST",
+    put = "PUT",
+    delete = "DELETE"
+}
+
 export interface CustomResponse {
     ok: boolean;
     status: number;
@@ -16,7 +23,7 @@ const getAccessToken = (): string | undefined => {
     }
 }
 
-export const customFetch = async (path: string, method?: string, body?: object): Promise<CustomResponse> => {
+export const customFetch = async (path: string, method?: HttpMethod, body?: object): Promise<CustomResponse> => {
     try {
         const accessToken = getAccessToken();
 
@@ -27,7 +34,7 @@ export const customFetch = async (path: string, method?: string, body?: object):
             }
 
             const init: RequestInit = {
-                method: method ? method : "GET",
+                method: method ? method : HttpMethod.get,
                 headers: headersInit
             }
 

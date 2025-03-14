@@ -2,7 +2,7 @@ import Frame from "../../components/Frame.tsx";
 import {ChangeEvent, FC, KeyboardEvent, useCallback, useContext, useEffect, useState} from "react";
 import {Icon, IconButton} from "../../components/Button.tsx";
 import "./BattleChat.css";
-import {MatchContext, UserContext} from "../../Context.tsx";
+import {MatchContext, UserContext} from "../../context.tsx";
 
 export interface IBattleMessage {
     emitter?: string;
@@ -12,17 +12,15 @@ export interface IBattleMessage {
 const BattleChat: FC = () => {
 
     const { socket } = useContext(MatchContext);
-    const [minimized, setMinimized] = useState<boolean>(false);
+    const [minimized, setMinimized] = useState<boolean>(true);
     const [messages, setMessages] = useState<IBattleMessage[]>([]);
     const [messageText, setMessageText] = useState<string>("");
     const username = useContext(UserContext)._user?.username;
 
     const sendMessage = useCallback((message: string, emitter?: string) => {
-        if (socket) {
-            const messageObj = { message, emitter };
-            setMessages(prevState => [...prevState, messageObj]);
-            socket?.emit("message", messageObj);
-        }
+        const messageObj = { message, emitter };
+        setMessages(prevState => [...prevState, messageObj]);
+        socket.emit("message", messageObj);
     }, [socket]);
 
     useEffect(() => {
@@ -30,14 +28,10 @@ const BattleChat: FC = () => {
             setMessages(prevState => [...prevState, msg]);
         }
 
-        if (socket) {
-            socket.on("message", handleReceivedMessage);
-        }
+        socket.on("message", handleReceivedMessage);
 
         return () => {
-            if (socket) {
-                socket.off("message", handleReceivedMessage);
-            }
+            socket.off("message", handleReceivedMessage);
         }
     }, [socket]);
 

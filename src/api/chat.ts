@@ -1,4 +1,4 @@
-import {customFetch} from "./api.ts";
+import {customFetch, HttpMethod} from "./api.ts";
 const namespace = "/chat";
 
 export const getUnseenMsg = async () =>
@@ -16,6 +16,6 @@ export const getChatMessages = async (id: string) =>
 export const sendChatMessage = async (id: string, text: string) =>
     await customFetch(
         namespace + "?to=" + id,
-        "POST",
+        HttpMethod.post,
         {to: id, text: text}
     );

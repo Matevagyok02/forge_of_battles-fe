@@ -4,17 +4,17 @@ import {IMatch} from "../../interfaces.ts";
 import {abandonMatch, createGame, getLastCreatedGame} from "../../api/match.ts";
 import Modal from "../../components/Modal.tsx";
 import {Button, Icon, IconButton} from "../../components/Button.tsx";
-import {FriendsContext, ModalContext, UserContext} from "../../Context.tsx";
+import {FriendsContext, ModalContext, UserContext} from "../../context.tsx";
 import {useNavigate} from "react-router-dom";
 
-const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
+const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: Friend | undefined }> = ({ _lastCreatedMatch, friend}) => {
 
     const navigate = useNavigate();
 
     const [friendToInvite, setFriendToInvite] = useState<Friend | undefined>(friend);
-    const [timeLimit, setTimeLimit] = useState<number>();
-    const [key, setKey] = useState<string>();
-    const [matchStage, setMatchStage] = useState<string>();
+    const [timeLimit, setTimeLimit] = useState<number | undefined>(_lastCreatedMatch?.battle.timeLimit);
+    const [key, setKey] = useState<string | undefined>(_lastCreatedMatch?.key);
+    const [matchStage, setMatchStage] = useState<string | undefined>(_lastCreatedMatch?.stage);
     const [errorMsg, setErrorMsg] = useState<string>();
     const [loading, setLoading] = useState<boolean>(false);
     const [availableFriends, setAvailableFriends] = useState<Friend[]>();
@@ -126,8 +126,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
     }
 
     useEffect(() => {
-        if (friends)
-            setAvailableFriends(getAvailableFriends(friends.friends));
+        if (friends) setAvailableFriends(getAvailableFriends(friends.friends));
     }, [friends]);
 
     useEffect(() => {
@@ -146,6 +145,12 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
         }
     }, [friends]);
 
+    useEffect(() => {
+        setTimeLimit(_lastCreatedMatch?.battle.timeLimit);
+        setKey(_lastCreatedMatch?.key);
+        setMatchStage(_lastCreatedMatch?.stage);
+    }, [_lastCreatedMatch]);
+
     return(
         <Modal closeCondition={!key} >
             <div className="flex min-w-[112vh] min-h-[64vh]" >
@@ -162,7 +167,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                         <div className="flex justify-center gap-2 px-2" >
                             <div className="create-game-player justify-start" >
                                 <img className="user-avatar" src={`./avatars/${_user?.picture}.jpg`} alt="" />
-                                <h1 className="font-bold" >
+                                <h1>
                                     {_user?.username}
                                 </h1>
                             </div>
@@ -171,7 +176,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                             </h1>
                             { friendToInvite ?
                                 <div className="create-game-player justify-end" >
-                                    <h1 className="font-bold" >
+                                    <h1>
                                         {friendToInvite.username}
                                     </h1>
                                     <div className="create-game-friend-avatar-container" >
@@ -252,7 +257,7 @@ const CreateGame: FC<{ friend?: Friend | undefined }> = ({friend}) => {
                     { key ?
                         <div className="flex flex-col items-center" >
                             <div className="flex gap-2" >
-                                <h1 className="text-2xl font-bold" >
+                                <h1 className="text-2xl" >
                                     {key}
                                 </h1>
                                 <IconButton icon={Icon.copy} onClick={() => navigator.clipboard.writeText(key as string)} />

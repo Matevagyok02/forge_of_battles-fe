@@ -1,9 +1,10 @@
-import {FC, useCallback, useContext, useEffect, useRef, useState} from "react";
+import {FC, Suspense, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {ICard} from "../../../interfaces.ts";
 import CardContent from "./CardContent.tsx";
 import Draggable from 'react-draggable';
-import {MatchContext} from "../../../Context.tsx";
-import DeployMenu from "../ui/DeployMenu.tsx";
+import {MatchContext} from "../../../context.tsx";
+import UseCardMenu from "../ui/UseCardMenu.tsx";
+import { draw_cards, use_cards } from "../../../assets/tips.json";
 
 const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation }) => {
 
@@ -25,8 +26,8 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
         }
     }, [inspect, cardRef]);
 
-    const handleDrag = (data: any) => {
-        if (data.y <= 0) {
+    const handleDrag = (e: any, data: any) => {
+        if (data.y <= 0 && e) {
             setY(data.y);
         }
     };
@@ -34,7 +35,7 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
     const handleDragStop = () => {
         const viewportHeight = window.innerHeight;
 
-        if (y > - (viewportHeight / 6) || y < - (viewportHeight / 3)) {
+        if (y > - (viewportHeight / 8) || y < - (viewportHeight / 3)) {
             setY(0);
         } else {
             setOpenDeployMenu(true);
@@ -66,12 +67,10 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
     }, [y]);
 
     useEffect(() => {
-        if (inspect && player?.turnStage === 3) {
-            setTip(
-                "Drag the card on the War Track to deploy it or click on the action to use it."
-            );
+        if (inspect && player.turnStage === 3) {
+            setTip(use_cards);
         } else {
-            setTip(null);
+            setTip(draw_cards);
         }
     }, [inspect]);
 
@@ -82,9 +81,9 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
     }
 
     return (
-        <>
+        <Suspense fallback={null} >
             { openDeployMenu ?
-                <DeployMenu cardToDeploy={card} cancel={cancelDeploy} />
+                <UseCardMenu card={card} cancel={cancelDeploy} />
                 :
                 player?.turnStage === 3 ?
                     <Draggable
@@ -123,7 +122,7 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
                         <CardContent card={card} />
                     </div>
             }
-        </>
+        </Suspense>
     );
 
 }

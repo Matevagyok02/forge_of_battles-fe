@@ -3,7 +3,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Home from "./pages/home/Home.tsx";
 import {ReactElement, useState} from "react";
 import {IInfoModal, InfoModal} from "./components/Modal.tsx";
-import {AuthContext, FriendsContext, ModalContext, UserContext} from "./Context.tsx";
+import {AuthContext, FriendsContext, ModalContext, UserContext} from "./context.tsx";
 import {useAuth0} from "@auth0/auth0-react";
 import {IUser} from "./interfaces.ts";
 import {Friends} from "./pages/home/FriendsPanel.tsx";
@@ -96,7 +96,6 @@ const App = () => {
                                     {infoModal.content}
                                 </InfoModal>
                             ))}
-
                             {
                                 openedForcedModal &&
                                 openedForcedModal

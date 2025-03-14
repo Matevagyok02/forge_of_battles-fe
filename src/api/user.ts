@@ -1,4 +1,4 @@
-import {customFetch} from "./api.ts";
+import {customFetch, HttpMethod} from "./api.ts";
 const namespace = "/user";
 
 export const getUser = async () =>
@@ -14,14 +14,14 @@ export const findByUsername = async (username: string) =>
 export const registerNewUser = async (username: string, picture?: string) =>
     await customFetch(
          namespace + "/register",
-        "POST",
+        HttpMethod.post,
         {username, picture}
     );
 
 export const changePicture = async (id: string) =>
     await customFetch(
         namespace + "/picture?id=" + id,
-        "PUT"
+        HttpMethod.put
     );
 
 export const findPlayerById = async (id: string) =>
