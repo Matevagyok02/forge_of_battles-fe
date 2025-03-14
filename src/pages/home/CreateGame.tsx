@@ -75,7 +75,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: Friend | undefined }
         } else {
             openInfoModal(
                 <p>
-                    Something went worng, press "OK" to refresh the page and try again
+                    Something went wrong, press "OK" to refresh the page and try again
                 </p>,
                 refresh
             );
@@ -154,7 +154,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: Friend | undefined }
     return(
         <Modal closeCondition={!key} >
             <div className="flex min-w-[112vh] min-h-[64vh]" >
-                <div className="flex flex-col justify-between items-center p-8" >
+               <div className="flex flex-col justify-between items-center p-8 w-1/2" >
                     <div className="w-1 min-w-full" >
                         <h1 className="text-center font-amarante text-4xl" >
                             Create a game

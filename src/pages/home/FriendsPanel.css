@@ -118,7 +118,8 @@
     height: 100%;
     margin-block: 8px;
     overflow: scroll;
-    overflow-inline: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
     mask-image: linear-gradient(transparent , black 16px, black calc(100% - 16px), transparent 100%);
 }
 

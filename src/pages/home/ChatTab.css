@@ -111,7 +111,7 @@
 .chat ul {
     height: 256px;
     overflow: scroll;
-    overflow-inline: hidden;
+    overflow-x: hidden;
 }
 
 @keyframes chat-unseen {
