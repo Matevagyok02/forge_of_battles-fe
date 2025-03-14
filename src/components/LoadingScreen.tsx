@@ -1,11 +1,12 @@
 import {FC} from "react";
-import styles from "./LoadingScreen.module.css";
 
-const LoadingScreen: FC<{ loading?: boolean }> = ({ loading }) => {
-
-  return ( loading &&
-      <div className={styles.overlay} ></div>
-  );
+const LoadingScreen : FC <{loading ?: boolean}> = ({loading = true}) => {
+    return( loading &&
+        <div id="loading-screen">
+            <div className=" text-primary" role="status">
+                <span className="animate-ping">Loading...</span>
+            </div>
+        </div>
+    )
 }
-
-export default LoadingScreen;
+export default LoadingScreen
