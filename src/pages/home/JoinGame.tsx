@@ -170,8 +170,8 @@ const Queue: FC<{ leave: () => void }> = ({ leave }) =>
             </div>
             <div className="flex flex-col items-center gap-2" >
                 <div className="loading-spinner w-1/3" ></div>
-                <p className="animate-pulse" >
-                    Searching for available players...
+                <p>
+                    Searching for available players<span className="animate-pulse" >...</span>
                 </p>
             </div>
             <Button text="Leave" onClick={leave} />
