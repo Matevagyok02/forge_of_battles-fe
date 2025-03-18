@@ -23,8 +23,8 @@ const AuthRequiredDialog: FC<{ modalToBeOpened: ReactElement | undefined }> = ({
                     Please log in if you already have an account or register to create a new one
                 </p>
                 <div className="flex gap-4" >
-                    <Button text="Log In" onClick={customLogin} />
-                    <Button text="Register" onClick={customLogin} />
+                    <Button text={"Log In"} onClick={customLogin} />
+                    <Button text={"Register"} onClick={customLogin} />
                 </div>
             </div>
         </Modal>

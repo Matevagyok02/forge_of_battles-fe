@@ -3,16 +3,15 @@ import {useNavigate, useParams} from "react-router-dom";
 import Deck from "./Deck.tsx";
 import {FC, Suspense, useCallback, useContext, useEffect, useState} from "react";
 import {Button} from "../../components/Button.tsx";
-import Frame from "../../components/Frame.tsx";
+import {Frame, WindowFrame} from "../../components/Frame.tsx";
 import {IBattle, IMatch, IUser} from "../../interfaces.ts";
 import {io, Socket} from "socket.io-client";
 import {parseTimeLimit} from "../../utils.ts";
 import {findPlayerById} from "../../api/user.ts";
 import {AuthContext, ModalContext} from "../../context.tsx";
 import LeaveMatchDialog from "./LeaveMatchDialog.tsx";
-import WindowFrame from "../../components/WindowFrame.tsx";
 import decksBaseInfo from "../../assets/decks.json";
-import {keyRegex} from "../home/JoinGame.tsx";
+import {keyRegex} from "../home/main_interface_components/JoinGame.tsx";
 import LoadingScreen from "../../components/LoadingScreen.tsx";
 
 interface IDeck {
@@ -53,7 +52,7 @@ const Preparation: FC = () => {
         return decks;
     }
 
-    const { user, isLoading } = useContext(AuthContext);
+    const { user, isAuthenticated } = useContext(AuthContext);
     const { openForcedModal } = useContext(ModalContext);
 
     const [match, setMatch] = useState<IMatch>();
@@ -66,7 +65,7 @@ const Preparation: FC = () => {
     const [socket, setSocket] = useState<Socket>();
 
     useEffect( () => {
-        if (key && !isLoading) {
+        if (key && isAuthenticated) {
             if (key.match(keyRegex) && user) {
                 if (!socket) {
                     setUpSocket(key, user.sub!)
@@ -244,8 +243,6 @@ const Preparation: FC = () => {
             }
         }
     }
-
-    //TODO: add loading screen
 
     return (
         <WindowFrame>

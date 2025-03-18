@@ -1,38 +1,38 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {FC, useContext, useEffect} from "react";
-import {joinMatch} from "../api/match.ts";
-import {keyRegex} from "./home/JoinGame.tsx";
-import {AuthContext, ModalContext} from "../context.tsx";
-import {Button} from "../components/Button.tsx";
-import {ForcedModal} from "../components/Modal.tsx";
+import {joinMatch} from "../../api/match.ts";
+import {keyRegex} from "../home/main_interface_components/JoinGame.tsx";
+import {AuthContext, ModalContext} from "../../context.tsx";
+import {Button} from "../../components/Button.tsx";
+import {ForcedModal} from "../../components/Modal.tsx";
 
 const Join: FC = () => {
 
-    const { isAuthenticated, isLoading, login } = useContext(AuthContext);
+    const { isAuthenticated, login } = useContext(AuthContext);
     const { openForcedModal, closeForcedModal } = useContext(ModalContext);
     const key = useParams().key;
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (key && isAuthenticated && !isLoading) {
+        if (key && isAuthenticated) {
             if (key.match(keyRegex)) {
                 joinMatch(key).then(result => {
                     if (result.ok) {
                         navigate("/preparation/" + key);
                     } else {
                         alert("Failed to join match");
-                        //navigate("/");
+                        navigate("/");
                     }
                 });
             } else {
                 alert("Invalid key");
-                //navigate("/");
+                navigate("/");
             }
         }
-    }, [key, isAuthenticated, isLoading]);
+    }, [key, isAuthenticated]);
 
     useEffect(() => {
-        if (!isAuthenticated && !isLoading) {
+        if (!isAuthenticated) {
             const cancel = () => {
                 closeForcedModal();
                 navigate("/");
@@ -54,7 +54,7 @@ const Join: FC = () => {
             );
         } else
             closeForcedModal();
-    }, [isLoading, isAuthenticated]);
+    }, [isAuthenticated]);
 
     return (
         <div id="empty-screen" ></div>

@@ -1,37 +1,37 @@
-import Frame from "./Frame.tsx";
+import {Frame} from "./Frame.tsx";
 import {Button, Icon, IconButton} from "./Button.tsx";
 import {FC, ReactElement, ReactNode, useContext, useEffect} from "react";
 import {ModalContext} from "../context.tsx";
+import styles from "../styles/components/Modals.module.css";
 
-const Modal: FC<{ children: ReactNode, closeCondition?: boolean }> = ({ children, closeCondition = true}) => {
+const Modal: FC<{ children: ReactNode, canBeClosed?: boolean }> = ({ children, canBeClosed = true}) => {
 
     const {closeModal} = useContext(ModalContext)
 
     useEffect(() => {
         const handleKeyDown = (e: any) => {
-            if (e.key === "Escape" && closeCondition) {
+            if (e.key === "Escape" && canBeClosed) {
                 closeModal();
             }
         }
 
         document.addEventListener("keydown", handleKeyDown);
+
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         }
-    }, []);
+    }, [canBeClosed]);
 
     return (
-        <div className="modal-container" >
-            <div className="modal" >
-                <Frame>
-                    { closeCondition &&
-                        <div className="close-btn-container" >
-                            <IconButton icon={Icon.cancel} onClick={closeModal} />
-                        </div>
-                    }
-                    {children}
-                </Frame>
-            </div>
+        <div className={styles.regularModal} >
+            <Frame bg={true} >
+                { canBeClosed &&
+                    <div className={styles.closeButton} >
+                        <IconButton icon={Icon.cancel} onClick={closeModal} />
+                    </div>
+                }
+                {children}
+            </Frame>
         </div>
     );
 }
@@ -39,8 +39,8 @@ const Modal: FC<{ children: ReactNode, closeCondition?: boolean }> = ({ children
 export const ForcedModal: FC<{ children: ReactNode }> = ({ children }) => {
 
     return (
-        <div className="modal forced" >
-            <Frame>
+        <div className={styles.forcedModal} >
+            <Frame bg={true} >
                 {children}
             </Frame>
         </div>
@@ -66,16 +66,14 @@ export const InfoModal: FC<{
     }
 
     return(
-        <div className="modal-container info" >
-            <div className="modal" >
-                <Frame>
-                    <div className="flex flex-col gap-4 items-center p-4" >
-                        {children}
-                        <div className="hr" ></div>
-                        <Button text="Ok" onClick={closeModal} />
-                    </div>
-                </Frame>
-            </div>
+        <div className={styles.infoModal} >
+            <Frame bg={true} >
+                <div className={styles.content} >
+                    {children}
+                    <div className="hr" ></div>
+                    <Button text={"Ok"} onClick={closeModal} />
+                </div>
+            </Frame>
         </div>
     )
 }

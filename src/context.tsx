@@ -1,7 +1,7 @@
 import {createContext, Dispatch, ReactElement, SetStateAction} from "react";
 import {ICard, IMatch, IPlayerState, IUser} from "./interfaces.ts";
 import {User} from "@auth0/auth0-react";
-import {Friends} from "./pages/home/FriendsPanel.tsx";
+import {Friends} from "./pages/home/friends_panel/FriendsPanel.tsx";
 import {Socket} from "socket.io-client";
 
 export interface IModalContext {
@@ -20,7 +20,6 @@ export interface IAuthContext {
     isAuthenticated: boolean;
     login: () => Promise<void>;
     logout: () => Promise<void>;
-    isLoading: boolean;
 }
 
 export interface IUserContext {

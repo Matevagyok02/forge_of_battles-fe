@@ -6,12 +6,12 @@ import {IInfoModal, InfoModal} from "./components/Modal.tsx";
 import {AuthContext, FriendsContext, ModalContext, UserContext} from "./context.tsx";
 import {useAuth0} from "@auth0/auth0-react";
 import {IUser} from "./interfaces.ts";
-import {Friends} from "./pages/home/FriendsPanel.tsx";
+import {Friends} from "./pages/home/friends_panel/FriendsPanel.tsx";
 import Preparation from "./pages/preparation/Preparation.tsx";
 import Battle from "./pages/battle/Battle.tsx";
-import Join from "./pages/Join.tsx";
+import Join from "./pages/join/Join.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
-import AddCard from "./pages/addCard/AddCard.tsx";
+import AddCard from "./pages/add_card/AddCard.tsx";
 import LoadingScreen from "./components/LoadingScreen.tsx";
 
 const App = () => {
@@ -69,10 +69,9 @@ const App = () => {
         <AuthContext.Provider
             value={{
                 user,
-                isAuthenticated,
+                isAuthenticated: isAuthenticated && !isLoading,
                 login: customLogin,
-                logout: customLogout,
-                isLoading
+                logout: customLogout
         }}
         >
             <LoadingScreen/>

@@ -1,0 +1,313 @@
+@import "../components/hexagonFrame.module.css";
+
+/*---CREATE GAME PANEL---*/
+.createGamePanel {
+    @apply optionCardContent;
+
+    .background {
+        background-image: url("../../assets/background/create_game.jpg");
+    }
+
+    .content {
+        @apply justify-between;
+    }
+
+    .description {
+        @apply w-1 min-w-full;
+
+        & h1 {
+            @apply text-center font-amarante text-4xl;
+        }
+
+         & p {
+            @apply text-center py-4;
+         }
+    }
+
+    .matchDisplay {
+        @apply flex flex-col items-center;
+
+        .key {
+            @apply text-2xl;
+        }
+
+        .link {
+            @apply underline
+        }
+
+        & > p {
+            @apply flex gap-2;
+        }
+
+        & > div {
+            @apply mt-4;
+        }
+    }
+
+    .createBtn {
+        @apply flex flex-col justify-end items-center gap-2 w-1 min-w-full;
+    }
+
+    .creationInterface {
+        @apply flex flex-col justify-center gap-4 w-fit;
+
+        .timeLimitSelect {
+            @apply px-2 flex gap-4;
+
+            & > div:first-child h1 {
+                @apply w-max;
+
+                & h1 {
+                    @apply font-amarante text-xl;
+                }
+            }
+        }
+
+        .instructions {
+            @apply text-center;
+        }
+
+        .playersDisplay {
+            @apply px-2 gap-4 grid;
+            grid-template-columns: 1fr 1fr;
+
+            .player {
+                @apply flex items-end gap-2 min-w-48 h-10;
+            }
+
+            .opponent {
+                @apply flex items-end gap-2 min-w-48 h-10 justify-end;
+
+                & > div {
+                    @apply relative;
+                }
+
+                .removeOpponent {
+                    @apply opacity-0 absolute bg-darkSlateBlue-70 text-3xl createGameAvatarBtn flex justify-center items-center;
+                }
+
+                .removeOpponent:hover {
+                    @apply opacity-100;
+                }
+            }
+
+            .opponentSelectContainer {
+                @apply relative h-10 w-10 rounded-full flex justify-center items-center border-thin-grey;
+
+                & i {
+                    @apply text-2xl;
+                }
+
+                & select {
+                    @apply absolute bg-transparent pointer-events-none no-default-appearence;
+                }
+
+                & select:focus {
+                    @apply bg-darkSlateBlue;
+                }
+            }
+        }
+    }
+}
+
+/*---JOIN GAME PANEL---*/
+.joinGamePanel {
+    @apply optionCardContent;
+
+    .background {
+        background-image: url("../../assets/background/join_game.jpg");
+    }
+
+    .content {
+        @apply justify-center;
+
+        & > h1 {
+            @apply font-amarante text-3xl text-center;
+        }
+
+        & p {
+            @apply text-center;
+        }
+    }
+
+    .joinRandom {
+        @apply flex flex-col gap-4 items-center h-full;
+
+        & > h1 {
+            @apply font-amarante text-3xl;
+        }
+    }
+
+    .joinByKey {
+        @apply flex flex-col gap-4 items-center;
+
+        & > h1 {
+            @apply font-amarante text-3xl;
+        }
+
+        .keyInput {
+            @apply cursor-pointer;
+
+            & input {
+                @apply fixed z-0 opacity-0 pointer-events-none;
+            }
+
+            & ul {
+                @apply flex gap-1;
+
+                & li {
+                    @apply w-8 h-8 rounded-md border-gray-300 text-center text-white;
+                    font-size: 24px;
+                    box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.4);
+                }
+
+                & li.focused {
+                    animation: focus 1s linear infinite;
+                }
+            }
+        }
+    }
+
+    .activeMatch {
+        & > p {
+            @apply w-80;
+        }
+
+        .opponent {
+            @apply flex px-2 gap-2;
+
+            & h1 {
+                @apply text-2xl;
+            }
+        }
+
+        .timeLimitDisplay {
+            @apply text-xl px-2;
+        }
+
+        & > div:last-child {
+            @apply pt-4 flex flex-col gap-4;
+        }
+    }
+
+    .queue {
+        @apply justify-between;
+
+        .description {
+            @apply flex flex-col items-center w-80;
+
+            & h1 {
+                @apply font-amarante text-3xl;
+            }
+        }
+
+        .loading {
+            @apply flex flex-col items-center gap-2;
+        }
+    }
+}
+
+/*---RULES AND CARDS PANEL---*/
+.rulesAndCardsPanel {
+    @apply flex p-16 gap-8;
+
+    & > div {
+        @apply flex flex-col gap-8 justify-between items-center;
+
+        & > p {
+            @apply text-center w-1 min-w-full;
+        }
+
+        & > i {
+            @apply hexFrameDecor;
+        }
+    }
+
+    .cards i {
+        background-image: url("../../assets/svg/cards_icon.svg");
+    }
+
+    .rules i {
+        background-image: url("../../assets/svg/rules_icon.svg");
+    }
+}
+
+.hexFrameDecor {
+    @apply relative w-32 bg-center bg-no-repeat hexagonFrame;
+    filter: drop-shadow(0 0 4px goldenrod);
+    background-size: 60%;
+}
+
+.hexFrameDecor::after {
+    @apply bg-gold;
+}
+
+.hexFrameDecor::before {
+    @apply absolute left-1.5 top-1/2 h-16;
+    content: "";
+    border-left: 2px solid goldenrod;
+    translate: 0 -50%;
+}
+
+@keyframes focus {
+    0% {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    10% {
+        background-color: rgba(255, 255, 255, 0.12);
+    }
+    20% {
+        background-color: rgba(255, 255, 255, 0.14);
+    }
+    30% {
+        background-color: rgba(255, 255, 255, 0.16);
+    }
+    40% {
+        background-color: rgba(255, 255, 255, 0.18);
+    }
+    50% {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    60% {
+        background-color: rgba(255, 255, 255, 0.18);
+    }
+    70% {
+        background-color: rgba(255, 255, 255, 0.16);
+    }
+    80% {
+        background-color: rgba(255, 255, 255, 0.14);
+    }
+    90% {
+        background-color: rgba(255, 255, 255, 0.12);
+    }
+    100% {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.background {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    mask-image: linear-gradient(to right, transparent, black 160px);
+}
+
+.optionCardContent {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 70vh;
+}
+
+.createGameAvatarBtn {
+    @apply flex justify-center items-center absolute aspect-square w-10;
+    border: 2px solid grey;
+    border-radius: 50%;
+}
+
+.errorDisplay {
+    @apply text-center text-red-700;
+}
+
+.content {
+    @apply flex flex-col items-center w-fit p-8 gap-8;
+}

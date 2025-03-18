@@ -1,0 +1,37 @@
+.registrationPanel {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    & > p, & > small {
+        text-align: center;
+        width: 248px;
+        padding-inline: 16px;
+    }
+
+    .error {
+        @apply text-red-700;
+    }
+
+    & menu {
+        display: flex;
+        gap: 16px;
+    }
+
+    & ul {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(3, 1fr);
+
+        & img {
+            width: 56px !important;
+            height: 56px !important;
+        }
+
+        .selected {
+            filter: drop-shadow(0 0 4px goldenrod) drop-shadow(0 0 8px white);
+        }
+    }
+}

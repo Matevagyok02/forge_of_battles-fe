@@ -1,0 +1,41 @@
+.modal {
+    @apply centered;
+    width: fit-content;
+    height: fit-content;
+}
+
+.regularModal {
+    @apply modal;
+
+    .closeButton {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 10;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        & button {
+            color: goldenrod !important;
+
+            &:hover i {
+                filter: drop-shadow(0 0 2px goldenrod) !important;
+            }
+        }
+    }
+}
+
+.infoModal {
+    @apply modal z-50;
+
+    .content {
+        @apply flex flex-col gap-4 items-center p-4;
+    }
+}
+
+.forcedModal {
+    @apply modal z-50;
+}

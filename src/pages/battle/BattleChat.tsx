@@ -1,8 +1,8 @@
-import Frame from "../../components/Frame.tsx";
 import {ChangeEvent, FC, KeyboardEvent, useCallback, useContext, useEffect, useState} from "react";
 import {Icon, IconButton} from "../../components/Button.tsx";
 import "./BattleChat.css";
 import {MatchContext, UserContext} from "../../context.tsx";
+import {Frame} from "../../components/Frame.tsx";
 
 export interface IBattleMessage {
     emitter?: string;

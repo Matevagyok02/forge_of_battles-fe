@@ -1,14 +1,22 @@
-import Frame from "./Frame.tsx";
+import {Frame} from "./Frame.tsx";
 import {FC, ReactNode} from "react";
-import "../styles/button.css"
+import styles from "../styles/components/Buttons.module.css"
 
 const negativeTexts = ["cancel", "decline", "remove", "abandon", "delete", "no", "leave"];
+
+enum ButtonWidth {
+    small = 128,
+    medium = 160,
+    large = 208
+}
 
 interface ButtonProps {
     text: string;
     onClick?: () => void;
     disabled?: boolean;
     loading?: boolean;
+    bg?: boolean;
+    width?: ButtonWidth;
 }
 
 interface IconButtonProps {
@@ -17,6 +25,7 @@ interface IconButtonProps {
     decorated?: boolean;
     onClick?: () => void;
     deactivated?: boolean;
+    bg?: boolean;
 }
 
 export interface OptionButton {
@@ -38,12 +47,12 @@ export enum Icon {
     sound = "volume-high",
     friends = "user-group",
     settings = "gear",
-    notification = "bell",
     cancel = "xmark",
     edit = "pen-to-square",
     options = "ellipsis-vertical",
     remove = "trash-can",
     add = "plus",
+    unseenMessage = "envelope",
     message = "comment-dots",
     minimize = "minus",
     send = "paper-plane",
@@ -51,16 +60,12 @@ export enum Icon {
     question = "circle-question",
 }
 
-const deactivated = (state: boolean | undefined) => {
-    return state ? "deactivated" : "";
+export const getIcon = (icon: Icon) => {
+    return `fa-solid fa-${icon}`;
 }
 
-const negative = (text: string) => {
-    return negativeTexts.includes(text.toLowerCase()) ? "negative-btn" : "";
-}
-
-const decorated = (decorated: boolean | undefined) => {
-    return decorated ? "decorative-hex" : "";
+export const negative = (text: string) => {
+    return negativeTexts.includes(text.toLowerCase()) ? styles.negative : "";
 }
 
 export const Button: FC<ButtonProps> = (props) => {
@@ -72,33 +77,35 @@ export const Button: FC<ButtonProps> = (props) => {
     }
 
     const getWidth = () => {
-        const length = props.text.length;
-
-        if (length < 5)
-            return "w-32";
-        else if (length < 10)
-            return "w-40";
-        else
-            return "w-52";
+        if (props.width) return props.width;
+        if (props.text.length < 5) return ButtonWidth.small;
+        if (props.text.length < 10) return ButtonWidth.medium;
+        return ButtonWidth.large;
     }
+
+    const styleClasses = [
+        styles.framedButton,
+        props.disabled ? styles.disabled : "",
+        props.loading ? styles.loading : ""
+    ]
 
     return(
         <button
             onClick={handleClick}
             disabled={props.disabled}
-            className={`h-fit w-fit framed-button cursor-pointer ${props.disabled ? 'grayscale' : ''} ${props.disabled || props.loading ? 'pointer-events-none' : ''}`}
-            style={{pointerEvents: props.disabled || props.loading ? 'none' : 'auto'}}
+            className={styleClasses.join(" ")}
         >
             <Frame>
-                <span className={`${getWidth()} h-full flex justify-center items-center`} >
+                <span className={styles.content} style={{ width: getWidth() + "px" }} >
                     { props.loading ?
-                        <div className="loader absolute" ></div>
+                        <i className={styles.loader} ></i>
                         :
-                        <label
-                            className={`absolute text-xl cursor-pointer ${negative(props.text)}`}
-                        >
+                        <label className={negative(props.text)} >
                             {props.text}
                         </label>
+                    }
+                    { props.bg &&
+                        <div className={styles.bg} ></div>
                     }
                 </span>
             </Frame>
@@ -112,13 +119,23 @@ export const IconButton: FC<IconButtonProps> = (props) => {
 
     const text = props.text ? props.text : iconName ? iconName[0].toUpperCase() + iconName.slice(1) : "";
 
+    const styleClasses = [
+        styles.iconButton,
+        "_" + iconName,
+        props.decorated ? styles.decorated : "",
+        props.deactivated ? styles.deactivated : "",
+        props.bg ? styles.bg : "",
+        negative(text)
+
+    ]
+
     return(
         <button
             title={props.text}
-            className={`icon-btn ${decorated(props.decorated)} ${iconName} ${deactivated(props.deactivated)} ${negative(text)}`}
+            className={styleClasses.join(" ")}
             onClick={props.onClick}
         >
-            <i className={`fa-solid fa-${props.icon}`} ></i>
+            <i className={getIcon(props.icon)} ></i>
         </button>
     )
 }
@@ -160,7 +177,7 @@ export const MultipleOptionsButton: FC<{ options: OptionButton[] }> = ({ options
     const Hint: FC<{ hint: string }> = ({ hint }) => {
 
         return( hint &&
-            <span className="hint" >
+            <span className={styles.hint} >
                 <i className="fa-solid fa-question-circle" ></i>
                 <p>{formatText(hint)}</p>
             </span>
@@ -168,7 +185,7 @@ export const MultipleOptionsButton: FC<{ options: OptionButton[] }> = ({ options
     }
 
     return(
-        <ul className="multipleOptionsBtnList" >
+        <ul className={styles.multipleOptionsBtnList} >
             { options.map((option, index) =>
                 option.subOptions ?
                     <ul key={index} >

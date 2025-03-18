@@ -59,37 +59,37 @@
 }
 
 .attribute.buff {
-    background-image: url("../../assets/icons/effect_icons/modifier/attribute_buff.jpg");
+    background-image: url("../assets/icons/effect_icons/modifier/attribute_buff.jpg");
 }
 
 .attribute.debuff {
-    background-image: url("../../assets/icons/effect_icons/modifier/attribute_debuff.jpg");
+    background-image: url("../assets/icons/effect_icons/modifier/attribute_debuff.jpg");
 }
 
 .cost.buff {
-    background-image: url("../../assets/icons/effect_icons/modifier/attribute_buff.jpg");
+    background-image: url("../assets/icons/effect_icons/modifier/attribute_buff.jpg");
 }
 
 .cost.debuff {
-    background-image: url("../../assets/icons/effect_icons/modifier/attribute_debuff.jpg");
+    background-image: url("../assets/icons/effect_icons/modifier/attribute_debuff.jpg");
 }
 
 .eventDriven.draw {
-    background-image: url("../../assets/icons/effect_icons/event_driven/draw.jpg");
+    background-image: url("../assets/icons/effect_icons/event_driven/draw.jpg");
 }
 
 .eventDriven.deploy {
-    background-image: url("../../assets/icons/effect_icons/event_driven/deploy.jpg");
+    background-image: url("../assets/icons/effect_icons/event_driven/deploy.jpg");
 }
 
 .eventDriven.cardDeath {
-    background-image: url("../../assets/icons/effect_icons/event_driven/card_death.jpg");
+    background-image: url("../assets/icons/effect_icons/event_driven/card_death.jpg");
 }
 
 .eventDriven.discard {
-    background-image: url("../../assets/icons/effect_icons/event_driven/discard.jpg");
+    background-image: url("../assets/icons/effect_icons/event_driven/discard.jpg");
 }
 
 .eventDriven.turn {
-    background-image: url("../../assets/icons/effect_icons/event_driven/turn.jpg");
+    background-image: url("../assets/icons/effect_icons/event_driven/turn.jpg");
 }
