@@ -15,7 +15,9 @@ const RulesAndCards: FC = () => {
                     </p>
                     <Button text="Rules     " onClick={() => alert("TODO")} />
                 </div>
-                <span className="vr" ></span>
+
+                <vertical-line/>
+
                 <div className={styles.cards} >
                     <i></i>
                     <p>

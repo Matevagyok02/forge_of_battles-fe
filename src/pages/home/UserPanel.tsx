@@ -105,7 +105,9 @@ const ChangeAvatar: FC = () => {
                                 </li>
                             )}
                         </ul>
-                        <div className="hr" ></div>
+
+                        <horizontal-line/>
+
                         <Button
                             text={"Change Avatar"}
                             loading={loading}
@@ -122,7 +124,7 @@ const ChangeAvatar: FC = () => {
                                 "Something went wrong, please try again"
                             }
                         </p>
-                        <div className="hr" ></div>
+                        <horizontal-line/>
                         <Button text={"Ok"} onClick={closeModal} />
                     </>
                 }

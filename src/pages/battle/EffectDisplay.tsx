@@ -1,5 +1,5 @@
 import {FC, useContext} from "react";
-import styles from "../../styles/ActiveEffects.module.css";
+import styles from "../../styles/battle_page/ActiveEffects.module.css";
 import {AttributeModifierAbility, CostModifierAbility, IAbility, IMatch} from "../../interfaces.ts";
 import {MatchContext} from "../../context.tsx";
 import {AbilitySubtype} from "../add_card/AddCard.tsx";

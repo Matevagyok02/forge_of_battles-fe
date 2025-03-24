@@ -90,7 +90,7 @@ const SelectSacrifice: FC<{
                     <div className="w-full text-center" >
                         Click on the cards you are willing to sacrifice to select them
                     </div>
-                    <div className="hr" ></div>
+                    <horizontal-line/>
                     <div className="flex justify-center gap-4 px-4" >
                         <Button text="Cancel" onClick={handleCancelClick} />
                         <Button text={`Accept${countSelected(selectedCards) > 0 ? " (" + countSelected(selectedCards) + ")" : "    "}`} onClick={handleAcceptClick} />

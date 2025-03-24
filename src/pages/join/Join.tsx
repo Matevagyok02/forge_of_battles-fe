@@ -44,7 +44,7 @@ const Join: FC = () => {
                         <p className="px-4 text-xl text-center w-60" >
                             You must be logged in to join the match
                         </p>
-                        <div className="hr" ></div>
+                        <horizontal-line/>
                         <div className="flex flex-col gap-4 px-4 items-center" >
                             <Button text={"Login"} onClick={login} />
                             <Button text={"Cancel"} onClick={cancel} />

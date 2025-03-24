@@ -57,14 +57,14 @@ export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sen
     return(
         <ForcedModal>
             <div className="flex flex-col items-center gap-4 p-4" >
-                <div className="flex items-end gap-2" >
-                    <img className="user-avatar" src={`./avatars/${sender.picture || "1"}.jpg`} alt="" />
+                <div className="flex items-end gap-2 h-10" >
+                    <AvatarDisplay avatar={sender.picture} />
                     <h1 className="text-2xl" >{sender.username}</h1>
                 </div>
                 <div className="text-xl" >
                     wants to be your friend
                 </div>
-                <div className="hr" ></div>
+                <horizontal-line/>
                 <div className="flex gap-4" >
                     <Button
                         text="Decline"
@@ -162,14 +162,14 @@ export const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, 
         inviter &&
         <ForcedModal>
             <div className="flex flex-col items-center gap-4 p-4" >
-                <div className="flex items-end gap-2" >
+                <div className="flex items-end gap-2 h-10" >
                     <AvatarDisplay avatar={inviter.picture} />
                     <h1 className="text-2xl" >{inviter.username}</h1>
                 </div>
                 <div className="text-xl" >
                     has invited you for a battle
                 </div>
-                <div className="hr" ></div>
+                <horizontal-line/>
                 <div className="flex gap-4" >
                     <Button
                         text={"Decline"}

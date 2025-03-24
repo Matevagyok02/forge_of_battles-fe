@@ -2,7 +2,7 @@ import {FC, FocusEvent, useContext, useEffect, useState} from "react";
 import {getActiveMatch, joinMatch, joinQueue, leaveMatch, leaveQueue} from "../../../api/match.ts";
 import Modal from "../../../components/Modal.tsx";
 import {Button} from "../../../components/Button.tsx";
-import {ModalContext} from "../../../context.tsx";
+import {ModalContext, UserContext} from "../../../context.tsx";
 import {useNavigate} from "react-router-dom";
 import {IBattle, IMatch, IUser} from "../../../interfaces.ts";
 import {findPlayerById} from "../../../api/user.ts";
@@ -20,6 +20,7 @@ interface JoinGameProps {
 const JoinGame: FC<JoinGameProps> = (props) => {
 
     const navigate = useNavigate();
+    const { _user } = useContext(UserContext);
 
     const [errorMsg, setErrorMsg] = useState<string | undefined>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -30,7 +31,9 @@ const JoinGame: FC<JoinGameProps> = (props) => {
     const {openInfoModal} = useContext(ModalContext);
 
     const getOpponentDetails = async (match: IMatch) => {
-        const result = await findPlayerById(match.player1Id);
+        const opponentId = match.player1Id !== _user?.userId ? match.player1Id : match.player2Id;
+
+        const result = await findPlayerById(opponentId);
         if (result.ok && result.body) {
             return  result.body as IUser;
         } else {
@@ -141,7 +144,7 @@ const JoinGame: FC<JoinGameProps> = (props) => {
                         :
                         <div className={styles.content}>
                             <JoinRandom join={joinRandom} loading={loading} />
-                            <span className="hr" ></span>
+                            <horizontal-line/>
                             <JoinByKey
                                 join={joinWithKey}
                                 loading={loading}
@@ -168,9 +171,9 @@ const Queue: FC<{ leave: () => void }> = ({ leave }) => {
                 </p>
             </div>
             <div className={styles.loading} >
-                <div className="loading-spinner w-1/3" ></div>
+                <i className={"loading-spinner"} ></i>
                 <p>
-                    Searching for available players<span className="animate-pulse" >...</span>
+                    Searching for available players...
                 </p>
             </div>
             <Button text={"Leave"} onClick={leave} />
@@ -185,22 +188,24 @@ const JoinActiveMatch: FC<{ match: IMatch, opponent: IUser, rejoin: () => void, 
             <p>
                 You are inside an ongoing match. Finish or leave it before joining another one
             </p>
-            { opponent &&
-                <div className={styles.opponent} >
-                    <AvatarDisplay avatar={opponent.picture} />
-                    <h1>{opponent.username}</h1>
-                </div>
-            }
-            <div className="hr" ></div>
-            {(match.battle as IBattle).timeLimit &&
-                <div className={styles.timeLimitDisplay} >
-                    Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
-                </div>
-            }
-            <div>
+            <div className={"flex flex-col"} >
+                { opponent &&
+                    <div className={styles.opponent} >
+                        <AvatarDisplay avatar={opponent.picture} />
+                        <h1>{opponent.username}</h1>
+                    </div>
+                }
+                <horizontal-line/>
+                {(match.battle as IBattle).timeLimit &&
+                    <div className={styles.timeLimitDisplay} >
+                        Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
+                    </div>
+                }
+            </div>
+            <menu>
                 <Button text={"Rejoin"} onClick={rejoin} />
                 <Button text={"Leave"} onClick={leave} />
-            </div>
+            </menu>
         </div>
     );
 }

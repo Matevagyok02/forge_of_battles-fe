@@ -1,63 +1,126 @@
+.deck {
+    aspect-ratio: var(--card-aspect-ratio);
+    height: 256px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background-color: black;
+    border-radius: 8px;
+    transform-origin: center bottom;
+    cursor: pointer;
+    filter: drop-shadow(0 24px 16px black);
+    rotate: x 10deg;
+    background-size: cover;
+
+    & h1 {
+        @apply gold-text;
+        font-size: 32px;
+        pointer-events: none;
+    }
+
+    & span {
+        height: 64px;
+        filter: drop-shadow(0 0 4px black) drop-shadow(0 0 8px black) drop-shadow(0 0 16px black);
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("../../assets/svg/card_frame.svg");
+        background-size: cover;
+        filter: drop-shadow(0 0 8px goldenrod) drop-shadow(0 0 16px black);
+    }
+}
+
 main.preparation {
     background-image: url("../../assets/background/preparation_bg.jpg");
     box-shadow: inset 0 0 70px 20px black;
-}
 
-.leave-prep-btn {
-    position: fixed;
-    bottom: 40px;
-    left: 40px;
-}
+    .infoDisplayContainer {
+        @apply absolute right-10 bottom-10;
 
-.leave-prep-btn button span {
-    background-color: var(--bg-9);
-}
+        .infoDisplay {
+            width: 320px;
+            min-height: 256px;
+            background-color: var(--bg-9);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
 
-.deck-selector-panel {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
+            .timeLeft {
+                @apply text-xl px-2;
+            }
 
-.game-info-container {
-    position: absolute;
-    right: 40px;
-    bottom: 40px;
-}
+            .opponentStatus {
+                @apply flex px-2 gap-2 h-10;
 
-.game-info-panel {
-    width: 320px;
-    min-height: 256px;
-    background-color: var(--bg-9);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+                & > h1 {
+                    @apply text-2xl;
+                }
 
-.decks-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 896px;
-    height: 1px;
-    perspective: 1024px;
-}
+                & i {
+                    font-size: 32px;
+                }
 
-.decks-container > * {
-    translate: 0 -64px;
-}
+                & i[data-value="true"] {
+                    color: goldenrod;
+                    filter: drop-shadow(0 0 8px goldenrod);
+                }
 
-#ready-btn button label {
-    font-size: 32px;
-}
+                & i[data-value="false"] {
+                    @apply aspect-square text-center;
+                    color: grey;
+                    filter: drop-shadow(0 0 8px white);
+                    line-height: unset;
+                }
+            }
 
-#ready-btn button span {
-    height: 56px;
-    width: 256px;
+            .deckInfo {
+                @apply px-2;
+
+                & h1 {
+                    @apply text-2xl;
+                }
+            }
+        }
+    }
+
+    .deckSelectionContainer {
+        @apply flex flex-col items-center justify-between h-full;
+
+        .decks {
+            @apply flex justify-center items-center;
+            width: 896px;
+            height: 1px;
+            perspective: 1024px;
+
+            & > * {
+                translate: 0 -64px;
+            }
+        }
+
+        & > h1 {
+            @apply text-4xl py-8;
+        }
+
+        & menu {
+            @apply h-40 flex flex-col gap-5 items-center;
+
+            .readyButton {
+                scale: 1.4;
+            }
+
+            & > h1 {
+                @apply text-4xl;
+            }
+        }
+    }
 }
 
 .center {
@@ -86,38 +149,38 @@ main.preparation {
     translate: -50%;
     background-color: goldenrod;
     clip-path: polygon(
-        0 0,
-        50% 100%,
-        100% 0,
-        50% calc(100% - 4px)
+            0 0,
+            50% 100%,
+            100% 0,
+            50% calc(100% - 4px)
     );
     animation: levitate 2s infinite;
     filter: drop-shadow(0 0 8px goldenrod);
 }
 
-.left-to-center {
+.leftToCenter {
     animation: left-to-center 0.5s linear forwards;
 }
 
-.center-to-right {
+.centerToRight {
     animation: center-to-right 0.5s linear forwards;
 }
 
-.right-to-left {
+.rightToLeft {
     z-index: -1;
     animation: right-to-left 0.5s linear forwards;
 }
 
-.center-to-left {
+.centerToLeft {
     animation: center-to-left 0.5s linear forwards;
 }
 
-.left-to-right {
+.leftToRight {
     z-index: -1;
     animation: left-to-right 0.5s linear forwards;
 }
 
-.right-to-center {
+.rightToCenter {
     animation: right-to-center 0.5s linear forwards;
 }
 
@@ -241,19 +304,3 @@ main.preparation {
     }
 }
 
-#not-ready {
-    @apply animate-spin;
-    font-size: 32px;
-    color: var(--silver);
-    line-height: unset;
-    text-align: center;
-    aspect-ratio: 1/1;
-    filter: drop-shadow(0 0 8px white);
-}
-
-#ready {
-    @apply animate-pulse;
-    font-size: 32px;
-    color: goldenrod;
-    filter: drop-shadow(0 0 8px goldenrod);
-}

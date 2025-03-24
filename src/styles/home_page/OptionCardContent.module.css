@@ -1,4 +1,5 @@
-@import "../components/hexagonFrame.module.css";
+@import "../components/hexagonFrame.css";
+@import "../components/loadingSpinner.css";
 
 /*---CREATE GAME PANEL---*/
 .createGamePanel {
@@ -79,7 +80,7 @@
                 @apply flex items-end gap-2 min-w-48 h-10 justify-end;
 
                 & > div {
-                    @apply relative;
+                    @apply relative aspect-square h-10;
                 }
 
                 .removeOpponent {
@@ -106,6 +107,10 @@
                     @apply bg-darkSlateBlue;
                 }
             }
+        }
+
+        .timeLimitDisplay {
+            @apply w-full text-center text-xl px-2;
         }
     }
 }
@@ -169,12 +174,18 @@
     }
 
     .activeMatch {
+        @apply justify-between;
+
         & > p {
             @apply w-80;
         }
 
+        & > div {
+            @apply flex flex-col items-center gap-4 w-full;
+        }
+
         .opponent {
-            @apply flex px-2 gap-2;
+            @apply flex px-2 gap-2 h-10;
 
             & h1 {
                 @apply text-2xl;
@@ -185,7 +196,7 @@
             @apply text-xl px-2;
         }
 
-        & > div:last-child {
+        & > menu {
             @apply pt-4 flex flex-col gap-4;
         }
     }
@@ -203,16 +214,21 @@
 
         .loading {
             @apply flex flex-col items-center gap-2;
+
+            & i {
+                @apply loadingSpinner;
+                width: 50%;
+            }
         }
     }
 }
 
 /*---RULES AND CARDS PANEL---*/
 .rulesAndCardsPanel {
-    @apply flex p-16 gap-8;
+    @apply flex p-8;
 
     & > div {
-        @apply flex flex-col gap-8 justify-between items-center;
+        @apply flex flex-col gap-8 p-8 justify-between items-center;
 
         & > p {
             @apply text-center w-1 min-w-full;

@@ -70,7 +70,7 @@ export const InfoModal: FC<{
             <Frame bg={true} >
                 <div className={styles.content} >
                     {children}
-                    <div className="hr" ></div>
+                    <horizontal-line/>
                     <Button text={"Ok"} onClick={closeModal} />
                 </div>
             </Frame>

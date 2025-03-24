@@ -64,7 +64,9 @@ const AddFriend: FC<{ add: (friend: IFriend) => void }> = ({ add }) => {
                             <AvatarDisplay avatar={searchResult.picture} />
                             <h1>{searchResult.username}</h1>
                         </div>
-                        <div className="hr"></div>
+
+                        <horizontal-line/>
+
                         <menu>
                             <Button text={"Invite"} onClick={inviteFriend} />
                             <Button text={"Cancel"} onClick={() => setSearchResult(null)} />
@@ -78,7 +80,7 @@ const AddFriend: FC<{ add: (friend: IFriend) => void }> = ({ add }) => {
                                     {inviteResult.body.message}
                                 </p>
                             }
-                            <div className="hr"></div>
+                            <horizontal-line/>
                             <Button text={"Close"} onClick={closeModal} />
                         </>
                         :

@@ -89,7 +89,7 @@ const Registration: FC = () => {
                             Select an avatar and enter a username to create an account
                         </p>
 
-                        <div className="hr" ></div>
+                        <horizontal-line/>
 
                         <ul>
                             { Object.keys(avatars).map(avatar =>
@@ -107,7 +107,7 @@ const Registration: FC = () => {
                             Change it later by clicking on the edit icon inside the avatar display
                         </small>
 
-                        <div className="hr" ></div>
+                        <horizontal-line/>
 
                         <input
                             className={textInputStyles.textInput}
@@ -117,7 +117,7 @@ const Registration: FC = () => {
                             onChange={(e) => input(e.target.value)}
                         />
 
-                        <div className="hr" ></div>
+                        <horizontal-line/>
 
                         { errorMsg &&
                             <p className={styles.error} >
@@ -146,7 +146,7 @@ const Registration: FC = () => {
                                 "Something went wrong, please try again later"
                             }
                         </p >
-                        <div className="hr" ></div>
+                        <horizontal-line/>
                         <Button
                             text={registered ? "Continue" : "Ok"}
                             onClick={registered ? closeRegistretion : logout}

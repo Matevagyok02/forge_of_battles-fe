@@ -1,4 +1,4 @@
-@import "hexagonFrame.module.css";
+@import "hexagonFrame.css";
 
 .framedButton, .iconButton {
     color: goldenrod;

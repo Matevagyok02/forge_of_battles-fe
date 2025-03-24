@@ -163,7 +163,6 @@ const Battle: FC = () => {
             const player = match.battle?.playerStates[user.sub];
             const opponent = match.battle?.playerStates[opponentId];
 
-            console.log(match.player1Id, match.player2Id);
             if (player && opponent) {
                 player.userId = user.sub;
                 opponent.userId = opponentId;
@@ -174,11 +173,17 @@ const Battle: FC = () => {
         }
     }, [match, user]);
 
+    useEffect(() => {
+        if (socket) {
+            socket.emit("register");
+        }
+    }, [socket]);
+
     useEffect( () => {
         if (isAuthenticated) {
             if (user && key && (key.match(keyRegex) || key === "test")) {
                 if (!socket) {
-                    setTimeout(() => setUpSocket(key), 1000);
+                    setUpSocket(key);
                 }
             } else {
                 leavePage();

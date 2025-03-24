@@ -145,7 +145,7 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
                         />
                     </div>
                 </div>
-                <div className="hr" ></div>
+                <horizontal-line/>
                 <ul>
                     { messages && messages.map((message, index) => (
                         <li key={index} data-value={message.selfWritten ? "self" : "partner"}>

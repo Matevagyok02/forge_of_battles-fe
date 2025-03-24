@@ -7,7 +7,7 @@ import {
     useState
 } from "react";
 import {IFriend, FriendStatus, getFriendById} from "../friends_panel/FriendsPanel.tsx";
-import {IMatch, IUser, MatchStage} from "../../../interfaces.ts";
+import {IMatch, MatchStage} from "../../../interfaces.ts";
 import {abandonMatch, createGame, getLastCreatedGame} from "../../../api/match.ts";
 import Modal from "../../../components/Modal.tsx";
 import {Button, Icon, IconButton} from "../../../components/Button.tsx";
@@ -17,6 +17,7 @@ import styles from "../../../styles/home_page/OptionCardContent.module.css";
 import AvatarDisplay from "../../../components/AvatarDisplay.tsx";
 import {findPlayerById} from "../../../api/user.ts";
 import RangeSlider from "../../../components/RangeSelect.tsx";
+import {parseTimeLimit} from "../../../utils.ts";
 
 const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined }> = ({ _lastCreatedMatch, friend}) => {
 
@@ -116,7 +117,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
     }, [match]);
 
     const getOpponentDetails = useCallback((userId: string) => {
-        let opponent: IFriend | IUser | undefined;
+        let opponent: IFriend | undefined;
 
         if (friends) {
             opponent = getFriendById(userId, friends.friends);
@@ -125,7 +126,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
         if (!opponent) {
             findPlayerById(userId).then(result => {
                 if (result.ok && result.body) {
-                    opponent = result.body as IUser;
+                    opponent = result.body as IFriend;
                 }
             });
         }
@@ -155,7 +156,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
                             setOpponent={setOpponent}
                             isMatchCreated={!!match}
                         />
-                        <div className="hr" ></div>
+                        <horizontal-line/>
                         { !match ?
                             <div className={styles.timeLimitSelect} >
                                 <div>
@@ -176,16 +177,23 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
                                 />
                             </div>
                             :
-                            <p className={styles.instructions} >
-                                { match.stage === MatchStage.pending ?
-                                    opponent ?
+                            <>
+                                { match.battle.timeLimit &&
+                                    <div className={styles.timeLimitDisplay} >
+                                        Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
+                                    </div>
+                                }
+                                <p className={styles.instructions} >
+                                    { match.stage === MatchStage.pending ?
+                                        opponent ?
                                             "Wait for your friend to join the game..."
                                             :
                                             "Send the following key or link to your opponent"
-                                    :
-                                    `Click "Rejoin" to continue the game`
-                                }
-                            </p>
+                                        :
+                                        `Click "Rejoin" to continue the game`
+                                    }
+                                </p>
+                            </>
                         }
                     </div>
                     { match ?
@@ -236,7 +244,7 @@ const MatchDisplay: FC<{ match: IMatch, abandon: () => void, rejoin: () => void 
             <div>
                 { match.stage === MatchStage.pending ? (
                         <Button text={"Abandon"} onClick={abandon} />
-                ) : ( match.stage === MatchStage.preparing || match.stage === MatchStage.started && (
+                ) : ( match.stage !== MatchStage.finished && (
                         <Button text={"Rejoin" } onClick={rejoin} />
                 ))}
             </div>

@@ -3,7 +3,7 @@ import {useContext, useEffect, useRef, useState} from "react";
 import {getUser} from "../../api/user.ts";
 import {IMatch, IReceiver, ISender, IUser, IUserResponseBody} from "../../interfaces.ts";
 import FriendsPanel, {FriendStatus, IFriend} from "./friends_panel/FriendsPanel.tsx";
-import {io} from "socket.io-client";
+import {io, Socket} from "socket.io-client";
 import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../context.tsx";
 import JoinGame from "./main_interface_components/JoinGame.tsx";
 import {AuthPanel, UserPanel} from "./UserPanel.tsx";
@@ -23,8 +23,9 @@ const Home = () => {
     const { user, isAuthenticated } = useContext(AuthContext);
     const { _user, setUser } = useContext(UserContext);
     const { friends, setFriends } = useContext(FriendsContext);
-    const { openInfoModal, openedModal, openModal, closeModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
+    const { openInfoModal, openedModal, openModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
 
+    const [socket, setSocket] = useState<Socket>();
     const [friendRequests, setFriendRequests] = useState<ISender[]>();
     const [gameRequests, setGameRequests] = useState<IMatch[]>();
 
@@ -88,8 +89,7 @@ const Home = () => {
     }
 
     const refreshGameCreation = () => {
-        closeModal();
-        setTimeout(() => openModal(<CreateGame/>), 0);
+        openModal(<CreateGame/>)
     };
 
     const setUpSocket = () => {
@@ -99,8 +99,6 @@ const Home = () => {
                 auth: { userId: user!.sub },
             }
         );
-
-        socket.emit('register', user!.sub);
 
         socket.on("friend-request", (sender) => {
             if (friendRequests) {
@@ -254,12 +252,23 @@ const Home = () => {
         socket.on("random-match-found", (key: string) => {
             navigate("/preparation/" + key);
         });
+
+        socket.emit('register', user!.sub);
+
+        setSocket(socket);
     }
 
     useEffect(() => {
-        if (!_user && isAuthenticated) {
-            loadUser();
+        if (isAuthenticated) {
+            if (!_user) {
+                loadUser();
+            }
             setUpSocket();
+        } else {
+            if (socket) {
+                socket.disconnect();
+                setSocket(undefined);
+            }
         }
     }, [isAuthenticated]);
 
