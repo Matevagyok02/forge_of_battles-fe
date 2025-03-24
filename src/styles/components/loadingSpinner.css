@@ -1,0 +1,14 @@
+.loadingSpinner {
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    min-width: 16px;
+    background-image: conic-gradient(transparent 10%, grey);
+    mask: radial-gradient(circle, transparent 50%, black 50%);
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        rotate: 360deg;
+    }
+}

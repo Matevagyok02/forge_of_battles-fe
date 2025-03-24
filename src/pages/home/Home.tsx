@@ -1,59 +1,41 @@
-import "./Home.css";
-import "./FriendsPanel.css";
-import "./ChatTab.css";
-import {Button, Icon, IconButton} from "../../components/Button.tsx";
-import {FC, ReactElement, useCallback, useContext, useEffect, useRef, useState} from "react";
+import styles from "../../styles/home_page/Home.module.css";
+import {useContext, useEffect, useRef, useState} from "react";
 import {getUser} from "../../api/user.ts";
 import {IMatch, IReceiver, ISender, IUser, IUserResponseBody} from "../../interfaces.ts";
-import FriendsPanel, {Friend, FriendStatus} from "./FriendsPanel.tsx";
-import {io} from "socket.io-client";
-import ChatTab, {ChatRef, Message} from "./ChatTab.tsx";
+import FriendsPanel, {FriendStatus, IFriend} from "./friends_panel/FriendsPanel.tsx";
+import {io, Socket} from "socket.io-client";
 import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../context.tsx";
-import JoinGame from "./JoinGame.tsx";
-import UserPanel from "./UserPanel.tsx";
+import JoinGame from "./main_interface_components/JoinGame.tsx";
+import {AuthPanel, UserPanel} from "./UserPanel.tsx";
 import Registration from "./Registration.tsx";
-import AuthRequiredDialog from "../../components/AuthRequiredDialog.tsx";
-import CreateGame from "./CreateGame.tsx";
-import TutorialAndCards from "./TutorialAndCards.tsx";
+import CreateGame from "./main_interface_components/CreateGame.tsx";
 import {FriendRequest, GameRequest} from "./Requests.tsx";
 import {useNavigate} from "react-router-dom";
-import WindowFrame from "../../components/WindowFrame.tsx";
 import {getActiveMatch, getLastCreatedGame} from "../../api/match.ts";
+import OptionCardButtons from "./main_interface_components/OptionCardButton.tsx";
+import AvatarDisplay from "../../components/AvatarDisplay.tsx";
+import {WindowFrame} from "../../components/Frame.tsx";
+import Chat, {ChatRef} from "./chat/Chat.tsx";
 
 const Home = () => {
 
     const navigate = useNavigate();
-    const { user, isAuthenticated, login } = useContext(AuthContext);
+    const { user, isAuthenticated } = useContext(AuthContext);
     const { _user, setUser } = useContext(UserContext);
     const { friends, setFriends } = useContext(FriendsContext);
-    const { openInfoModal, openedModal, openModal, closeModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
+    const { openInfoModal, openedModal, openModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
 
+    const [socket, setSocket] = useState<Socket>();
     const [friendRequests, setFriendRequests] = useState<ISender[]>();
     const [gameRequests, setGameRequests] = useState<IMatch[]>();
-    const [chatPartners, setChatPartners] = useState<Friend[]>([]);
 
-    const chatRef = useRef<Map<string, ChatRef>>(new Map());
+    const chatRef = useRef<ChatRef | null>(null);
 
-    const openChat = useCallback((friend: Friend) => {
-        setChatPartners(prevState => {
-            if (prevState && prevState.findIndex(partner => partner.userId === friend.userId) === -1) {
-                return [...prevState, friend];
-            } else {
-                return [friend];
-            }
-        });
-    }, []);
-
-    const closeChat = useCallback((id: string) => {
-        setChatPartners(prevState => {
-            if (prevState) {
-                return prevState.filter(partner => partner.userId !== id);
-            } else {
-                return prevState;
-            }
-        });
-        chatRef.current.delete(id);
-    }, []);
+    const openChat = (friend: IFriend) => {
+        if (chatRef.current) {
+            chatRef.current!.openChat(friend);
+        }
+    }
 
     const loadUser = () => {
         getUser().then( userObj => {
@@ -107,8 +89,7 @@ const Home = () => {
     }
 
     const refreshGameCreation = () => {
-        closeModal();
-        setTimeout(() => openModal(<CreateGame/>), 0);
+        openModal(<CreateGame/>)
     };
 
     const setUpSocket = () => {
@@ -119,8 +100,6 @@ const Home = () => {
             }
         );
 
-        socket.emit('register', user!.sub);
-
         socket.on("friend-request", (sender) => {
             if (friendRequests) {
                 setFriendRequests([...friendRequests, sender]);
@@ -130,7 +109,7 @@ const Home = () => {
         });
 
         socket.on("friend-request-accepted", (acceptor) => {
-            const friend = acceptor as Friend;
+            const friend = acceptor as IFriend;
             if (friends && friend) {
                 setFriends(prevState => {
                     if (prevState) {
@@ -150,7 +129,7 @@ const Home = () => {
                             The following user has accepted your friend request:
                         </p>
                         <div className="flex items-end justify-center gap-2" >
-                            <img className="user-avatar" src={`./avatars/${acceptor.picture || "1"}.jpg`} alt="" />
+                            <AvatarDisplay avatar={acceptor.picture} />
                             <h1 className="text-2xl" >{acceptor.username}</h1>
                         </div>
                     </div>
@@ -159,7 +138,7 @@ const Home = () => {
         });
 
         socket.on("friend-request-declined", (decliner) => {
-            const userId = (decliner as Friend).userId;
+            const userId = (decliner as IFriend).userId;
             if (friends && userId) {
                 setFriends(prevState => {
                     if (prevState)
@@ -186,12 +165,12 @@ const Home = () => {
         });
 
         socket.on("friend-connected", (friend) => {
-            const friendId = (friend as Friend).userId;
+            const friendId = (friend as IFriend).userId;
 
             setFriends(prevState => {
                 if (prevState) {
                     const updatedFriends = prevState.friends.map(f =>
-                        f.userId === friendId ? { ...f, status: FriendStatus.Online } : f
+                        f.userId === friendId ? { ...f, status: FriendStatus.online } : f
                     );
                     return { ...prevState, friends: updatedFriends };
                 } else {
@@ -199,18 +178,18 @@ const Home = () => {
                 }
             });
 
-            if (chatRef.current && chatRef.current.has(friendId)) {
-                chatRef.current.get(friendId)?.changeStatus(FriendStatus.Online);
+            if (chatRef.current) {
+                chatRef.current!.changeStatus(friendId, FriendStatus.online);
             }
         });
 
         socket.on("friend-disconnected", (friend) => {
-            const friendId = (friend as Friend).userId;
+            const friendId = (friend as IFriend).userId;
 
             setFriends(prevState => {
                 if (prevState) {
                     const updatedFriends = prevState.friends.map(f =>
-                        f.userId === friendId ? { ...f, status: FriendStatus.Offline } : f
+                        f.userId === friendId ? { ...f, status: FriendStatus.offline } : f
                     );
                     return { ...prevState, friends: updatedFriends };
                 } else {
@@ -218,19 +197,14 @@ const Home = () => {
                 }
             });
 
-            if (chatRef.current && chatRef.current.has(friendId)) {
-                chatRef.current.get(friendId)?.changeStatus(FriendStatus.Offline);
+            if (chatRef.current) {
+                chatRef.current!.changeStatus(friendId, FriendStatus.offline);
             }
         });
 
         socket.on("chat-message", (message) => {
-            if (chatRef.current && chatRef.current.has(message.from)) {
-                chatRef.current.get(message.from)?.addMessage({
-                    senderId: message.from,
-                    messageText: message.text,
-                    createdAt: new Date(),
-                    selfWritten: false
-                } as Message);
+            if (chatRef.current) {
+                chatRef.current!.addMessage(message);
             }
             else if (friends) {
                 setFriends(prevState => {
@@ -263,7 +237,7 @@ const Home = () => {
                         The following user has declined your match invite:
                     </p>
                     <div className="flex items-end justify-center gap-2" >
-                        <img className="user-avatar" src={`./avatars/${decliner.picture || "1"}.jpg`} alt="" />
+                        <AvatarDisplay avatar={decliner.picture} />
                         <h1 className="text-2xl" >{decliner.username}</h1>
                     </div>
                 </div>,
@@ -278,68 +252,23 @@ const Home = () => {
         socket.on("random-match-found", (key: string) => {
             navigate("/preparation/" + key);
         });
-    }
 
-    const OptionCardButton: FC<{id: string}> = ({id}) => {
+        socket.emit('register', user!.sub);
 
-        const content = optionCardContent[id];
-
-        const openOption = () => {
-            if (!isAuthenticated && id !== "tutorialAndCards") {
-                let modalToBeOpened: ReactElement | undefined;
-
-                switch (id) {
-                    case "createGame":
-                        modalToBeOpened = <CreateGame />;
-                        break;
-                    case "joinGame":
-                        modalToBeOpened = <JoinGame />;
-                        break;
-                    default:
-                        break;
-                }
-
-                openModal(<AuthRequiredDialog modalToBeOpened={modalToBeOpened} />);
-            } else {
-                switch (id) {
-                    case "createGame":
-                        if (_user) {
-                            openModal(<CreateGame />);
-                        }
-                        break;
-                    case "joinGame":
-                        if (_user) {
-                            openModal(<JoinGame />);
-                        }
-                        break;
-                    case "tutorialAndCards":
-                        openModal(<TutorialAndCards />);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        return(
-            content &&
-            <div id={id} className="option-card-btn" onClick={openOption} >
-                <div>
-                    <h1 className="gold-text" >
-                        {content.title}
-                    </h1>
-                    <p>
-                        {content.description}
-                    </p>
-                </div>
-            </div>
-        )
+        setSocket(socket);
     }
 
     useEffect(() => {
-        if (!_user && isAuthenticated) {
-            loadUser();
+        if (isAuthenticated) {
+            if (!_user) {
+                loadUser();
+            }
             setUpSocket();
+        } else {
+            if (socket) {
+                socket.disconnect();
+                setSocket(undefined);
+            }
         }
     }, [isAuthenticated]);
 
@@ -387,18 +316,14 @@ const Home = () => {
 
     return(
         <WindowFrame>
-            <main className="home" >
+            <main className={styles.home} >
                 <div>
-                    <div className="h-[100vh] w-fit" >
-                        <div className="title-text" ></div>
+                    <div>
+                        <div className={styles.textLogo} ></div>
                         { openedModal ?
                             openedModal
                             :
-                            <div className="option-card-btn-container">
-                                <OptionCardButton id="createGame" />
-                                <OptionCardButton id="joinGame" />
-                                <OptionCardButton id="tutorialAndCards" />
-                            </div>
+                            <OptionCardButtons />
                         }
                     </div>
                     { _user ?
@@ -409,59 +334,17 @@ const Home = () => {
                                     <FriendsPanel
                                         openChat={openChat}
                                     />
-                                    <div className="chat-panel" >
-                                        {chatPartners.map(partner => (
-                                            <ChatTab
-                                                key={partner.userId}
-                                                friend={partner}
-                                                userId={_user.userId}
-                                                closeChat={closeChat}
-                                                ref={(ref: ChatRef) => {
-                                                    if (ref) {
-                                                        chatRef.current.set(partner.userId, ref);
-                                                    } else {
-                                                        chatRef.current.delete(partner.userId);
-                                                    }
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
+                                    <Chat ref={chatRef} />
                                 </>
                             }
                         </>
                         :
-                        <div className="auth-panel" >
-                            { !isAuthenticated &&
-                                <Button
-                                    text="Log In &nbsp; Register"
-                                    onClick={login}
-                                />
-                            }
-                            <div className="settings" >
-                                <IconButton icon={Icon.music} decorated onClick={() => alert("TODO")} />
-                                <IconButton icon={Icon.sound} decorated onClick={() => alert("TODO")} />
-                            </div>
-                        </div>
+                        <AuthPanel />
                     }
                 </div>
             </main>
         </WindowFrame>
     );
-}
-
-const optionCardContent: { [key: string]: { title: string, description: string } } = {
-    createGame: {
-        title: "Create Game",
-        description: "Create a game room, set a time limit and invite other players for a battle"
-    },
-    joinGame: {
-        title: "Join Game",
-        description: "Fight against your friend using a key, or join a random game to play with a stranger"
-    },
-    tutorialAndCards: {
-        title: "Tutorial & Cards",
-        description: "Play the tutorial to learn the game mechanics or browse the game rules and cards"
-    }
 }
 
 export default Home;

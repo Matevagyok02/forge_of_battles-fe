@@ -68,7 +68,9 @@ const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
                     <div className="text-sm px-4" >
                         Select the card you want to change, or select none to change both
                     </div>
-                    <div className="hr" ></div>
+
+                    <horizontal-line/>
+
                     <div className="flex gap-4" >
                         <Button text={"Cancel"} onClick={close} />
                         <Button text={"Redraw"} onClick={redraw} />

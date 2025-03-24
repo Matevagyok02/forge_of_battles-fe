@@ -1,28 +1,44 @@
-import "../styles/frame.css";
+import styles from "../styles/components/Frames.module.css";
 import {FC, ReactNode} from "react";
 
-const Frame: FC<{ children: ReactNode }> = ({children}) => {
+export const Frame: FC<{ children: ReactNode, bg?: boolean }> = ({children, bg = false }) => {
 
     return(
-        <div className="frame-container">
-            <div className="frame-content" >{children}</div>
-            <div className="frame-decor-container" >
-                <div className="frame-border"></div>
-                <div className="inner-frame-container">
-                    <div className="top-right-inner-border" ></div>
-                    <div className="top-left-inner-border" ></div>
-                    <div className="bottom-right-inner-border" ></div>
-                    <div className="bottom-left-inner-border" ></div>
+        <div className={styles.frame} >
+            <div className={`${styles.content} ${bg ? styles.background : ""}`} >
+                {children}
+            </div>
+
+            <div className={styles.decorationContainer} >
+                <div className={styles.border} ></div>
+
+                <div className={styles.corners} >
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
                 </div>
-                <div className="top-right-corner"></div>
-                <div className="top-left-corner"></div>
-                <div className="bottom-right-corner"></div>
-                <div className="bottom-left-corner"></div>
             </div>
         </div>
     )
 }
 
-export default Frame;
+export const WindowFrame: FC<{children: ReactNode}> = ({children}) => {
 
-/*test commit*/
+    return (
+        <div className={styles.windowFrame} >
+            <div>
+                {children}
+
+                <div className={styles.decoration} >
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+

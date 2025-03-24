@@ -68,12 +68,16 @@ const ResultScreen: FC<{ match: IMatch, player: IPlayerState, opponent: IPlayerS
               <h1 className={`${getResultStyleClass(winner)} gold-text text-6xl text-center`} >
                   {getResultText(winner)}
               </h1>
-              <div className="hr" ></div>
+
+              <horizontal-line/>
+
               <div className="grid grid-cols-2 gap-4 px-8" >
                   <PlayerStatistics player={opponent} hasWon={winner === opponent.userId} />
                   <PlayerStatistics player={player} hasWon={winner === player.userId} />
               </div>
-              <div className="hr" ></div>
+
+              <horizontal-line/>
+
               <ul className="px-2 text-2xl text-[grey]" >
                   { match.battle.timeLimit &&
                       <li>
@@ -86,7 +90,9 @@ const ResultScreen: FC<{ match: IMatch, player: IPlayerState, opponent: IPlayerS
                       <span className="text-[lightgrey] pl-2" >{ Math.ceil(match.battle.turn) / 2 }</span>
                   </li>
               </ul>
-              <div className="hr" ></div>
+
+              <horizontal-line/>
+
               <Button text={"Return to Home"} onClick={() => navigate("/")} />
           </div>
       </BattleInterfaceOverlay>

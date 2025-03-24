@@ -1,19 +1,20 @@
 import {FC, useContext, useEffect, useState} from "react";
 import {IMatch, ISender} from "../../interfaces.ts";
 import {acceptFriendRequest, declineFriendRequest} from "../../api/friend.ts";
-import {Friend, getFriendById} from "./FriendsPanel.tsx";
+import {IFriend, getFriendById} from "./friends_panel/FriendsPanel.tsx";
 import {ForcedModal} from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {FriendsContext, ModalContext} from "../../context.tsx";
 import {useNavigate} from "react-router-dom";
 import {declineMatch, joinMatch} from "../../api/match.ts";
+import AvatarDisplay from "../../components/AvatarDisplay.tsx";
 
 export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sender, onResolve}) => {
 
     const [loading, setLoading] = useState(false);
     const { setFriends } = useContext(FriendsContext);
 
-    const addFriend = (friend: Friend) => {
+    const addFriend = (friend: IFriend) => {
         setFriends(prevState => {
             if (prevState) {
                 return {
@@ -31,7 +32,7 @@ export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sen
 
         acceptFriendRequest(sender.userId).then(result => {
             if (result.ok) {
-                addFriend(sender as Friend);
+                addFriend(sender as IFriend);
                 onResolve();
             } else {
                 setLoading(false);
@@ -56,14 +57,14 @@ export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sen
     return(
         <ForcedModal>
             <div className="flex flex-col items-center gap-4 p-4" >
-                <div className="flex items-end gap-2" >
-                    <img className="user-avatar" src={`./avatars/${sender.picture || "1"}.jpg`} alt="" />
+                <div className="flex items-end gap-2 h-10" >
+                    <AvatarDisplay avatar={sender.picture} />
                     <h1 className="text-2xl" >{sender.username}</h1>
                 </div>
                 <div className="text-xl" >
                     wants to be your friend
                 </div>
-                <div className="hr" ></div>
+                <horizontal-line/>
                 <div className="flex gap-4" >
                     <Button
                         text="Decline"
@@ -86,7 +87,7 @@ export const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, 
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
-    const [inviter, setInviter] = useState<Friend>();
+    const [inviter, setInviter] = useState<IFriend>();
     const [searchInterval, setSearchInterval] = useState<number | undefined>();
 
     const { openInfoModal } = useContext(ModalContext);
@@ -161,22 +162,22 @@ export const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, 
         inviter &&
         <ForcedModal>
             <div className="flex flex-col items-center gap-4 p-4" >
-                <div className="flex items-end gap-2" >
-                    <img className="user-avatar" src={`./avatars/${inviter.picture || "1"}.jpg`} alt="" />
+                <div className="flex items-end gap-2 h-10" >
+                    <AvatarDisplay avatar={inviter.picture} />
                     <h1 className="text-2xl" >{inviter.username}</h1>
                 </div>
                 <div className="text-xl" >
                     has invited you for a battle
                 </div>
-                <div className="hr" ></div>
+                <horizontal-line/>
                 <div className="flex gap-4" >
                     <Button
-                        text="Decline"
+                        text={"Decline"}
                         onClick={declineRequest}
                         loading={loading}
                     />
                     <Button
-                        text="Accept"
+                        text={"Accept"}
                         onClick={acceptRequest}
                         loading={loading}
                     />
