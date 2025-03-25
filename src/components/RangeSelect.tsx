@@ -29,7 +29,7 @@ const RangeSlider: FC<RangeSliderProps> = (props) => {
     const [activeStep, setActiveStep] = useState<number>(steps.indexOf(props.default || props.min));
 
     useEffect(() => {
-        props.onChange(activeStep);
+        props.onChange(steps[activeStep]);
     }, [activeStep]);
 
     return(

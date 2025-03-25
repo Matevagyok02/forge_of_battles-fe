@@ -140,9 +140,9 @@ const FriendsPanel: FC<{ openChat: (friend: IFriend) => void }> = ({ openChat })
     return (
         <div className={styles.container} >
             {!unseenMessages ?
-                <IconButton icon={Icon.friends} text={"Friends"} decorated onClick={togglePanel} />
+                <IconButton icon={Icon.friends} text={"Friends"} bg decorated onClick={togglePanel} />
                 :
-                <IconButton icon={Icon.unseenMessage} text={"Check Unseen Messages"} decorated onClick={togglePanel} />
+                <IconButton icon={Icon.unseenMessage} text={"Check Unseen Messages"} bg decorated onClick={togglePanel} />
             }
             <div className={`${styles.panel} ${open ? styles.open : styles.closed}`} >
                 <div className={styles.frame}></div>

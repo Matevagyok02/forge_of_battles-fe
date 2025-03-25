@@ -46,9 +46,9 @@ export const UserPanel: FC = () => {
                 </div>
             </div>
             <menu>
-                <IconButton icon={Icon.music} text={"Music"} decorated onClick={() => alert("TODO")} />
-                <IconButton icon={Icon.sound} text={"Sounds"} decorated onClick={() => alert("TODO")} />
-                <IconButton icon={Icon.logout} text={"Log Out"}  decorated onClick={logout} />
+                <IconButton icon={Icon.music} text={"Music"} bg decorated onClick={() => alert("TODO")} />
+                <IconButton icon={Icon.sound} text={"Sounds"} bg decorated onClick={() => alert("TODO")} />
+                <IconButton icon={Icon.logout} text={"Log Out"} bg decorated onClick={logout} />
             </menu>
         </div>
     );

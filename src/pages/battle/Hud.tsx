@@ -4,6 +4,7 @@ import {IPlayerState, IUser} from "../../interfaces.ts";
 import {findPlayerById} from "../../api/user.ts";
 import {AuthContext, MatchContext, UserContext} from "../../context.tsx";
 import {OutgoingBattleEvent} from "./Battle.tsx";
+import AvatarDisplay from "../../components/AvatarDisplay.tsx";
 
 const maxMana = 10;
 const maxHealth = 8;
@@ -293,7 +294,7 @@ const PlayerDetails: FC<{ playerId?: string }> = ({ playerId }) => {
     return(
         <>
             <div className={styles.avatarContainer} >
-                <img src={`../avatars/${userDetails?.picture || "1"}.jpg`} alt="" />
+                <AvatarDisplay avatar={userDetails?.picture} />
             </div>
             <div className={styles.usernameContainer} >
                 <h1>

@@ -1,8 +1,10 @@
 import {ICard} from "../../../interfaces.ts";
 import {FC, useEffect, useState} from "react";
+import styles from "../../../styles/battle_page/CardContent.module.css";
+//TODO: show modified attributes
+const CardContent: FC<{ card: ICard, showModifiedAttributes?: boolean }> = ({ card, showModifiedAttributes = false }) => {
 
-const CardContent: FC<{ card: ICard }> = ({ card }) => {
-
+    const imageUrl = `../cards/${card.deck}/${card.name.toLowerCase().replace(/ /g, "_")}.jpg`;
     const [imageLoaded, setImageLoaded] = useState(true);
 
     useEffect(() => {
@@ -13,52 +15,54 @@ const CardContent: FC<{ card: ICard }> = ({ card }) => {
     return(
         <>
             { imageLoaded ?
-                <img
-                    src={`../cards/${card.deck}/${card.name.toLowerCase().replace(/ /g, "_")}.jpg`}
-                    alt=""
-                    onError={() => setImageLoaded(false)}
-                />
+                <img className={styles.image} src={imageUrl} alt={""} onError={() => setImageLoaded(false)} />
                 :
-                <div className="card-image-placeholder" ></div>
+                <div className={styles.image} ></div>
             }
-            <div className="card-name" >
-                <h1 className="gold-text" >
+
+            <div className={styles.name} >
+                <h1>
                     {card.name}
                 </h1>
             </div>
-            <div className="card-attribute-icon cost" >
-                <h1>
-                    {card.cost}
-                </h1>
-            </div>
-            <div className="card-attribute-icon def" >
-                <h1>
-                    {card.defence}
-                </h1>
-            </div>
-            <div className="card-attribute-icon att" >
-                <h1>
-                    {card.attack}
-                </h1>
-            </div>
-            <div className="card-abilities" >
-                <p className="action-ability" >
+
+            <ul>
+                <li className={styles.cost} >
+                    <h1>
+                        {card.cost}
+                    </h1>
+                </li>
+                <li className={styles.defense} >
+                    <h1>
+                        {card.defence}
+                    </h1>
+                </li>
+                <li className={styles.attack} >
+                    <h1>
+                        {card.attack}
+                    </h1>
+                </li>
+            </ul>
+
+            <ul className={styles.abilities} >
+                <li className={styles.action} >
                     <FormatAbilityText text={card.actionAbility.description} />
-                </p>
-                <p className="passive-ability" >
+                </li>
+                <li className={styles.passive} >
                     <FormatAbilityText text={card.passiveAbility.description} />
-                </p>
-            </div>
+                </li>
+            </ul>
         </>
     )
 }
+
 
 export const FormatAbilityText: FC<{ text?: string }> = ({ text }) => {
 
     return (
         text && text.split(" ").map((word, index) =>
             word === "MANA" ?
-                <span key={index} className="mana-icon" >&nbsp;&nbsp;&nbsp;</span>
+                <i key={index} className="mana-icon" >&nbsp;&nbsp;&nbsp;</i>
                 :
                 " " + word
         )

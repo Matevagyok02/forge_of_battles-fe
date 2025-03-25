@@ -38,6 +38,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
 
     const changeTimeLimit = (input: number) => {
         setTimeLimit(input === maxTimeLimit ? undefined : input);
+        console.log(input === maxTimeLimit ? undefined : input);
     }
 
     const abandonCreatedMatch = () => {
@@ -150,6 +151,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
                             Select a friend to invite or use the generated key or link to invite your opponent
                         </p>
                     </div>
+
                     <div className={styles.creationInterface} >
                         <PlayersDisplay
                             opponent={opponent}
@@ -196,6 +198,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
                             </>
                         }
                     </div>
+
                     { match ?
                         <MatchDisplay
                             match={match}
@@ -213,6 +216,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
                         </div>
                     }
                 </div>
+
                 <div className={styles.background} ></div>
             </div>
         </Modal>
