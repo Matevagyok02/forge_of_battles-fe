@@ -75,7 +75,9 @@ const App = () => {
                 isLoading
         }}
         >
-            <LoadingScreen/>
+           <LoadingScreen>
+               {null}
+           </LoadingScreen>
             <ModalContext.Provider
                 value={{
                     openInfoModal,

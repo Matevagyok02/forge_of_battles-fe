@@ -150,3 +150,5 @@ input[type="text"]:invalid {
     mask: radial-gradient(circle, transparent 50%, black 50%);
     animation: spin 2s linear infinite;
 }
+
+
