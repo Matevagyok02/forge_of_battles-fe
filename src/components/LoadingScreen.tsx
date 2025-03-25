@@ -11,16 +11,23 @@ const LoadingScreen : FC <{loading ?: boolean}> = ({loading = true}) => {
                 <div className="h-full w-full relative">
                     <div className={`absolute ${loadingScreenStyles.customSpin1}`}>
                         <Frame>
-                            <div className="w-24 h-24 aspect-square" ></div>
+                            <div className="w-24 h-24 aspect-square"/>
                         </Frame>
                     </div>
                     <div className={`absolute ${loadingScreenStyles.customSpin2}`}>
                         <Frame>
-                            <div className="w-24 h-24 aspect-square" ></div>
+                            <div className="w-24 h-24 aspect-square"/>
                         </Frame>
                     </div>
                 </div>
+                <div className={loadingScreenStyles.loadingText}>
+                    <h1>loading</h1>
+                    <span>
+                        <h1 className={loadingScreenStyles.typewriter}>...</h1>
+                    </span>
+                </div>
             </div>
+
          </div>
     )
 }
