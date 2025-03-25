@@ -11,7 +11,6 @@ import Battle from "./pages/battle/Battle.tsx";
 import Join from "./pages/join/Join.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
 import AddCard from "./pages/add_card/AddCard.tsx";
-import LoadingScreen from "./components/LoadingScreen.tsx";
 
 const App = () => {
 
@@ -73,9 +72,6 @@ const App = () => {
                 logout: customLogout
         }}
         >
-           <LoadingScreen>
-               {null}
-           </LoadingScreen>
             <ModalContext.Provider
                 value={{
                     openInfoModal,
