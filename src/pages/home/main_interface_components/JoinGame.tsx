@@ -1,12 +1,14 @@
 import {FC, FocusEvent, useContext, useEffect, useState} from "react";
-import {getActiveMatch, joinMatch, joinQueue, leaveMatch, leaveQueue} from "../../api/match.ts";
-import Modal from "../../components/Modal.tsx";
-import {Button} from "../../components/Button.tsx";
-import {ModalContext} from "../../context.tsx";
+import {getActiveMatch, joinMatch, joinQueue, leaveMatch, leaveQueue} from "../../../api/match.ts";
+import Modal from "../../../components/Modal.tsx";
+import {Button} from "../../../components/Button.tsx";
+import {ModalContext, UserContext} from "../../../context.tsx";
 import {useNavigate} from "react-router-dom";
-import {IBattle, IMatch, IUser} from "../../interfaces.ts";
-import {findPlayerById} from "../../api/user.ts";
-import {parseTimeLimit} from "../../utils.ts";
+import {IBattle, IMatch, IUser} from "../../../interfaces.ts";
+import {findPlayerById} from "../../../api/user.ts";
+import {parseTimeLimit} from "../../../utils.ts";
+import styles from "../../../styles/home_page/OptionCardContent.module.css";
+import AvatarDisplay from "../../../components/AvatarDisplay.tsx";
 
 export const keyRegex = /^[A-Z0-9]{0,6}$/;
 
@@ -18,6 +20,7 @@ interface JoinGameProps {
 const JoinGame: FC<JoinGameProps> = (props) => {
 
     const navigate = useNavigate();
+    const { _user } = useContext(UserContext);
 
     const [errorMsg, setErrorMsg] = useState<string | undefined>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -28,7 +31,9 @@ const JoinGame: FC<JoinGameProps> = (props) => {
     const {openInfoModal} = useContext(ModalContext);
 
     const getOpponentDetails = async (match: IMatch) => {
-        const result = await findPlayerById(match.player1Id);
+        const opponentId = match.player1Id !== _user?.userId ? match.player1Id : match.player2Id;
+
+        const result = await findPlayerById(opponentId);
         if (result.ok && result.body) {
             return  result.body as IUser;
         } else {
@@ -124,57 +129,54 @@ const JoinGame: FC<JoinGameProps> = (props) => {
     }
 
     return(
-        <Modal closeCondition={!activeMatch && !inQueue} >
-            <div className="flex min-w-[112vh] min-h-[64vh]" >
-                <div className="flex flex-col gap-4 p-8 justify-center items-center w-1/2" >
-                    { activeMatch ?
-                        <JoinActiveMatch
-                            match={activeMatch.match}
-                            opponent={activeMatch.opponent}
-                            rejoin={() => rejoinMatch(activeMatch!.match.key)}
-                            leave={leaveOngoingMatch}
-                        />
+        <Modal canBeClosed={!activeMatch && !inQueue} >
+            <div className={styles.joinGamePanel} >
+                { activeMatch ?
+                    <JoinActiveMatch
+                        match={activeMatch.match}
+                        opponent={activeMatch.opponent}
+                        rejoin={() => rejoinMatch(activeMatch!.match.key)}
+                        leave={leaveOngoingMatch}
+                    />
+                    :
+                    inQueue ?
+                        <Queue leave={leaveRandom} />
                         :
-                        inQueue ?
-                            <Queue leave={leaveRandom} />
-                            :
-                            <>
-                                <JoinRandom join={joinRandom} loading={loading} />
-                                <span className="hr" ></span>
-                                <JoinByKey
-                                    join={joinWithKey}
-                                    loading={loading}
-                                    errorMsg={errorMsg}
-                                />
-                            </>
-                    }
-                </div>
-                <div className="join-game-bg" ></div>
+                        <div className={styles.content}>
+                            <JoinRandom join={joinRandom} loading={loading} />
+                            <horizontal-line/>
+                            <JoinByKey
+                                join={joinWithKey}
+                                loading={loading}
+                                errorMsg={errorMsg}
+                            />
+                        </div>
+                }
+                <div className={styles.background} ></div>
             </div>
         </Modal>
     );
 }
 
-const Queue: FC<{ leave: () => void }> = ({ leave }) =>
-{
+const Queue: FC<{ leave: () => void }> = ({ leave }) => {
 
     return(
-        <div className="flex flex-col justify-between gap-4 items-center h-full">
-            <div className="flex flex-col items-center" >
-                <h1 className="text-3xl font-amarante" >
+        <div className={[styles.queue, styles.content].join(" ")} >
+            <div className={styles.description} >
+                <h1>
                     Random
                 </h1>
-                <p className="w-2/3 text-center" >
+                <p>
                     You are in the queue. Wait for an opponent to join
                 </p>
             </div>
-            <div className="flex flex-col items-center gap-2" >
-                <div className="loading-spinner w-1/3" ></div>
-                <p className="animate-pulse" >
+            <div className={styles.loading} >
+                <i className={"loading-spinner"} ></i>
+                <p>
                     Searching for available players...
                 </p>
             </div>
-            <Button text="Leave" onClick={leave} />
+            <Button text={"Leave"} onClick={leave} />
         </div>
     );
 }
@@ -182,41 +184,40 @@ const Queue: FC<{ leave: () => void }> = ({ leave }) =>
 const JoinActiveMatch: FC<{ match: IMatch, opponent: IUser, rejoin: () => void, leave: () => void }> = ({ match, opponent, rejoin, leave }) => {
 
     return(
-        <>
-            <h1 className="text-center w-80" >
+        <div className={[styles.activeMatch, styles.content].join(" ")} >
+            <p>
                 You are inside an ongoing match. Finish or leave it before joining another one
-            </h1>
-            { opponent &&
-                <div className="flex px-2 gap-2" >
-                    <img className="user-avatar" src={`../avatars/${opponent.picture || "1"}.jpg`} alt="" />
-                    <h1 className="text-2xl" >{opponent.username}</h1>
-                </div>
-            }
-            <div className="hr" ></div>
-            {
-                (match.battle as IBattle).timeLimit &&
-                <div className="text-xl px-2" >
-                    Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
-                </div>
-            }
-            { match &&
-                <div className="pt-4 flex flex-col gap-4" >
-                    <Button text={"Rejoin"} onClick={rejoin} />
-                    <Button text={"Leave"} onClick={leave} />
-                </div>
-            }
-        </>
+            </p>
+            <div className={"flex flex-col"} >
+                { opponent &&
+                    <div className={styles.opponent} >
+                        <AvatarDisplay avatar={opponent.picture} />
+                        <h1>{opponent.username}</h1>
+                    </div>
+                }
+                <horizontal-line/>
+                {(match.battle as IBattle).timeLimit &&
+                    <div className={styles.timeLimitDisplay} >
+                        Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
+                    </div>
+                }
+            </div>
+            <menu>
+                <Button text={"Rejoin"} onClick={rejoin} />
+                <Button text={"Leave"} onClick={leave} />
+            </menu>
+        </div>
     );
 }
 
 const JoinRandom: FC<{ join: () => void, loading: boolean }> = ({ join, loading }) => {
 
     return(
-        <div className="flex flex-col gap-4 items-center h-full">
-            <h1 className="text-3xl font-amarante" >
+        <div className={styles.joinRandom}>
+            <h1>
                 Random
             </h1>
-            <p className="w-2/3 text-center" >
+            <p>
                 Join a random game to fight against strangers
             </p>
             <Button text="Queue Up" onClick={join} loading={loading} />
@@ -225,6 +226,8 @@ const JoinRandom: FC<{ join: () => void, loading: boolean }> = ({ join, loading 
 }
 
 const JoinByKey: FC<{ join: (key: string) => void, loading: boolean, errorMsg?: string }> = ({ join, loading, errorMsg }) => {
+
+    const INPUT = "key-input";
 
     const [focused, setFocused] = useState<boolean>(false);
     const [key, setKey] = useState<string>("");
@@ -252,25 +255,27 @@ const JoinByKey: FC<{ join: (key: string) => void, loading: boolean, errorMsg?: 
     }
 
     return(
-        <div className="flex flex-col gap-4 items-center">
-            <h1 className="text-3xl font-amarante" >
+        <div className={styles.joinByKey}>
+            <h1>
                 Key
             </h1>
-            <p className="text-center" >
+            <p>
                 Enter a key to join a game with a friend
             </p>
-            <label htmlFor={"key-input"} className="key-input" >
+            <label htmlFor={INPUT} className={styles.keyInput} >
                 <input
-                    id={"key-input"}
-                    type="text"
+                    id={INPUT}
+                    type={"text"}
                     pattern={keyRegex.source}
                     onChange={(e) => input(e.target.value)}
                     onFocus={e => handleFocus(e)}
                     onBlur={() => setFocused(false)}
+                    value={key}
                 />
-                <ul className={`key-input-display ${focused ? "focused" : ""}`} >
+                <ul>
                     {keyInputs.map(i =>
                         <li
+                            className={focused && key.length === i ? styles.focused : ""}
                             key={i}
                         >
                             {key[i]}
@@ -279,7 +284,7 @@ const JoinByKey: FC<{ join: (key: string) => void, loading: boolean, errorMsg?: 
                 </ul>
             </label>
             { errorMsg &&
-                <p className="error-text" >
+                <p className={styles.errorDisplay} >
                     {errorMsg}
                 </p>
             }

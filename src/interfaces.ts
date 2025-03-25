@@ -1,4 +1,4 @@
-import {Friend} from "./pages/home/FriendsPanel.tsx";
+import {IFriend} from "./pages/home/friends_panel/FriendsPanel.tsx";
 import {WarTrackPos} from "./pages/battle/cards/CardSlot.tsx";
 
 /*---Friend Interfaces---*/
@@ -133,13 +133,20 @@ export interface IBattle {
     turn: number;
 }
 
+export enum MatchStage {
+    pending = "pending",
+    preparing = "preparing",
+    started = "started",
+    finished = "finished"
+}
+
 export interface IMatch {
     key: string;
     player1Id: string;
     player2Id: string;
     battle: IBattle;
     randomMatch: boolean;
-    stage: string;
+    stage: MatchStage;
 }
 
 /*---User Interfaces---*/
@@ -154,5 +161,5 @@ export interface IUser {
 
 export interface IUserResponseBody {
     user: IUser;
-    friends: Friend[];
+    friends: IFriend[];
 }

@@ -3,10 +3,12 @@ import {registerNewUser} from "../../api/user.ts";
 import {ForcedModal} from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../context.tsx";
-import avatarList from "../../assets/avatars.json";
+import avatars from "../../assets/avatars/avatars.ts";
+import styles from "../../styles/home_page/Registration.module.css";
+import textInputStyles from "../../styles/components/textInput.module.css";
+import AvatarDisplay from "../../components/AvatarDisplay.tsx";
 
 const Registration: FC = () => {
-
     const [username, setUsername] = useState<string>("");
     const [picture, setPicture] = useState<string>("1");
     const [loading, setLoading] = useState<boolean>(false);
@@ -18,8 +20,10 @@ const Registration: FC = () => {
     const { setUser } = useContext(UserContext);
     const { setFriends } = useContext(FriendsContext);
 
+    const minCharacters = 8;
+    const maxCharacters = 16;
     const usernameRegex = /^[a-zA-Z0-9]{0,16}$/;
-    const universalErrorMsg = "Username must be 8-16 characters and contain only letters and numbers";
+    const universalErrorMsg = `Username must be ${minCharacters}-${maxCharacters} characters and contain only letters and numbers`;
 
     const register = () => {
         if (username.match(usernameRegex) && username.length > 7) {
@@ -78,50 +82,50 @@ const Registration: FC = () => {
 
     return(
         <ForcedModal>
-            <div className="p-4 flex flex-col items-center gap-4" >
+            <div className={styles.registrationPanel} >
                 {typeof registered === "undefined" ?
                     <>
-                        <p className="text-center w-72 px-4" >
+                        <p>
                             Select an avatar and enter a username to create an account
                         </p>
 
-                        <div className="hr" ></div>
+                        <horizontal-line/>
 
-                        <ul className="avatar-selector" >
-                            {avatarList.map(avatar =>
+                        <ul>
+                            { Object.keys(avatars).map(avatar =>
                                 <li
                                     key={avatar}
                                     onClick={() => setPicture(avatar)}
-                                    className={picture === avatar ? "selected" : ""}
+                                    className={picture === avatar ? styles.selected : ""}
                                 >
-                                    <img className="user-avatar" src={`./avatars/${avatar}.jpg`} alt="" />
+                                    <AvatarDisplay avatar={avatar} />
                                 </li>
                             )}
                         </ul>
 
-                        <small className="text-center w-72 px-4" >
+                        <small>
                             Change it later by clicking on the edit icon inside the avatar display
                         </small>
 
-                        <div className="hr" ></div>
+                        <horizontal-line/>
 
                         <input
-                            className="username-input"
-                            type="text"
-                            placeholder="Username (min. 8 characters)"
+                            className={textInputStyles.textInput}
+                            type={"text"}
+                            placeholder={`Username (min. ${minCharacters} characters)`}
                             pattern={usernameRegex.source}
                             onChange={(e) => input(e.target.value)}
                         />
 
-                        <div className="hr" ></div>
+                        <horizontal-line/>
 
                         { errorMsg &&
-                            <p className="error-text text-center w-72 px-4" >
+                            <p className={styles.error} >
                                 {errorMsg}
                             </p>
                         }
 
-                        <div className="flex gap-4" >
+                        <menu>
                             <Button
                                 text={"Cancel"}
                                 onClick={logout}
@@ -131,27 +135,22 @@ const Registration: FC = () => {
                                 loading={loading}
                                 onClick={register}
                             />
-                        </div>
+                        </menu>
                     </>
                     :
                     <>
-                        { registered ?
-                            <>
-                                <p className="text-center w-72 px-4" >
-                                    Your account was created successfully
-                                </p>
-                                <div className="hr" ></div>
-                                <Button text={"Continue"} onClick={closeRegistretion} />
-                            </>
-                            :
-                            <>
-                                <p className="error-text text-center w-72 px-4" >
-                                    Something went wrong, please try again later
-                                </p >
-                                <div className="hr" ></div>
-                                <Button text={"Ok"} onClick={logout} />
-                            </>
-                        }
+                        <p className={registered ? "" : styles.error} >
+                            { registered ?
+                                "Your account was successfully created"
+                                :
+                                "Something went wrong, please try again later"
+                            }
+                        </p >
+                        <horizontal-line/>
+                        <Button
+                            text={registered ? "Continue" : "Ok"}
+                            onClick={registered ? closeRegistretion : logout}
+                        />
                     </>
                 }
             </div>

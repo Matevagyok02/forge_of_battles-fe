@@ -9,7 +9,7 @@ import BattleChat from "./BattleChat.tsx";
 import {PlayerHand, OpponentHand} from "./Hands.tsx";
 import {getCardsById} from "../../api/cards.ts";
 import {io, Socket} from "socket.io-client";
-import {keyRegex} from "../home/JoinGame.tsx";
+import {keyRegex} from "../home/main_interface_components/JoinGame.tsx";
 import HudContainer from "./Hud.tsx";
 import EventDisplay, {EventDisplayHandle} from "./EventDisplay.tsx";
 import LoadingScreen from "../../components/LoadingScreen.tsx";
@@ -49,9 +49,9 @@ const Battle: FC = () => {
 
     const navigate = useNavigate();
     const key = useParams().key;
-    const [match, setMatch] = useState<IMatch>({} as IMatch);
-    const [player, setPlayer] = useState<IPlayerState>({} as IPlayerState);
-    const [opponent, setOpponent] = useState<IPlayerState>({} as IPlayerState);
+    const [match, setMatch] = useState<IMatch>();
+    const [player, setPlayer] = useState<IPlayerState>();
+    const [opponent, setOpponent] = useState<IPlayerState>();
     const [cards, setCards] = useState<ICard[]>([]);
 
     const [loading, setLoading] = useState<boolean>(true);
@@ -64,7 +64,7 @@ const Battle: FC = () => {
     const eventDisplay = useRef<EventDisplayHandle | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
 
-    const {user, isLoading} = useContext(AuthContext);
+    const {user, isAuthenticated} = useContext(AuthContext);
 
     const setBattleData = (data: { battle: IBattle } | IMatch) => {
         setMatch(prevState =>
@@ -163,7 +163,6 @@ const Battle: FC = () => {
             const player = match.battle?.playerStates[user.sub];
             const opponent = match.battle?.playerStates[opponentId];
 
-            console.log(match.player1Id, match.player2Id);
             if (player && opponent) {
                 player.userId = user.sub;
                 opponent.userId = opponentId;
@@ -174,11 +173,17 @@ const Battle: FC = () => {
         }
     }, [match, user]);
 
+    useEffect(() => {
+        if (socket) {
+            socket.emit("register");
+        }
+    }, [socket]);
+
     useEffect( () => {
-        if (!isLoading) {
+        if (isAuthenticated) {
             if (user && key && (key.match(keyRegex) || key === "test")) {
                 if (!socket) {
-                    setTimeout(() => setUpSocket(key), 1000);
+                    setUpSocket(key);
                 }
             } else {
                 leavePage();
@@ -190,7 +195,7 @@ const Battle: FC = () => {
                 socket.disconnect();
             }
         }
-    }, [isLoading, user, key, socket]);
+    }, [isAuthenticated, user, key, socket]);
 
     const leavePage = () => {
         socket?.disconnect();

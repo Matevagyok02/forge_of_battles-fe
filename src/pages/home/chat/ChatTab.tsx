@@ -1,7 +1,18 @@
-import {ChangeEvent, forwardRef, KeyboardEvent, useEffect, useImperativeHandle, useRef, useState,} from "react";
-import {Friend} from "./FriendsPanel.tsx";
-import {Icon, IconButton} from "../../components/Button.tsx";
-import {getChatMessages, sendChatMessage} from "../../api/chat.ts";
+import {
+    ChangeEvent,
+    forwardRef,
+    KeyboardEvent,
+    useContext,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+} from "react";
+import {IFriend} from "../friends_panel/FriendsPanel.tsx";
+import {Icon, IconButton} from "../../../components/Button.tsx";
+import {getChatMessages, sendChatMessage} from "../../../api/chat.ts";
+import styles from "../../../styles/home_page/Chat.module.css";
+import {UserContext} from "../../../context.tsx";
 
 export interface Message {
     senderId: string;
@@ -11,17 +22,18 @@ export interface Message {
 }
 
 interface ChatProps {
-    friend: Friend;
-    userId: string;
-    closeChat: (id: string) => void;
+    friend: IFriend;
+    closeChat: () => void;
 }
 
-export interface ChatRef {
+export interface ChatTabRef {
     addMessage: (message: Message) => void;
     changeStatus: (status: string) => void;
 }
 
 const ChatTab = forwardRef((props: ChatProps, ref) => {
+
+    const userId = useContext(UserContext)._user?.userId;
 
     const [minimized, setMinimized] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -30,17 +42,6 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
     const [unseenMessages, setUnseenMessages] = useState<boolean | null>(false);
 
     const chatEndRef = useRef<HTMLDivElement | null>(null);
-
-    const getMessages = () => {
-        getChatMessages(props.friend.userId).then(response => {
-            if (response.ok && response.body && "messages" in response.body) {
-                (response.body.messages as Message[]).forEach((message: Message) => {
-                    message.selfWritten = message.senderId === props.userId;
-                });
-                setMessages(response.body.messages as Message[]);
-            }
-        });
-    }
 
     useImperativeHandle(ref, () => ({
         addMessage: (message: Message) => {
@@ -56,22 +57,33 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
     }));
 
     useEffect(() => {
-        getMessages();
+        getChatMessages(props.friend.userId).then(response => {
+            if (response.ok && response.body && "messages" in response.body) {
+                (response.body.messages as Message[]).forEach((message: Message) => {
+                    message.selfWritten = message.senderId === userId;
+                });
+                setMessages(response.body.messages as Message[]);
+            }
+        });
     }, []);
 
     useEffect(() => {
         if (chatEndRef.current && !minimized) {
             chatEndRef.current!.scrollIntoView();
         }
+
+        if (!minimized) {
+            setUnseenMessages(false);
+        }
     }, [messages, minimized]);
 
     const sendMessage = () => {
-        if (messageText.trim()) {
+        if (messageText.trim() && userId) {
             const text = messageText.trim();
             setMessageText("");
 
             const message = {
-                senderId: props.userId,
+                senderId: userId,
                 messageText: text,
                 createdAt: new Date(),
                 selfWritten: true
@@ -92,11 +104,6 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
         }
     }
 
-    const minimizeChat = () => {
-        setUnseenMessages(false);
-        setMinimized(false);
-    }
-
     const input = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setMessageText(e.target.value);
         e.target.style.height = "auto";
@@ -104,32 +111,29 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
     }
 
     return(
-        <div>
-            { minimized ?
-                status && unseenMessages !== null &&
-                <div
-                    onClick={minimizeChat}
-                    className={`chat-min ${status} ${unseenMessages ? "unseen-msg" : ""}`}
-                >
-                    <div className="status-indicator" title={status}></div>
-                    <h1>
-                        {props.friend.username}
-                    </h1>
-                </div>
-                :
-                <div
-                    className="chat"
-                >
-                <div className="flex justify-between items-center px-2" >
+        minimized ?
+            status && unseenMessages !== null &&
+            <li
+                className={`${styles.minTab} ${unseenMessages ? styles.unseenMsg : ""}`}
+                onClick={() => setMinimized(false)}
+            >
+                <i className={styles.statusIndicator} title={status} ></i>
+                <h1>
+                    {props.friend.username}
+                </h1>
+            </li>
+            :
+            <li className={styles.tab} >
+                <div>
                     {status &&
-                        <div className={`flex items-center gap-2 ${status}`}>
-                            <div className="status-indicator" title={props.friend.status}></div>
+                        <div>
+                            <i className={styles.statusIndicator} title={status}></i>
                             <h1>
                                 {props.friend.username}
                             </h1>
                         </div>
                     }
-                    <div className="flex items-center gap-2" >
+                    <div>
                         <IconButton
                             icon={Icon.minimize}
                             onClick={() => setMinimized(true)}
@@ -137,20 +141,20 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
                         <IconButton
                             text={"Close"}
                             icon={Icon.cancel}
-                            onClick={() => props.closeChat(props.friend.userId)}
+                            onClick={props.closeChat}
                         />
                     </div>
                 </div>
-                    <div className="hr" ></div>
-                    <ul>
-                        { messages && messages.map((message, index) => (
-                            <li key={index} className={`message ${message.selfWritten ? "self" : "partner"}`}>
-                                {message.messageText}
-                            </li>
-                        ))}
-                        <div ref={chatEndRef} ></div>
-                    </ul>
-                    <div className="input-container" >
+                <horizontal-line/>
+                <ul>
+                    { messages && messages.map((message, index) => (
+                        <li key={index} data-value={message.selfWritten ? "self" : "partner"}>
+                            {message.messageText}
+                        </li>
+                    ))}
+                    <div ref={chatEndRef} ></div>
+                </ul>
+                <div className={styles.input} >
                         <textarea
                             rows={1}
                             placeholder="..."
@@ -158,11 +162,9 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
                             onChange={e => input(e)}
                             onKeyDown={(e) => handleEnterPress(e)}
                         ></textarea>
-                        <IconButton icon={Icon.send} onClick={sendMessage} />
-                    </div>
+                    <IconButton icon={Icon.send} onClick={sendMessage} />
                 </div>
-            }
-        </div>
+            </li>
     );
 });
 

@@ -247,7 +247,7 @@ const TimeLeftDisplay: FC<{ turnStartedAt?: number, prevTimeLeft: number, should
 
     return(
         <div className={styles.timeContainer} >
-            <h1 className={timeLeft && timeLeft <= criticalTime || prevTimeLeft <= criticalTime ? "error-text" : ""} >
+            <h1 className={timeLeft && timeLeft <= criticalTime || prevTimeLeft <= criticalTime ? "text-red-700" : ""} >
                 { timeLeft && shouldCountdown  ?
                     calcTimeLeft(timeLeft)
                     :

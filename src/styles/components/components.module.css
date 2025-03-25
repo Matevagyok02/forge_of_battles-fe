@@ -1,0 +1,3 @@
+.avatarDisplay {
+    @apply block aspect-square rounded-full bg-black border-thin-grey max-h-full;
+}

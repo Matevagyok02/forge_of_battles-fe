@@ -24,8 +24,6 @@ const LeaveMatchDialog: FC<{ matchKey: string | undefined, isHost: boolean }> = 
                 );
             }
         });
-
-
     }
 
     const abandon = () => {
@@ -55,7 +53,7 @@ const LeaveMatchDialog: FC<{ matchKey: string | undefined, isHost: boolean }> = 
                         "Are you sure you want to leave this match?"
                     }
                 </p>
-                <div className="hr" ></div>
+                <horizontal-line/>
                 <div className="flex gap-4" >
                     <Button text={"No"} onClick={ closeForcedModal } />
                     <Button text={"Yes"} onClick={ handleClick } />

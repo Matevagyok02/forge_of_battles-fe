@@ -1,8 +1,8 @@
 import {FC, useContext} from "react";
-import styles from "./ActiveEffects.module.css";
+import styles from "../../styles/battle_page/ActiveEffects.module.css";
 import {AttributeModifierAbility, CostModifierAbility, IAbility, IMatch} from "../../interfaces.ts";
 import {MatchContext} from "../../context.tsx";
-import {AbilitySubtype} from "../addCard/AddCard.tsx";
+import {AbilitySubtype} from "../add_card/AddCard.tsx";
 import {FormatAbilityText} from "./cards/CardContent.tsx";
 
 const EffectDisplay: FC = () => {
@@ -25,11 +25,6 @@ const Effects: FC<{ effects: IAbility[] }> = ({ effects }) => {
 
     return(
         <ul className={styles.effectList} >
-            { effects.map((effect, index) =>
-                <li key={index} >
-                    <Effect effect={effect} />
-                </li>
-            )}
             { effects.map((effect, index) =>
                 <li key={index} >
                     <Effect effect={effect} />

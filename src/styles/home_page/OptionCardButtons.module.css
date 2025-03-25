@@ -1,0 +1,51 @@
+.container {
+    @apply inline-flex gap-8 w-fit pt-5;
+}
+
+.button {
+    width: 18vw;
+    height: 66vh;
+    border-radius: 6px;
+    box-shadow: 0 0 16px 4px black;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    cursor: pointer;
+
+    backdrop-filter: drop-shadow(0 0 40px black);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.button:hover {
+    animation: option-card-hover 0.2s ease forwards;
+}
+
+.button div {
+    padding: 12px 12px 32px 12px;
+    border-radius: 6px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 1));
+    min-height: 30%;
+}
+
+.button h1 {
+    min-width: fit-content;
+    font-size: 28px;
+}
+
+.button p {
+    filter:
+            drop-shadow(1px 1px 4px black)
+            drop-shadow(-1px -1px 4px black)
+            drop-shadow(1px -1px 4px black)
+            drop-shadow(-1px 1px 4px black);
+}
+
+@keyframes option-card-hover {
+    0% {}
+    100% {
+        scale: 1.05;
+        box-shadow: 0 0 64px rgba(255, 255, 255, 0.2) inset;
+    }
+}

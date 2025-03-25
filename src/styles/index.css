@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Amarante&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,11 +8,6 @@
   font-family: Friz Quadrata;
   src: url("../assets/font/friz_quadrata_regular.ttf") format("truetype");
 }
-
-/*@font-face {*/
-/*  font-family: Amarante;*/
-/*  src: url("https://fonts.googleapis.com/css2?family=Amarante&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap");*/
-/*}*/
 
 :root {
   color: lightgray;
@@ -62,4 +59,43 @@
 
   --silver-border: 2px solid grey;
   --thin-silver-border: 1px solid grey;
+}
+
+body {
+  font-family: Friz Quadrata, sans-serif;
+  letter-spacing: 1px;
+  line-height: 1.2;
+
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+
+  scrollbar-width: thin;
+  scrollbar-color: grey transparent;
+}
+
+horizontal-line {
+  width: 100%;
+  height: 0;
+  border-top: 1px solid grey;
+  border-radius: 2px;
+}
+
+vertical-line {
+  width: 0;
+  height: inherit;
+  border-left: 1px solid grey;
+  border-radius: 2px;
+}
+
+#empty-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-color);
 }

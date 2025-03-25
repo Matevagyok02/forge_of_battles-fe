@@ -1,0 +1,102 @@
+/*---USER PANEL---*/
+
+.userPanel {
+    @apply absolute right-0 top-0 m-8 flex flex-col;
+
+    .name {
+        @apply w-fit pr-16 pl-9 h-8 flex items-center;
+
+        & h1 {
+            @apply min-w-28 text-center;
+        }
+
+        & ::before {
+            @apply absolute w-full h-full top-0 left-0;
+            content: "";
+            background-color: grey;
+            clip-path: polygon(
+                    0 0,
+                    calc(100% - 30px) 0,
+                    calc(100% - 30px) 2px,
+                    5px 2px,
+                    33px 30px,
+                    100% 30px,
+                    100% 100%,
+                    32px 100%
+            );
+        }
+    }
+
+    .avatar {
+        @apply absolute top-0 right-0 aspect-square w-14 bg-black rounded-full;
+
+        .changeAvatarBtn {
+            @apply absolute top-0 left-0
+            w-full h-full round
+            text-3xl opacity-0 border-thin-grey
+            flex items-center justify-center;
+            background-color: rgba(0, 0, 0, 0.6);
+
+            &:hover {
+                @apply opacity-100;
+            }
+        }
+    }
+
+    & menu {
+        @apply absolute top-9 right-16 flex gap-2.5;
+
+        & button {
+            @apply w-8;
+        }
+
+        & button::after {
+            rotate: 90deg;
+        }
+    }
+}
+
+/*---CHANGE AVATAR---*/
+
+.changeAvatar {
+    @apply flex flex-col items-center gap-4 px-4 py-8 ;
+
+    & > ul {
+        @apply grid grid-cols-3 gap-4 px-4;
+
+        & img {
+            width: 56px !important;
+            height: 56px !important;
+        }
+
+        .selected {
+            filter: drop-shadow(0 0 4px goldenrod) drop-shadow(0 0 8px white);
+        }
+    }
+
+    & > p {
+        @apply px-4;
+    }
+
+    & > p.error {
+        @apply text-red-500;
+    }
+}
+
+/*---AUTH PANEL---*/
+
+.authPanel {
+    @apply absolute right-0 top-0 m-8 flex flex-col items-center gap-2;
+
+    & menu {
+        @apply flex gap-4;
+
+        & button {
+            @apply w-8;
+
+            &::after {
+                @apply rotate-90;
+            }
+        }
+    }
+}

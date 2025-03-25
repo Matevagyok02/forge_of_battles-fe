@@ -1,33 +1,19 @@
-import "./Preparation.css";
 import {useNavigate, useParams} from "react-router-dom";
-import Deck from "./Deck.tsx";
+import Deck, {IDeck, initDecks, Pos, Animation, Positions, Animations} from "./Deck.tsx";
 import {FC, Suspense, useCallback, useContext, useEffect, useState} from "react";
 import {Button} from "../../components/Button.tsx";
-import Frame from "../../components/Frame.tsx";
-import {IBattle, IMatch, IUser} from "../../interfaces.ts";
+import {Frame, WindowFrame} from "../../components/Frame.tsx";
+import {IBattle, IMatch, IUser, MatchStage} from "../../interfaces.ts";
 import {io, Socket} from "socket.io-client";
 import {parseTimeLimit} from "../../utils.ts";
 import {findPlayerById} from "../../api/user.ts";
 import {AuthContext, ModalContext} from "../../context.tsx";
 import LeaveMatchDialog from "./LeaveMatchDialog.tsx";
-import WindowFrame from "../../components/WindowFrame.tsx";
-import decksBaseInfo from "../../assets/decks.json";
-import {keyRegex} from "../home/JoinGame.tsx";
+import {keyRegex} from "../home/main_interface_components/JoinGame.tsx";
 import LoadingScreen from "../../components/LoadingScreen.tsx";
-
-interface IDeck {
-    name: string;
-    id: string;
-    description: string;
-    animation?: string;
-    pos?: Pos;
-}
-
-enum Pos {
-    center = "center",
-    right = "right",
-    left = "left"
-}
+import AvatarDisplay from "../../components/AvatarDisplay.tsx";
+import styles from "../../styles/preparation_page/Preparation.module.css";
+import "../../custom-elements.d.ts";
 
 const Preparation: FC = () => {
 
@@ -36,37 +22,20 @@ const Preparation: FC = () => {
 
     const [loading, setLoading] = useState(true);
 
-    const initDecks = (base: {name: string, id: string, description: string}[]) => {
-        const decks: IDeck[] = [];
-        const positions = [Pos.center, Pos.right, Pos.left];
-
-        base.forEach((deck, index) => {
-             decks.push({
-                 name: deck.name,
-                 id: deck.id,
-                 description: deck.description,
-                 animation: "",
-                 pos: positions[index]
-             })
-        });
-
-        return decks;
-    }
-
-    const { user, isLoading } = useContext(AuthContext);
+    const { user, isAuthenticated } = useContext(AuthContext);
     const { openForcedModal } = useContext(ModalContext);
 
     const [match, setMatch] = useState<IMatch>();
     const [opponent, setOpponent] = useState<IUser>();
-    const [decks, setDecks] = useState<IDeck[]>(initDecks(decksBaseInfo));
+    const [decks, setDecks] = useState<IDeck[]>(initDecks());
     const [isHost, setIsHost] = useState<boolean>();
     const [isReady, setIsReady] = useState(false);
     const [opponentIsReady, setOpponentIsReady] = useState(false);
-    const [selectedDeck, setSelectedDeck] = useState<IDeck>(decksBaseInfo[0] as IDeck);
+    const [selectedDeck, setSelectedDeck] = useState<IDeck>(decks[0]);
     const [socket, setSocket] = useState<Socket>();
 
     useEffect( () => {
-        if (key && !isLoading) {
+        if (key && isAuthenticated) {
             if (key.match(keyRegex) && user) {
                 if (!socket) {
                     setUpSocket(key, user.sub!)
@@ -76,6 +45,12 @@ const Preparation: FC = () => {
             }
         }
     }, [user, key, socket]);
+
+    useEffect(() => {
+        if (socket) {
+            socket.emit("register");
+        }
+    }, [socket]);
 
     useEffect(() => {
         if (match) {
@@ -88,7 +63,6 @@ const Preparation: FC = () => {
 
     const leavePage = () => {
         socket?.disconnect();
-        setSocket(undefined);
         navigate("/");
     }
 
@@ -109,12 +83,12 @@ const Preparation: FC = () => {
     }, [socket, selectedDeck]);
 
     const processMatchData = async (match: IMatch) => {
-        if (match.stage === "pending") {
+        if (match.stage === MatchStage.pending) {
             leavePage();
             return;
         }
 
-        if (match.stage === "started" && Object.keys(match.battle.playerStates).length === 2) {
+        if (match.stage === MatchStage.started && Object.keys(match.battle.playerStates).length === 2) {
             return navigate(`/battle/${key}`);
         }
 
@@ -124,7 +98,7 @@ const Preparation: FC = () => {
             setIsReady(true);
         }
 
-        setIsHost(userId === match.player1Id);
+        setIsHost(userId === match.player1Id && !match.randomMatch);
         const opponentId = [match.player1Id, match.player2Id].find(id => id !== userId);
         if (!opponentId) {
             leavePage();
@@ -172,30 +146,30 @@ const Preparation: FC = () => {
         setSocket(socket);
     }
 
-    const handleOnClick = (pos: string) => {
+    const handleOnClick = (clickedPos: Pos) => {
         const rotateRight = (decks: IDeck[]): IDeck[] => {
             return decks.map((deck) => {
-                let animation: string;
+                let animation: Animation;
                 let pos: Pos;
 
                 switch (deck.pos) {
-                    case Pos.center:
-                        animation = "center-to-right";
-                        pos = Pos.right;
+                    case Positions.center:
+                        animation = Animations.centerToRight;
+                        pos = Positions.right;
                         break;
-                    case Pos.right:
-                        animation = "right-to-left";
-                        pos = Pos.left;
+                    case Positions.right:
+                        animation = Animations.rightToLeft;
+                        pos = Positions.left;
                         break;
-                    case Pos.left:
-                        animation = "left-to-center";
-                        pos = Pos.center;
+                    case Positions.left:
+                        animation = Animations.leftToCenter;
+                        pos = Positions.center;
                         break;
                     default:
                         return deck;
                 }
 
-                if (pos === Pos.center) {
+                if (pos === Positions.center) {
                     setSelectedDeck(deck);
                 }
                 return { ...deck, pos, animation };
@@ -204,27 +178,27 @@ const Preparation: FC = () => {
 
         const rotateLeft = (decks: IDeck[]): IDeck[] => {
             return decks.map((deck) => {
-                let animation: string;
+                let animation: Animation;
                 let pos: Pos;
 
                 switch (deck.pos) {
-                    case Pos.center:
-                        animation = "center-to-left";
-                        pos = Pos.left;
+                    case Positions.center:
+                        animation = Animations.centerToLeft;
+                        pos = Positions.left;
                         break;
-                    case Pos.right:
-                        animation = "right-to-center";
-                        pos = Pos.center;
+                    case Positions.right:
+                        animation = Animations.rightToCenter;
+                        pos = Positions.center;
                         break;
-                    case Pos.left:
-                        animation = "left-to-right";
-                        pos = Pos.right;
+                    case Positions.left:
+                        animation = Animations.leftToRight;
+                        pos = Positions.right;
                         break;
                     default:
                         return deck;
                 }
 
-                if (pos === Pos.center) {
+                if (pos === Positions.center) {
                     setSelectedDeck(deck);
                 }
                 return { ...deck, pos, animation };
@@ -232,11 +206,11 @@ const Preparation: FC = () => {
         }
 
         if (!isReady) {
-            switch (pos as keyof typeof Pos) {
-                case Pos.right:
+            switch (clickedPos) {
+                case Positions.right:
                     setDecks(prevState => rotateLeft(prevState));
                     break;
-                case Pos.left:
+                case Positions.left:
                     setDecks(prevState => rotateRight(prevState));
                     break;
                 default:
@@ -245,20 +219,22 @@ const Preparation: FC = () => {
         }
     }
 
-    //TODO: add loading screen
-
     return (
         <WindowFrame>
             <LoadingScreen loading={loading} />
             <Suspense fallback={<LoadingScreen />} >
-                <main className="preparation" >
-                    <div className="deck-selector-panel" >
-                        <div className="title-text" ></div>
-                        <div className="decks-container" >
+                <main className={styles.preparation} >
+                    <div className={styles.deckSelectionContainer} >
+                        <h1>
+                            Select your deck
+                        </h1>
+
+                        <div className={styles.decks} >
                             {decks.map((deck) =>
                                 <Deck
                                     key={deck.id}
                                     name={deck.name}
+                                    background={deck.background}
                                     id={deck.id}
                                     pos={deck.pos!}
                                     animation={deck.animation!}
@@ -266,13 +242,18 @@ const Preparation: FC = () => {
                                 />
                             )}
                         </div>
-                        <div className="h-40 flex flex-col gap-5 items-center" >
+
+                        <menu>
                             { !isReady ?
-                                <span id="ready-btn">
-                            <Button text={"Ready"} onClick={confirmReady} disabled={selectedDeck.id === "venom"} />
-                        </span>
+                                <span className={styles.readyButton} >
+                                    <Button
+                                        text={"Ready"}
+                                        onClick={confirmReady}
+                                        disabled={selectedDeck.id === "venom"}
+                                    />
+                                </span>
                                 :
-                                <h1 className="text-4xl animate-pulse" >
+                                <h1 className="animate-pulse" >
                                     Waiting for opponent...
                                 </h1>
                             }
@@ -280,43 +261,45 @@ const Preparation: FC = () => {
                                 text={isHost ? "Abandon" : "Leave"}
                                 onClick={() => openForcedModal(<LeaveMatchDialog matchKey={key} isHost={!!isHost} />)}
                             />
-                        </div>
-                        <div className="game-info-container" >
-                            <Frame>
-                                <div className="game-info-panel" >
-                                    { opponent &&
-                                        <>
-                                            <div className="flex px-2 gap-2" >
-                                                <img className="user-avatar" src={`../avatars/${opponent.picture || "1"}.jpg`} alt="" />
-                                                <h1 className="text-2xl" >{opponent.username}</h1>
-                                                { opponentIsReady ?
-                                                    <i id="ready" className="fa-solid fa-check" ></i>
-                                                    :
-                                                    <i id="not-ready" className="fa-solid fa-spinner" ></i>
-                                                }
-                                            </div>
-                                            <div className="hr" ></div>
-                                        </>
-                                    }
-                                    { match && parseTimeLimit(match) &&
-                                        <>
-                                            <div className="text-xl px-2" >
-                                                Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
-                                            </div>
-                                            <div className="hr" ></div>
-                                        </>
-                                    }
-                                    <div className="px-2" >
-                                        <h1 className="text-2xl" >
-                                            {selectedDeck.name}
-                                        </h1>
-                                        <p>
-                                            {selectedDeck.description}
-                                        </p>
-                                    </div>
+                        </menu>
+                    </div>
+
+                    <div className={styles.infoDisplayContainer} >
+                        <Frame>
+                            <div className={styles.infoDisplay} >
+                                { opponent &&
+                                    <>
+                                        <div className={styles.opponentStatus} >
+                                            <AvatarDisplay avatar={opponent.picture} />
+                                            <h1>{opponent.username}</h1>
+                                            <i
+                                                data-value={opponentIsReady}
+                                                className={`fa-solid fa-${opponentIsReady ? "check animate-pulse" : "spinner animate-spin"}`}
+                                            />
+                                        </div>
+                                        <horizontal-line/>
+                                    </>
+                                }
+                                { match && parseTimeLimit(match) &&
+                                    <>
+                                        <div className={styles.timeLeft} >
+                                            Time limit: {parseTimeLimit(match)}|{parseTimeLimit(match)} min
+                                        </div>
+                                        <horizontal-line/>
+                                    </>
+                                }
+                                <div className={styles.deckInfo} >
+                                    <h1
+                                        style={{ color: `var(--${selectedDeck.id}-1)` }}
+                                    >
+                                        {selectedDeck.name}
+                                    </h1>
+                                    <p>
+                                        {selectedDeck.description}
+                                    </p>
                                 </div>
-                            </Frame>
-                        </div>
+                            </div>
+                        </Frame>
                     </div>
                 </main>
             </Suspense>

@@ -1,0 +1,14 @@
+{
+  "create_game": {
+    "title": "Create Game",
+    "description": "Create a game room, set a time limit and invite other players for a battle"
+  },
+  "join_game": {
+    "title": "Join Game",
+    "description": "Fight against your friend using a key, or join a random game to play with a stranger"
+  },
+  "rules_and_cards": {
+    "title": "Rules & Cards",
+    "description": "Play the tutorial to learn the game mechanics or browse the game rules and cards"
+  }
+}

@@ -1,0 +1,279 @@
+@import "hexagonFrame.css";
+
+.framedButton, .iconButton {
+    color: goldenrod;
+}
+
+.framedButton:hover label.negative, .iconButton.negative:hover i {
+    filter: drop-shadow(0 0 4px red) !important;
+}
+
+button:active {
+    transform: scale(0.99);
+    filter: brightness(1.2);
+}
+
+.negative {
+    @apply text-red-700;
+}
+
+.deactivated {
+    color: dimgrey !important;
+}
+
+.loader {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 3px solid var(--silver);
+    clip-path: polygon(0 100%, 50% 50%, 100% 100%, 100% 0, 0 0);
+    animation: rotate 1s linear infinite;
+}
+
+/*---ICON BUTTON---*/
+.iconButton {
+    @apply flex justify-center items-center;
+
+    & i {
+        @apply block w-fit;
+    }
+
+    &:hover i {
+        filter: drop-shadow(0 0 2px goldenrod);
+    }
+}
+
+.iconButton.decorated {
+    @apply hexagonFrame;
+}
+
+.iconButton.bg {
+
+    & i:before {
+        @apply relative z-10;
+    }
+
+    & i:after {
+        @apply absolute w-full h-full top-0 left-0;
+        content: "";
+        rotate: -90deg;
+        background-color: rgba(0, 0, 0, 0.4);
+        clip-path: polygon(
+                50% 0,
+                100% 25%,
+                100% 75%,
+                50% 100%,
+                0 75%,
+                0 25%
+        );
+    }
+}
+
+.iconButton.deactivated:hover i {
+    filter: drop-shadow(0 0 2px black) !important;
+}
+
+/*---FRAMED BUTTON---*/
+.framedButton {
+    @apply cursor-pointer w-fit h-fit;
+
+    .content {
+        @apply h-full flex justify-center items-center pointer-events-none relative;
+
+        & > label {
+            @apply absolute text-xl cursor-pointer;
+        }
+
+        .bg {
+            @apply w-full h-full absolute;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: -10;
+        }
+    }
+
+    & > div {
+        position: relative;
+    }
+
+    & > div:after {
+        @apply connectable-borders z-10 left-0;
+    }
+
+    & > div:before {
+        @apply connectable-borders z-10 right-0;
+    }
+}
+
+.framedButton.disabled {
+    cursor: auto;
+    pointer-events: none;
+    filter: grayscale(1);
+}
+
+.framedButton.loading {
+    cursor: auto;
+    pointer-events: none;
+}
+
+.connectable-borders {
+    content: "";
+    border-block: 1px solid grey;
+    position: absolute;
+    margin: 3px;
+    height: calc(100% - 6px);
+    animation: disconnect-borders 0.2s linear forwards;
+}
+
+.framedButton:hover {
+    & span {
+        animation: shade-bg 0.2s linear forwards;
+    }
+
+    & label {
+        filter: drop-shadow(0 0 4px goldenrod);
+    }
+
+    & > div {
+        position: relative;
+    }
+
+    & > div:after {
+        animation: connect-borders 0.2s linear forwards;
+    }
+
+    & > div:before {
+        animation: connect-borders 0.2s linear forwards;
+    }
+}
+
+/*---MULTIPLE OPTIONS BUTTON LIST---*/
+.multipleOptionsBtnList {
+    @apply flex flex-col justify-center items-center flex-1 cursor-pointer;
+    flex: 1;
+
+    & li {
+        @apply flex justify-between items-center gap-2;
+        font-size: 1.4em;
+
+        &:hover .hint {
+            visibility: visible;
+        }
+
+        .hint {
+            visibility: hidden;
+            color: grey;
+            font-size: 0.8em;
+            position: relative;
+
+            & p {
+                position: absolute;
+                top: 1.2em;
+                left: 1.2em;
+                color: lightgrey;
+                font-size: 0.8em;
+                background-color: rgba(0, 0, 0, 0.5);
+                padding: 8px;
+                text-align: justify;
+                width: 256px;
+                visibility: hidden;
+                clip-path: polygon(
+                        0 0,
+                        8px 4px,
+                        calc(100% - 4px) 4px,
+                        calc(100% - 4px) calc(100% - 4px),
+                        4px calc(100% - 4px),
+                        4px 8px
+                );
+            }
+
+            &:hover p {
+                visibility: visible;
+            }
+        }
+    }
+
+    & > ul, & > h1 {
+        font-size: 1.4em;
+    }
+
+    & > li, & > ul {
+        width: 100%;
+        padding-block: 2px;
+        padding-inline: 32px;
+        border: 2px solid transparent;
+
+        &:hover {
+            background-image: linear-gradient(
+                    to right,
+                    transparent,
+                    rgba(0, 0, 0, 0.2) 10%,
+                    rgba(0, 0, 0, 0.4),
+                    rgba(0, 0, 0, 0.2) 90%,
+                    transparent
+            );
+            border-image: linear-gradient(to right, transparent, goldenrod 40%, goldenrod 60%, transparent) 1;
+        }
+    }
+
+    & > ul {
+        display: flex;
+        align-items: center;
+
+        & ul {
+            display: none;
+        }
+
+        & li {
+            font-size: 1.2em;
+            padding-left: 8px;
+            color: darkgrey;
+            padding-right: 8px;
+
+            &:hover {
+                color: lightgrey;
+                background-image: linear-gradient(
+                        to right,
+                        transparent,
+                        rgba(255, 255, 255, 0.1) 10%,
+                        rgba(255, 255, 255, 0.2),
+                        rgba(255, 255, 255, 0.1) 90%,
+                        transparent
+                );
+            }
+        }
+
+        &:hover > ul {
+            display: block;
+            width: 100%;
+        }
+    }
+}
+
+/*---Animations---*/
+
+@keyframes shade-bg {
+    from {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent 20%, transparent 80%, rgba(0, 0, 0, 0.1));
+    }
+    to {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) );
+    }
+}
+
+@keyframes connect-borders {
+    from {
+        width: 0;
+    }
+    to {
+        width: 50%;
+    }
+}
+
+@keyframes disconnect-borders {
+    from {
+        width: 50%;
+    }
+    to {
+        width: 0;
+    }
+}
