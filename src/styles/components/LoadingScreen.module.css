@@ -1,0 +1,44 @@
+.loadingScreen{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(23, 23, 23);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    @apply w-20 h-20 aspect-square absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes custom-spin1 {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes custom-spin2 {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.customSpin1 {
+    animation: custom-spin1 2s linear infinite;
+}
+
+.customSpin2 {
+    animation: custom-spin2 2s linear infinite;
+}
