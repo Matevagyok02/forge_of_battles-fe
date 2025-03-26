@@ -24,6 +24,7 @@
     transform: translate(-50%, -50%);
     background-image: url("../../assets/svg/logo.svg");
     background-size: cover;
+    filter: drop-shadow(0 0 5px goldenrod);
 }
 
 .frameContentPlaceholder
@@ -52,4 +53,32 @@
 
 .customSpin2 {
     animation: custom-spin2 2s linear infinite;
+}
+
+@keyframes typewriter {
+    0% {
+        width: 0;
+    }
+    20% {
+        width: 33.3333%;
+    }
+    40% {
+        width: 66.6666%;
+    }
+    60% {
+        width: 100%;
+    }
+}
+
+.loadingText {
+    @apply flex absolute w-full justify-center animate-pulse text-2xl;
+    color: grey;
+    top: 150%;
+}
+
+.typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+    animation: typewriter 1.5s infinite;
 }

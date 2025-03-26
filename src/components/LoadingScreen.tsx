@@ -19,6 +19,12 @@ const LoadingScreen : FC <{loading ?: boolean}> = ({loading = true}) => {
                         </Frame>
                     </div>
                 </div>
+                <div className={loadingScreenStyles.loadingText}>
+                    <h1>loading</h1>
+                    <span>
+                        <h1 className={loadingScreenStyles.typewriter}>...</h1>
+                    </span>
+                </div>
             </div>
          </div>
     )
