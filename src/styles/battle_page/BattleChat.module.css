@@ -1,0 +1,63 @@
+.container {
+    @apply fixed left-0 bottom-0;
+    z-index: 1;
+    margin: 1.6vw;
+}
+
+.toggleChatButton {
+    scale: 2;
+}
+
+.chat {
+    @apply relative p-2 flex flex-col justify-between items-center;
+    font-size: 14px;
+    width: 25vw;
+    background-color: rgba(0, 0, 0, 0.3);
+
+    & > ul {
+        @apply w-full p-2 overflow-y-scroll;
+        height: 25vh;
+        mask-image: linear-gradient(
+                to bottom,
+                transparent 4px,
+                black 8px,
+                black calc(100% - 8px),
+                transparent calc(100% - 4px)
+        );
+
+        & > li {
+            @apply my-1;
+
+            & > p {
+                @apply pl-2 break-words;
+            }
+
+            & h1 {
+                -webkit-text-stroke: 0.02em lightgrey;
+            }
+        }
+    }
+
+    .input {
+        @apply flex items-end w-full;
+        padding: 0 8px 8px;
+
+        & > button {
+            @apply p-1 scale-125;
+        }
+
+        & > textarea {
+            @apply bg-transparent mx-1 py-1 w-full resize-none;
+            outline: none;
+            color: lightgrey;
+            border-bottom: 1px solid;
+            border-image: linear-gradient(
+                    to right,
+                    transparent,
+                    var(--silver) 16px,
+                    var(--silver) calc(100% - 16px),
+                    transparent
+            ) 1;
+        }
+    }
+}

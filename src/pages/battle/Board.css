@@ -1,90 +1,3 @@
-.board-container {
-    width: 100%;
-    height: 100vh;
-    perspective: 64vh;
-    perspective-origin: center;
-    pointer-events: none;
-    position: fixed;
-    display: flex;
-    justify-content: center;
-    translate: 0 -1vh;
-}
-
-.board {
-    pointer-events: auto;
-    width: fit-content;
-    height: fit-content;
-    rotate: x 30deg;
-    transform-origin: bottom center;
-    display: grid;
-    gap: 64px;
-    grid-template-columns: 1fr 3fr 1fr;
-    translate: 0 -8vh;
-}
-
-.war-track {
-    display: grid;
-    gap: 8px;
-    grid-template-columns: repeat(3, 3fr);
-    grid-template-rows: repeat(3, 4fr);
-}
-
-.card-slot-placeholder {
-    height: 25vh;
-    aspect-ratio: var(--card-aspect-ratio);
-    width: auto;
-    text-align: center;
-    font-size: 3vh;
-    border-radius: 4%;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.right-card-piles, .left-card-piles {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    align-items: center;
-    padding-block: 32px;
-}
-
-.right-card-piles {
-    filter: drop-shadow(-0.8vh 0.8vh 4px black);
-    justify-content: flex-end;
-}
-
-.left-card-piles {
-    filter: drop-shadow(0.8vh 0.8vh 4px black);
-    justify-content: flex-start;
-}
-
-.card-slot .card-slot-placeholder::before, .vg .card-slot-placeholder::before {
-    position: absolute;
-    content: "";
-    display: block;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-    background-image: radial-gradient(100% 100% at center, rgba(0, 0, 0, 0.7), transparent);
-}
-
-.card-slot .card-slot-placeholder h1 {
-    opacity: 0;
-}
-
-.card-slot:hover .card-slot-placeholder h1 {
-    opacity: 1;
-    filter: drop-shadow(0 0 4px black);
-}
-
-.discard-pile, .draw-pile {
-    aspect-ratio: var(--card-aspect-ratio);
-    height: 25vh;
-    position: relative;
-}
-
 .draw-pile-btn-container {
     pointer-events: auto;
     position: absolute;
@@ -132,106 +45,39 @@
     font-size: 1.6em;
 }
 
-.vanguard .card-slot-placeholder {
-    box-shadow: inset 0 0 8px 2px grey;
-}
-.vanguard .card-slot-placeholder h1 {
-    color: grey;
+.card-back {
+    --color: grey;
+    background-color: var(--color);
 }
 
-.card-back.light {
-    background-color: var(--light-1);
-}
-.card-back.light-secondary {
-    background-color: var(--light-2);
-}
-.card-back.darkness {
-    background-color: var(--darkness-1);
-}
-.card-back.darkness-secondary {
-    background-color: var(--darkness-2);
-}
-.card-back.venom {
-    background-color: var(--venom-1);
-}
-.card-back.venom-secondary {
-    background-color: var(--venom-2);
-}
-.card-slot:hover .card-slot-placeholder.venom-secondary::before, .card-back.venom-secondary {
-    background-color: var(--venom-2);
-}
-
-.card-slot .card-slot-placeholder.light {
-    box-shadow: inset 0 0 8px 2px var(--light-1);
-    color: var(--light-1);
-}
-.card-slot .card-slot-placeholder.light-secondary {
-    box-shadow: inset 0 0 8px 2px var(--light-2);
-    color: var(--light-2);
-}
-.card-slot .card-slot-placeholder.darkness {
-    box-shadow: inset 0 0 8px 2px var(--darkness-1);
-    color: var(--darkness-1);
-}
-.card-slot .card-slot-placeholder.darkness-secondary {
-    box-shadow: inset 0 0 8px 2px var(--darkness-2);
-    color: var(--darkness-2);
-}
-.card-slot .card-slot-placeholder.venom {
-    box-shadow: inset 0 0 8px 2px var(--venom-1);
-    color: var(--venom-1);
-}
-.card-slot .card-slot-placeholder.venom-secondary {
-    box-shadow: inset 0 0 8px 2px var(--venom-2);
-    color: var(--venom-2);
-}
-
-.deployed-card.light:hover,
-.discard-pile.light:hover,
-.draw-pile.light.hovered,
-.draw-pile-btn.light:hover
+.deployed-card:hover,
+.discard-pile:hover,
+.draw-pile.hovered,
+.draw-pile-btn:hover
 {
-    filter: drop-shadow(0 0 4px var(--light-1));
+    --color: grey;
+    filter: drop-shadow(0 0 4px var(--color));
 }
 
-.deployed-card.light-secondary:hover,
-.discard-pile.light-secondary:hover,
-.draw-pile.light-secondary.hovered,
-.draw-pile-btn.light-secondary:hover
-{
-    filter: drop-shadow(0 0 4px var(--light-2));
+.light {
+    --color: var(--light-1);
+}
+.light[data-value="alt"] {
+    --color: var(--light-2);
+}
+.darkness {
+    --color: var(--darkness-1);
+}
+.darkness[data-value="alt"] {
+    --color: var(--darkness-2);
+}
+.venom {
+    --color: var(--venom-1);
+}
+.venom[data-value="alt"] {
+    --color: var(--venom-2);
 }
 
-.deployed-card.darkness:hover,
-.discard-pile.darkness:hover,
-.draw-pile.darkness.hovered,
-.draw-pile-btn.darkness:hover
-{
-    filter: drop-shadow(0 0 4px var(--darkness-2));
-}
-
-.deployed-card.darkness-secondary:hover,
-.discard-pile.darkness-secondary:hover,
-.draw-pile.darkness-secondary.hovered,
-.draw-pile-btn.darkness-secondary:hover
-{
-    filter: drop-shadow(0 0 4px var(--darkness-1));
-}
-.deployed-card.venom:hover,
-.discard-pile.venom:hover,
-.draw-pile.venom.hovered,
-.draw-pile-btn.venom:hover
-{
-    filter: drop-shadow(0 0 4px var(--venom-1));
-}
-
-.deployed-card.venom-secondary:hover,
-.discard-pile.venom-secondary:hover,
-.draw-pile.venom-secondary.hovered,
-.draw-pile-btn.venom-secondary:hover
-{
-    filter: drop-shadow(0 0 4px var(--venom-2));
-}
 
 .defender1, .supporter1, .attacker1, .vanguard2 {
     animation: advance-up 0.5s linear forwards;

@@ -82,11 +82,17 @@ export interface InstantAbility extends IAbility {
     args?: object | string;
 }
 
+enum Deck {
+    light = "light",
+    darkness = "darkness",
+    venom = "venom"
+}
+
 export interface ICard {
     id: string;
     tempId?: string;
     name: string;
-    deck: string;
+    deck: Deck;
     cost: number;
     attack: number;
     defence: number;
@@ -109,7 +115,7 @@ export interface IDeployedCard {
 
 export interface IPlayerState {
     userId?: string;
-    deck: string;
+    deck: Deck;
     drawingDeck: string[];
     bonusHealth: number[];
     casualties: string[];
@@ -137,7 +143,8 @@ export enum MatchStage {
     pending = "pending",
     preparing = "preparing",
     started = "started",
-    finished = "finished"
+    finished = "finished",
+    abandoned = "abandoned"
 }
 
 export interface IMatch {

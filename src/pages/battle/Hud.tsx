@@ -1,5 +1,5 @@
 import {FC, useCallback, useContext, useEffect, useState} from "react";
-import styles from "./Hud.module.css";
+import styles from "../../styles/battle_page/Hud.module.css";
 import {IPlayerState, IUser} from "../../interfaces.ts";
 import {findPlayerById} from "../../api/user.ts";
 import {AuthContext, MatchContext, UserContext} from "../../context.tsx";
@@ -264,16 +264,10 @@ const PlayerDetails: FC<{ playerId?: string }> = ({ playerId }) => {
     const [userDetails, setUserDetails] = useState<{username: string, picture: string}>();
 
     const userId = useContext(AuthContext).user?.sub;
-    const { _user } = useContext(UserContext);
     const { setUser } = useContext(UserContext);
 
     useEffect(() => {
-        if (_user && _user.username && _user.picture && _user.userId === userId) {
-            setUserDetails({
-                username: _user.username,
-                picture: _user.picture
-            });
-        } else if (playerId) {
+        if (playerId) {
             findPlayerById(playerId).then(response => {
                 if (response?.ok && response?.body) {
                     const playerDetails = response.body as IUser
@@ -285,11 +279,11 @@ const PlayerDetails: FC<{ playerId?: string }> = ({ playerId }) => {
                     setUserDetails({
                         username: playerDetails.username,
                         picture: playerDetails.picture
-                    })
+                    });
                 }
             });
         }
-    }, [userId]);
+    }, []);
 
     return(
         <>

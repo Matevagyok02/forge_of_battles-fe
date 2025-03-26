@@ -23,7 +23,7 @@ const Home = () => {
     const { user, isAuthenticated } = useContext(AuthContext);
     const { _user, setUser } = useContext(UserContext);
     const { friends, setFriends } = useContext(FriendsContext);
-    const { openInfoModal, openedModal, openModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
+    const { openInfoModal, openedModal, closeModal, openModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
 
     const [socket, setSocket] = useState<Socket>();
     const [friendRequests, setFriendRequests] = useState<ISender[]>();
@@ -307,6 +307,8 @@ const Home = () => {
                             } else {
                                 openModal(<JoinGame inQueue={true} />);
                             }
+                        } else {
+                            closeModal();
                         }
                     });
                 }

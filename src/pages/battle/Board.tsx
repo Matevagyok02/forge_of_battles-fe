@@ -1,6 +1,7 @@
 import {FC, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {MatchContext} from "../../context.tsx";
 import "./Board.css";
+import styles from "../../styles/battle_page/Board.module.css";
 import {DiscardPile, DrawPile} from "./CardPiles.tsx";
 import {IPlayerState} from "../../interfaces.ts";
 import RedrawCards from "./ui/RedrawCards.tsx";
@@ -25,32 +26,40 @@ const warTrackPositions: WarTrackSlot[] = [
     { pos: WarTrackPos.defender, owner: 1 }
 ];
 
+export const deckColorStyles = {
+    primary: {
+        light: styles.light,
+        darkness: styles.darkness,
+        venom: styles.venom,
+    },
+    secondary: {
+        light: styles.lightSecondary,
+        darkness: styles.darknessSecondary,
+        venom: styles.venomSecondary,
+    }
+}
+
 const Board: FC = () => {
 
     return(
-        <div className="board-container" >
-            <div className="board" >
+        <div className={styles.container} >
+            <div className={styles.board} >
                 <OpponentCardPiles />
-                <WarTrack />
+
+                <div className={styles.battlefield} >
+                    {warTrackPositions.map((slot: WarTrackSlot, index) =>
+                        <CardSlot
+                            key={index}
+                            pos={slot.pos}
+                            owner={slot.owner}
+                        />
+                    )}
+                </div>
+
                 <PlayerCardPiles />
             </div>
         </div>
     );
-}
-
-const WarTrack: FC = () => {
-
-    return(
-        <div className="war-track" >
-            {warTrackPositions.map((slot: WarTrackSlot, index) =>
-                <CardSlot
-                    key={index}
-                    pos={slot.pos}
-                    owner={slot.owner}
-                />
-            )}
-        </div>
-    )
 }
 
 const PlayerCardPiles: FC = () => {
@@ -94,14 +103,13 @@ const PlayerCardPiles: FC = () => {
     const closeRedraw = () => setOpenRedraw(false);
 
     return(
-        <div className="right-card-piles" >
-            <div className={`discard-pile ${player.deck}`} >
+        <div className={styles.cardPiles} data-value={"right"} >
+            <div className={`${styles.discardPile} ${player.deck}`} >
                 <DiscardPile cardIds={player!.casualties} deck={player.deck} />
             </div>
             <div
                 ref={playerDrawPileRef}
-                id="player-draw-pile"
-                className={`draw-pile ${player.deck} ${drawPileHovered ? "hovered" : ""}`}
+                className={`${styles.drawPile} ${player.deck} ${drawPileHovered ? "hovered" : ""}`}
             >
                 <DrawPile cardIds={player!.drawingDeck} deck={player.deck} />
                 { playerDrawPileRef.current &&
@@ -120,25 +128,14 @@ const PlayerCardPiles: FC = () => {
                         { (canDraw || canRedraw) &&
                             <VirtualParent virtualParent={playerDrawPileRef.current as Element} >
                                 <div className={`draw-pile-btn-container`} >
-                                    { canDraw ?
-                                        <h1
-                                            className={`draw-pile-btn ${player.deck}`}
-                                            onClick={drawCards}
-                                            onMouseEnter={() => setDrawPileHovered(true)}
-                                            onMouseLeave={() => setDrawPileHovered(false)}
-                                        >
-                                            Draw
-                                        </h1>
-                                        :
-                                        <h1
-                                            className={`draw-pile-btn ${player.deck}`}
-                                            onClick={() => setOpenRedraw(true)}
-                                            onMouseEnter={() => setDrawPileHovered(true)}
-                                            onMouseLeave={() => setDrawPileHovered(false)}
-                                        >
-                                            Redraw
-                                        </h1>
-                                    }
+                                    <h1
+                                        className={`draw-pile-btn ${player.deck}`}
+                                        onClick={ canDraw ? drawCards : () => setOpenRedraw(true) }
+                                        onMouseEnter={() => setDrawPileHovered(true)}
+                                        onMouseLeave={() => setDrawPileHovered(false)}
+                                    >
+                                        { canDraw ? "Draw" : "Redraw" }
+                                    </h1>
                                 </div>
                             </VirtualParent>
                         }
@@ -158,11 +155,11 @@ const OpponentCardPiles: FC = () => {
     const color = opponent.deck + (opponent.deck === player.deck ? "-secondary" : "");
 
     return(
-        <div className="left-card-piles" >
-            <div className={`draw-pile`} >
+        <div className={styles.cardPiles} data-value={"left"}  >
+            <div className={styles.drawPile} >
                 <DrawPile cardIds={opponent.drawingDeck} deck={color} />
             </div>
-            <div className={`discard-pile ${color}`} >
+            <div className={`${styles.drawPile} ${color}`} >
                 <DiscardPile cardIds={opponent.casualties} deck={color} />
             </div>
         </div>

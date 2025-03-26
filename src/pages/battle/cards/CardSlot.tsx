@@ -2,6 +2,7 @@ import {FC, useContext, useEffect, useState} from "react";
 import {MatchContext} from "../../../context.tsx";
 import {ICard} from "../../../interfaces.ts";
 import DeployedCard from "./DeployedCard.tsx";
+import styles from "../../../styles/battle_page/Board.module.css";
 
 export enum WarTrackPos {
     defender = "defender",
@@ -43,11 +44,11 @@ const CardSlot: FC<{ pos: WarTrackPos, owner: number }> = ({pos, owner}) => {
     }
 
     return(
-        <div className={`card-slot ${pos}`} >
+        <div className={`${styles.slot} ${pos}`} >
             { card ?
                 <DeployedCard card={card} slot={pos} owner={cardOwner} color={getColor(cardOwner)} />
                 :
-                <div className={`card-slot-placeholder ${getColor(cardOwner)}`}>
+                <div className={`${styles.placeholder} ${getColor(cardOwner)}`}>
                     <h1>
                         {pos.charAt(0).toUpperCase() + pos.slice(1).toLowerCase()}
                     </h1>

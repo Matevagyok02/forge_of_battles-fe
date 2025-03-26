@@ -1,5 +1,6 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {FC, Suspense, useCallback, useContext, useEffect, useRef, useState} from "react";
+import styles from "../../styles/battle_page/Battle.module.css";
 import "./Battle.css";
 import "./cards/Cards.css";
 import {IBattle, ICard, IMatch, IPlayerState} from "../../interfaces.ts";
@@ -199,7 +200,6 @@ const Battle: FC = () => {
 
     const leavePage = () => {
         socket?.disconnect();
-        setSocket(undefined);
         navigate("/");
     }
 
@@ -252,7 +252,7 @@ const Battle: FC = () => {
     }, [match?.stage]);
 
     return(
-        <main id="battle" >
+        <main className={styles.battle} >
             <LoadingScreen loading={loading} />
             { winner && showResult ?
                 <Suspense fallback={<LoadingScreen />} >
@@ -271,7 +271,7 @@ const Battle: FC = () => {
                             setTip,
                             containerRef: containerRef.current ? containerRef.current as HTMLElement : undefined
                         }} >
-                            <div id="battle-container" ref={containerRef} >
+                            <div id={"battle-container"} ref={containerRef} >
                                 <HudContainer />
                                 <OpponentHand />
                                 <PlayerHand />

@@ -1,0 +1,104 @@
+.container {
+    @apply fixed w-full h-full top-0 flex justify-center pointer-events-none;
+    perspective: 64vh;
+    perspective-origin: center;
+    translate: 0 -1vh;
+
+    .board {
+        @apply w-fit h-fit pointer-events-auto flex gap-8;
+        rotate: x 30deg;
+        transform-origin: bottom center;
+        translate: 0 -8vh;
+
+        .battlefield {
+            @apply grid gap-2;
+            grid-template-columns: repeat(3, 3fr);
+            grid-template-rows: repeat(3, 4fr);
+
+            .slot {
+                .placeholder {
+                    @apply relative flex items-center justify-center text-center w-auto;
+                    height: 25vh;
+                    aspect-ratio: var(--card-aspect-ratio);
+                    font-size: 3vh;
+                    border-radius: 4%;
+
+                    --color: grey;
+                    box-shadow: inset 0 0 8px 2px var(--color);
+                    color: var(--color);
+
+                    & h1 {
+                        @apply opacity-0
+                    }
+                }
+
+                .placeholder::before {
+                    @apply absolute block w-full h-full;
+                    content: "";
+                    z-index: -1;
+                    background-image: radial-gradient(100% 100% at center, rgba(0, 0, 0, 0.7), transparent);
+                }
+            }
+
+            .slot:hover .placeholder h1 {
+                opacity: 1;
+                filter: drop-shadow(0 0 4px black);
+            }
+        }
+    }
+}
+
+.cardPiles {
+    @apply flex flex-col gap-8 items-center p-8;
+
+    .drawPile, .discardPile {
+        aspect-ratio: var(--card-aspect-ratio);
+        height: 25vh;
+        position: relative;
+    }
+}
+
+.cardPiles[data-value="right"] {
+    @apply justify-end;
+    filter: drop-shadow(-0.8vh 0.8vh 4px black);
+}
+
+.cardPiles[data-value="left"] {
+    @apply justify-start;
+    filter: drop-shadow(0.8vh 0.8vh 4px black);
+}
+
+/*card back side*/
+.back {
+    --color: grey;
+    background-color: var(--color);
+}
+
+
+.deployedCard:hover,
+.discardPile:hover,
+.drawPile.hovered,
+.drawPileButton:hover
+{
+    --color: grey;
+    filter: drop-shadow(0 0 4px var(--color));
+}
+
+.light {
+    --color: var(--light-1);
+}
+.lightSecondary {
+    --color: var(--light-2);
+}
+.darkness {
+    --color: var(--darkness-1);
+}
+.darknessSecondary {
+    --color: var(--darkness-2);
+}
+.venom {
+    --color: var(--venom-1);
+}
+.venomSecondary {
+    --color: var(--venom-2);
+}

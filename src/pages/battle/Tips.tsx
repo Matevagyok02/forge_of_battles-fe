@@ -1,6 +1,6 @@
 import {FC, ReactNode, useContext, useEffect} from "react";
 import {MatchContext} from "../../context.tsx";
-import styles from "./Tips.module.css";
+import styles from "../../styles/battle_page/Tips.module.css";
 import BattlePortalWrap from "../../components/BattlePortalWrap.tsx";
 import tips from "../../assets/tips.json";
 import {IPlayerState} from "../../interfaces.ts";

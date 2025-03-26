@@ -1,12 +1,5 @@
-import {
-    FC,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState
-} from "react";
-import {IFriend, FriendStatus, getFriendById} from "../friends_panel/FriendsPanel.tsx";
+import {FC, useCallback, useContext, useEffect, useRef, useState} from "react";
+import {FriendStatus, getFriendById, IFriend} from "../friends_panel/FriendsPanel.tsx";
 import {IMatch, MatchStage} from "../../../interfaces.ts";
 import {abandonMatch, createGame, getLastCreatedGame} from "../../../api/match.ts";
 import Modal from "../../../components/Modal.tsx";
@@ -233,25 +226,36 @@ const MatchDisplay: FC<{ match: IMatch, abandon: () => void, rejoin: () => void 
 
     return(
         <div className={styles.matchDisplay} >
-            <p>
-                <span className={styles.key} >
-                    {match.key}
-                </span>
-                <IconButton icon={Icon.copy} onClick={() => copyText(match.key)} />
-            </p>
-            <p>
-                <span className={styles.link} >
-                    {link}
-                </span>
-                <IconButton icon={Icon.copy} onClick={() => copyText(link)} />
-            </p>
-            <div>
-                { match.stage === MatchStage.pending ? (
-                        <Button text={"Abandon"} onClick={abandon} />
-                ) : ( match.stage !== MatchStage.finished && (
-                        <Button text={"Rejoin" } onClick={rejoin} />
-                ))}
-            </div>
+            { match.stage !== MatchStage.abandoned ?
+                <>
+                    <p>
+                        <span className={styles.key} >
+                             {match.key}
+                        </span>
+                        <IconButton icon={Icon.copy} onClick={() => copyText(match.key)} />
+                    </p>
+                    <p>
+                         <span className={styles.link} >
+                            {link}
+                        </span>
+                        <IconButton icon={Icon.copy} onClick={() => copyText(link)} />
+                    </p>
+                    <div>
+                        { match.stage === MatchStage.pending ? (
+                            <Button text={"Abandon"} onClick={abandon} />
+                        ) : ( match.stage !== MatchStage.finished && (
+                            <Button text={"Rejoin" } onClick={rejoin} />
+                        ))}
+                    </div>
+                </>
+                :
+                <>
+                    <p>
+                        Your opponent has left the match. Click 'Abandon' to delete the match.
+                    </p>
+                    <Button text={"Abandon"} onClick={abandon} />
+                </>
+            }
         </div>
     )
 }

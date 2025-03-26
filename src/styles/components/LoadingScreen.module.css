@@ -8,6 +8,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    --width: 10rem;
+    --height: 10rem;
+
+    & > div {
+
+    }
 }
 
 .logo {
@@ -15,7 +22,11 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background-image: url("../../assets/svg/logo.svg");
+    background-size: cover;
 }
+
+.frameContentPlaceholder
 
 @keyframes custom-spin1 {
     from {
