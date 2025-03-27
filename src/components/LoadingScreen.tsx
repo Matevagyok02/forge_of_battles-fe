@@ -1,6 +1,6 @@
-import {FC, Suspense} from "react";
 import styles from "../styles/components/LoadingScreen.module.css"
 import {Frame} from "./Frame.tsx";
+import {FC} from "react";
 
 const LoadingScreen : FC <{loading ?: boolean}> = ({loading = true}) => {
 

@@ -10,8 +10,13 @@ enum AttrValue {
 }
 
 interface AttributeValues {
-    attack?: AttrValue;
-    defense?: AttrValue;
+    attack: AttrValue;
+    defense: AttrValue;
+}
+
+const defaultAttrValues: AttributeValues = {
+    attack: AttrValue.normal,
+    defense: AttrValue.normal
 }
 
 const CardContent: FC<{ card: ICard, showModifiedAttributes?: boolean }> = ({ card, showModifiedAttributes = false }) => {
@@ -19,7 +24,7 @@ const CardContent: FC<{ card: ICard, showModifiedAttributes?: boolean }> = ({ ca
     const { match, loadCards } = useContext(MatchContext);
     const imageUrl = `../cards/${card.deck}/${card.name.toLowerCase().replace(/ /g, "_")}.jpg`;
     const [imageLoaded, setImageLoaded] = useState(true);
-    const [attributeValues, setAttributeValues] = useState<AttributeValues>({});
+    const [attributeValues, setAttributeValues] = useState<AttributeValues>(defaultAttrValues);
 
     useEffect(() => {
         setImageLoaded(true);
@@ -48,9 +53,8 @@ const CardContent: FC<{ card: ICard, showModifiedAttributes?: boolean }> = ({ ca
                     defense: compareValue(originalCard.defence, card.defence)
                 }
             }
-        } else {
-            return {};
         }
+        return defaultAttrValues;
     }
 
     useEffect(() => {
@@ -107,8 +111,8 @@ export const FormatAbilityText: FC<{ text?: string }> = ({ text }) => {
     return (
         text && text.split(" ").map((word, index) => {
             switch (word) {
-                case "MANA": return <i className={styles.mana} >&nbsp;&nbsp;&nbsp;</i>;
-                case "SACRIFICE": return <i className={styles.sacrifice} >&nbsp;&nbsp;&nbsp;</i>;
+                case "MANA": return <i key={index} className={styles.mana} >&nbsp;&nbsp;&nbsp;</i>;
+                case "SACRIFICE": return <i key={index} className={styles.sacrifice} >&nbsp;&nbsp;&nbsp;</i>;
                 default: return " " + word;
             }
         })

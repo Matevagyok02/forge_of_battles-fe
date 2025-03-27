@@ -87,7 +87,7 @@ export interface ICard {
     id: string;
     tempId?: string;
     name: string;
-    deck: keyof decks;
+    deck: keyof typeof decks;
     cost: number;
     attack: number;
     defence: number;
@@ -110,7 +110,7 @@ export interface IDeployedCard {
 
 export interface IPlayerState {
     userId?: string;
-    deck: keyof decks;
+    deck: keyof typeof decks;
     drawingDeck: string[];
     bonusHealth: number[];
     casualties: string[];

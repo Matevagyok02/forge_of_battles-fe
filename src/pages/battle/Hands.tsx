@@ -3,7 +3,6 @@ import {ICard} from "../../interfaces.ts";
 import HandHeldCard, {HandHeldCardBack} from "./cards/HandHeldCard.tsx";
 import {MatchContext} from "../../context.tsx";
 import styles from "../../styles/battle_page/Battle.module.css";
-import cardStyles from "../../styles/battle_page/Cards.module.css";
 import {deckColorStyles} from "./Board.tsx";
 
 export const PlayerHand: FC = () => {

@@ -105,7 +105,7 @@ const PlayerCardPiles: FC = () => {
     return(
         <div className={styles.cardPiles} data-value={"right"} >
             <div className={`${styles.discardPile} ${deckColorStyles.primary[player.deck]}`} >
-                <DiscardPile cardIds={player.casualties} deckColor={deckColorStyles.primary[player.deck]} />
+                <DiscardPile cardIds={player.casualties} />
             </div>
             <div
                 ref={playerDrawPileRef}
@@ -163,7 +163,7 @@ const OpponentCardPiles: FC = () => {
                 <DrawPile cardIds={opponent.drawingDeck} deckColor={color} />
             </div>
             <div className={`${styles.discardPile} ${color}`} >
-                <DiscardPile cardIds={opponent.casualties} deckColor={color} />
+                <DiscardPile cardIds={opponent.casualties} />
             </div>
         </div>
     )

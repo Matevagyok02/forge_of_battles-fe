@@ -165,7 +165,7 @@ export const MultipleOptionsButton: FC<{ options: OptionButton[] }> = ({ options
                                 break;
                         }
 
-                        return <i className={styleClass} >&nbsp;&nbsp;&nbsp;</i>;
+                        return <i key={index} className={styleClass} >&nbsp;&nbsp;&nbsp;</i>;
                     } else {
                         return " " + word + " ";
                     }

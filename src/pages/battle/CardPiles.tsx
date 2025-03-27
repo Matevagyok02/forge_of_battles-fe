@@ -31,7 +31,7 @@ export const DrawPile: FC<{
     )
 }
 
-export const DiscardPile: FC<{ cardIds: string[], deckColor: string }> = ({ cardIds, deckColor }) => {
+export const DiscardPile: FC<{ cardIds: string[] }> = ({ cardIds }) => {
 
     const [rotations, setRotations] = useState<number[]>([]);
 

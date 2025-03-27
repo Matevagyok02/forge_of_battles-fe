@@ -1,4 +1,4 @@
-import {FC, Suspense, useCallback, useContext, useEffect, useRef, useState} from "react";
+import {CSSProperties, FC, Suspense, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {ICard} from "../../../interfaces.ts";
 import CardContent from "./CardContent.tsx";
 import Draggable from 'react-draggable';
@@ -105,7 +105,7 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
                             style={{
                                 rotate: `${rotation}deg`,
                                 "--y-offset": `${Math.abs(rotation)}%`,
-                            }}
+                            } as CSSProperties }
                         >
                             <CardContent card={card} />
                         </div>
@@ -119,7 +119,7 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
                         style={{
                             rotate: `${rotation}deg`,
                             "--y-offset": `${Math.abs(rotation)}%`,
-                        }}
+                        } as CSSProperties }
                     >
                         <CardContent card={card} />
                     </div>
