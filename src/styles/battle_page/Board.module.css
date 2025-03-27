@@ -56,6 +56,10 @@
         height: 25vh;
         position: relative;
     }
+
+    .discardPile > li {
+        position: absolute;
+    }
 }
 
 .cardPiles[data-value="right"] {
@@ -68,37 +72,82 @@
     filter: drop-shadow(0.8vh 0.8vh 4px black);
 }
 
+.pileSizeIndicator {
+    @apply flex justify-end items-end;
+    width: 104%;
+    height: 110%;
+
+    & > div {
+        @apply round flex items-center justify-center;
+        width: 2em;
+        height: 2em;
+        background-color: rgba(0, 0, 0, 0.8);
+        border: 1px solid darkgoldenrod;
+
+        & > h1 {
+            color: goldenrod;
+            font-size: 1.2em;
+        }
+    }
+}
+
+.drawButton {
+    @apply absolute h-full flex justify-center items-center cursor-pointer pointer-events-auto;
+    left: -10%;
+    width: 120%;
+    z-index: 10;
+
+    & > button {
+        @apply w-full text-center py-2;
+        font-size: 1.2em;
+        border-block: 1px solid;
+        border-image: linear-gradient(
+                to right,
+                transparent,
+                goldenrod,
+                transparent
+        ) 1;
+        background-image: linear-gradient(
+                to right,
+                transparent,
+                rgba(0, 0, 0, 0.6) 10%,
+                rgba(0, 0, 0, 0.8),
+                rgba(0, 0, 0, 0.6) 90%,
+                transparent
+        );
+    }
+}
+
 /*card back side*/
 .back {
     --color: grey;
     background-color: var(--color);
 }
 
-
-.deployedCard:hover,
+.slot .card:hover,
 .discardPile:hover,
 .drawPile.hovered,
-.drawPileButton:hover
+.drawButton > button:hover
 {
     --color: grey;
     filter: drop-shadow(0 0 4px var(--color));
 }
 
 .light {
-    --color: var(--light-1);
+    --color: var(--light-1) !important;
 }
 .lightSecondary {
-    --color: var(--light-2);
+    --color: var(--light-2) !important;
 }
 .darkness {
-    --color: var(--darkness-1);
+    --color: var(--darkness-1) !important;
 }
 .darknessSecondary {
-    --color: var(--darkness-2);
+    --color: var(--darkness-2) !important;
 }
 .venom {
-    --color: var(--venom-1);
+    --color: var(--venom-1) !important;
 }
 .venomSecondary {
-    --color: var(--venom-2);
+    --color: var(--venom-2) !important;
 }

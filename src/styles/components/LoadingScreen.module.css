@@ -1,58 +1,74 @@
 .loadingScreen{
+    @apply bg-neutral-900;
     position: fixed;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgb(23, 23, 23);
     z-index: 1000;
     display: flex;
     justify-content: center;
     align-items: center;
 
-    --width: 10rem;
     --height: 10rem;
+    --width: 10rem;
 
     & > div {
+        position: relative;
+        width: 10rem;
+        height: 10rem;
 
+        .logo {
+            @apply aspect-square absolute top-1/2 left-1/2;
+            width: var(--width);
+            height: var(--height);
+            transform: translate(-50%, -50%);
+            background-image: url("../../assets/svg/logo.svg");
+            background-size: 70%;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: drop-shadow(0 0 5px goldenrod);
+        }
+
+        .loadingText {
+            @apply flex absolute w-full justify-center animate-pulse text-2xl;
+            color: grey;
+            top: 150%;
+        }
+
+        .frameContentPlaceholer {
+            height: var(--height);
+            width: var(--width);
+        }
+
+        .spinningFrame {
+            @apply absolute;
+            filter: drop-shadow(0 0 4px black);
+        }
+
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            display: inline-block;
+            animation: typewriter 2s infinite;
+        }
     }
 }
 
-.logo {
-    @apply w-20 h-20 aspect-square absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-image: url("../../assets/svg/logo.svg");
-    background-size: cover;
-    filter: drop-shadow(0 0 5px goldenrod);
+.spin {
+    animation: spin 3s linear infinite;
 }
 
-.frameContentPlaceholder
+.reverseSpin {
+    animation: spin 3s linear reverse infinite;
+}
 
-@keyframes custom-spin1 {
+@keyframes spin {
     from {
         transform: rotate(360deg);
     }
     to {
         transform: rotate(0deg);
     }
-}
-
-@keyframes custom-spin2 {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.customSpin1 {
-    animation: custom-spin1 2s linear infinite;
-}
-
-.customSpin2 {
-    animation: custom-spin2 2s linear infinite;
 }
 
 @keyframes typewriter {
@@ -68,17 +84,4 @@
     60% {
         width: 100%;
     }
-}
-
-.loadingText {
-    @apply flex absolute w-full justify-center animate-pulse text-2xl;
-    color: grey;
-    top: 150%;
-}
-
-.typewriter {
-    overflow: hidden;
-    white-space: nowrap;
-    display: inline-block;
-    animation: typewriter 1.5s infinite;
 }

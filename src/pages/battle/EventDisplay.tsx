@@ -1,5 +1,6 @@
 import {forwardRef, useCallback, useImperativeHandle, useRef, useState} from "react";
 import Animations from "./animations/Animations.ts";
+import styles from "../../styles/battle_page/Battle.module.css";
 
 export interface EventDisplayHandle {
     displayText: (text: string, alert?: boolean) => void;
@@ -24,7 +25,10 @@ const EventDisplay = forwardRef((_, ref) => {
     }, [displayRef]);
 
     return(
-        <div className={`event-display ${isAlert ? "alert" : ""}`} ref={displayRef} >
+        <div
+            className={`${styles.eventDisplay} ${isAlert ? styles.alert : ""}`}
+            ref={displayRef}
+        >
             <p>
                 {text}
             </p>

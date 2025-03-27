@@ -5,6 +5,7 @@ import StormMenu from "./StormMenu.tsx";
 import Tips from "../Tips.tsx";
 import {IPlayerState} from "../../../interfaces.ts";
 import {OutgoingBattleEvent} from "../Battle.tsx";
+import styles from "../../../styles/battle_page/Battle.module.css"
 
 const BattleInterface: FC = () => {
 
@@ -31,7 +32,7 @@ const BattleInterface: FC = () => {
     }, [socket, player]);
 
     return( match.battle.turnOfPlayer === player.userId &&
-        <div className="battle-interface" >
+        <div className={styles.mainUi} >
             { canAdvance(player) &&
                 <Button text={"Advance"} onClick={advance} />
             }

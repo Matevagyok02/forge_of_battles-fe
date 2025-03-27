@@ -1,7 +1,10 @@
 import {FC, useContext, useEffect, useState} from "react";
 import {ICard} from "../../interfaces.ts";
-import HandHeldCard from "./cards/HandHeldCard.tsx";
+import HandHeldCard, {HandHeldCardBack} from "./cards/HandHeldCard.tsx";
 import {MatchContext} from "../../context.tsx";
+import styles from "../../styles/battle_page/Battle.module.css";
+import cardStyles from "../../styles/battle_page/Cards.module.css";
+import {deckColorStyles} from "./Board.tsx";
 
 export const PlayerHand: FC = () => {
 
@@ -42,25 +45,16 @@ export const PlayerHand: FC = () => {
         <div
             onMouseEnter={startInteraction}
             onMouseLeave={cancelInteraction}
-            className="player-hand-container"
+            className={styles.playerHand}
             style={ interacting ? { zIndex: 10 } : {} }
         >
-            <div
-                className="player-hand"
-                style={ cards.length > 4 ?
-                    { justifyContent: "space-between" }
-                    :
-                    { justifyContent: "center", gap: "17vh" }
-                }
-            >
+            <ul style={ getListStyle(player.onHand.length) } >
                 {cardRotations && cards.map((card, index) => (
-                    <div
-                        className="hand-held-card-wrapper" key={index}
-                    >
+                    <li key={index} >
                         <HandHeldCard card={card} rotation={cardRotations[index]} />
-                    </div>
+                    </li>
                 ))}
-            </div>
+            </ul>
         </div>
     );
 }
@@ -76,29 +70,29 @@ export const OpponentHand: FC = () => {
         );
     }, [opponent.onHand.length]);
 
+    const color = opponent.deck === player.deck ?
+        deckColorStyles.secondary[opponent.deck]
+        :
+        deckColorStyles.primary[opponent.deck];
+
     return(
-        <div className="opponent-hand"
-             style={ opponent.onHand.length > 4 ?
-                 { justifyContent: "space-between" }
-                 :
-                 { justifyContent: "center", gap: "17vh" }
-             }
-        >
-            {cardRotations.map((rotation, index) =>
-                <div className="hand-held-card-wrapper" key={index} >
-                    <div
-                        className={`card-back card ${opponent.deck + (opponent.deck === player.deck ? "-secondary" : "")}`}
-                        style={{
-                            rotate: `${rotation * 2}deg`,
-                            translate: `0 ${Math.abs(rotation * 1.5)}%`
-                        }}
-                    >
-                        <div style={{ rotate: `${rotation * 10}deg` }} ></div>
-                    </div>
-                </div>
-            )}
+        <div className={styles.opponentHand} >
+            <ul style={ getListStyle(opponent.onHand.length) }>
+                {cardRotations.map((rotation, index) =>
+                    <li key={index} >
+                        <HandHeldCardBack rotation={rotation} color={color} />
+                    </li>
+                )}
+            </ul>
         </div>
     )
+}
+
+const getListStyle = (cardCount: number) => {
+    return cardCount > 4 ?
+        { justifyContent: "space-between" }
+        :
+        { justifyContent: "center", gap: "17vh" }
 }
 
 export const getCardRotationPoints = (cardCount: number) => {

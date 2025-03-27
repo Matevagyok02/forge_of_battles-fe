@@ -1,6 +1,7 @@
 import {Frame} from "./Frame.tsx";
 import {FC, ReactNode} from "react";
 import styles from "../styles/components/Buttons.module.css"
+import iconStyles from "../styles/battle_page/Cards.module.css";
 
 const negativeTexts = ["cancel", "decline", "remove", "abandon", "delete", "no", "leave"];
 
@@ -154,16 +155,17 @@ export const MultipleOptionsButton: FC<{ options: OptionButton[] }> = ({ options
 
                         switch (formattedWord) {
                             case "sacrifice":
-                                styleClass = "sacrifice-icon";
+                                styleClass = iconStyles.sacrifice;
                                 break;
                             case "mana":
-                                styleClass = "mana-icon";
+                                styleClass = iconStyles.mana;
                                 break;
                             default:
                                 styleClass = "";
+                                break;
                         }
 
-                        return <span key={index} className={styleClass} >&nbsp;&nbsp;&nbsp;</span>;
+                        return <i className={styleClass} >&nbsp;&nbsp;&nbsp;</i>;
                     } else {
                         return " " + word + " ";
                     }

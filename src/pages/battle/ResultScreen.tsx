@@ -7,7 +7,9 @@ import {AuthContext, ModalContext, UserContext} from "../../context.tsx";
 import {findPlayerById} from "../../api/user.ts";
 import {calcTimeLeft, criticalTime} from "./Hud.tsx";
 import {sendFriendInvite} from "../../api/friend.ts";
-import BattleInterfaceOverlay from "../../components/BattleInterfaceOverlay.tsx";
+import MenuOverlay from "./components/MenuOverlay.tsx";
+import styles from "../../styles/battle_page/ResultScreen.module.css";
+import AvatarDisplay from "../../components/AvatarDisplay.tsx";
 
 export enum MatchResult {
     victory = "Victory",
@@ -52,42 +54,42 @@ const ResultScreen: FC<{ match: IMatch, player: IPlayerState, opponent: IPlayerS
     const getResultStyleClass = (winner: string | undefined) => {
         switch (winner) {
             case player.userId:
-                return "victory";
+                return styles.victory;
             case opponent.userId:
-                return "defeat";
+                return styles.defeat;
             case MatchResult.draw:
-                return "draw";
+                return styles.draw;
             default:
-                return "draw";
+                return styles.draw;
         }
     }
 
     return(
-      <BattleInterfaceOverlay>
-          <div className="w-fit h-full flex flex-col justify-center items-center gap-4" >
-              <h1 className={`${getResultStyleClass(winner)} gold-text text-6xl text-center`} >
+      <MenuOverlay>
+          <div className={styles.container} >
+              <h1 className={`${getResultStyleClass(winner)}`} >
                   {getResultText(winner)}
               </h1>
 
               <horizontal-line/>
 
-              <div className="grid grid-cols-2 gap-4 px-8" >
+              <div className={styles.playerStatistics} >
                   <PlayerStatistics player={opponent} hasWon={winner === opponent.userId} />
                   <PlayerStatistics player={player} hasWon={winner === player.userId} />
               </div>
 
               <horizontal-line/>
 
-              <ul className="px-2 text-2xl text-[grey]" >
+              <ul className={styles.statistics} >
                   { match.battle.timeLimit &&
                       <li>
                           ○ Time limit:
-                          <span className="text-[lightgrey] pl-2" >{parseTimeLimit(match)}|{parseTimeLimit(match)} min</span>
+                          <span>{parseTimeLimit(match)}|{parseTimeLimit(match)} min</span>
                       </li>
                   }
                   <li>
                       ○ Turns taken:
-                      <span className="text-[lightgrey] pl-2" >{ Math.ceil(match.battle.turn) / 2 }</span>
+                      <span>{ Math.ceil(match.battle.turn) / 2 }</span>
                   </li>
               </ul>
 
@@ -95,7 +97,7 @@ const ResultScreen: FC<{ match: IMatch, player: IPlayerState, opponent: IPlayerS
 
               <Button text={"Return to Home"} onClick={() => navigate("/")} />
           </div>
-      </BattleInterfaceOverlay>
+      </MenuOverlay>
     );
 }
 
@@ -162,35 +164,29 @@ const PlayerStatistics: FC<{ player: IPlayerState, hasWon?: boolean}> = ({ playe
     const getOutcomeStyleClass = (hasWon: boolean | undefined) => {
         switch (hasWon) {
             case true:
-                return "winner";
+                return styles.winner;
             case false:
-                return "loser";
+                return styles.loser;
             default:
                 return "";
         }
     }
 
     return( details &&
-        <div className={`game-result-player-statistics ${getOutcomeStyleClass(hasWon)}`}>
-            <img className="user-avatar" src={`../avatars/${details.picture || "1"}.jpg`} alt="" />
-            <h1 className="text-2xl" >{details.username}</h1>
+        <div className={getOutcomeStyleClass(hasWon)} >
+            <AvatarDisplay avatar={details.picture} />
+            <h1>{details.username}</h1>
             <ul>
-                <li className="text-[grey]" >
+                <li>
                     <span>○ Health left:</span>
-                    <span
-                        style={{ color: health < 1 ? "red" : "lightgrey" }}
-                        className="pl-2"
-                    >
+                    <span className={health < 1 ? styles.criitical : "" } >
                         {health}
                     </span>
                 </li>
                 { player.timeLeft &&
-                    <li className="text-[grey]" >
+                    <li>
                         <span>○ Time left:</span>
-                        <span
-                            style={{ color: player.timeLeft < criticalTime ? "red" : "lightgrey" }}
-                            className="pl-2"
-                        >
+                        <span className={player.timeLeft < criticalTime ? styles.criitical : "" } >
                             {calcTimeLeft(player.timeLeft)}
                         </span>
                     </li>

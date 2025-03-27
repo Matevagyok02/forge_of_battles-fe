@@ -3,8 +3,9 @@ import {MatchContext} from "../../../context.tsx";
 import {ICard} from "../../../interfaces.ts";
 import CardContent from "../cards/CardContent.tsx";
 import {Button} from "../../../components/Button.tsx";
-import BattlePortalWrap from "../../../components/BattlePortalWrap.tsx";
-import BattleInterfaceOverlay from "../../../components/BattleInterfaceOverlay.tsx";
+import PortalWrap from "../components/PortalWrap.tsx";
+import MenuOverlay from "../components/MenuOverlay.tsx";
+import styles from "../../../styles/battle_page/Cards.module.css";
 
 const SelectSacrifice: FC<{
     cardToBeUsed?: string,
@@ -73,31 +74,35 @@ const SelectSacrifice: FC<{
     const countSelected = (arr: { card: ICard, selected: boolean }[]) => arr.filter(card => card.selected).length;
 
     return (
-        <BattlePortalWrap>
-            <BattleInterfaceOverlay>
-                <div className="flex flex-col gap-4" >
-                    <div className="flex flex-wrap justify-center items-center gap-4 max-w-[56vw] max-h-[80vh] px-4">
+        <PortalWrap>
+            <MenuOverlay>
+                <menu className={styles.sacrifice} >
+                    <ul>
                         {selectedCards.map(({ card, selected }, index) =>
-                            <div
+                            <li
                                 key={index}
                                 onClick={() => handleCardClick(index)}
-                                className={`card-min card ${selected ? "selected" : ""}`}
+                                className={`${styles.card} ${selected ? styles.selected : ""}`}
                             >
                                 <CardContent card={card} />
-                            </div>
+                            </li>
                         )}
-                    </div>
-                    <div className="w-full text-center" >
+                    </ul>
+
+                    <p>
                         Click on the cards you are willing to sacrifice to select them
-                    </div>
+                    </p>
+
                     <horizontal-line/>
-                    <div className="flex justify-center gap-4 px-4" >
+
+                    <menu>
                         <Button text="Cancel" onClick={handleCancelClick} />
                         <Button text={`Accept${countSelected(selectedCards) > 0 ? " (" + countSelected(selectedCards) + ")" : "    "}`} onClick={handleAcceptClick} />
-                    </div>
-                </div>
-            </BattleInterfaceOverlay>
-        </BattlePortalWrap>
+                    </menu>
+
+                </menu>
+            </MenuOverlay>
+        </PortalWrap>
     );
 }
 

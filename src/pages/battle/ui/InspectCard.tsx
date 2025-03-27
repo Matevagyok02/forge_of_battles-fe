@@ -2,13 +2,14 @@ import {FC, useContext, useEffect, useState} from "react";
 import {ICard, IPlayerState, RequirementArgs} from "../../../interfaces.ts";
 import CardContent from "../cards/CardContent.tsx";
 import {MatchContext} from "../../../context.tsx";
-import BattlePortalWrap from "../../../components/BattlePortalWrap.tsx";
+import PortalWrap from "../components/PortalWrap.tsx";
 import {Icon, IconButton, MultipleOptionsButton, OptionButton} from "../../../components/Button.tsx";
 import SelectSacrifice from "./SelectSacrifice.tsx";
 import {OutgoingBattleEvent} from "../Battle.tsx";
-import BattleInterfaceOverlay from "../../../components/BattleInterfaceOverlay.tsx";
+import MenuOverlay from "../components/MenuOverlay.tsx";
 import { sacrifice_to_use_passive, not_enough_mana_to_use_passive } from "../../../assets/tips.json";
 import { select_sacrifice, use_passive } from "../../../assets/hints.json";
+import styles from "../../../styles/battle_page/Cards.module.css";
 
 const InspectCard: FC<{ card: ICard, slot: string, owner: number, cancel: () => void }> = ({ card, slot, owner, cancel }) => {
 
@@ -122,22 +123,22 @@ const InspectCard: FC<{ card: ICard, slot: string, owner: number, cancel: () => 
     }
 
     return( !openSelectSacrifice ?
-            <BattlePortalWrap>
-                <BattleInterfaceOverlay>
-                    <div className={`flex gap-4 ${ options ? "" : "flex-col items-center" }`} >
-                        <div className={`inspected-card card ${card.deck}`} >
+            <PortalWrap>
+                <MenuOverlay>
+                    <menu className={`${styles.inspect} ${ options ? "" : "flex-col items-center" }`} >
+                        <div className={styles.card} >
                             <CardContent card={card} />
                         </div>
                         { options ?
                             <MultipleOptionsButton options={options} />
                             :
-                            <div className="flex w-full justify-center text-2xl" >
+                            <div className={styles.closeButton} >
                                 <IconButton icon={Icon.cancel} text={"Close"} onClick={cancel} />
                             </div>
                         }
-                    </div>
-                </BattleInterfaceOverlay>
-            </BattlePortalWrap>
+                    </menu>
+                </MenuOverlay>
+            </PortalWrap>
             :
             <SelectSacrifice
                 setSacrifice={setSacrificeCards}

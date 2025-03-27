@@ -1,8 +1,5 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {FC, Suspense, useCallback, useContext, useEffect, useRef, useState} from "react";
-import styles from "../../styles/battle_page/Battle.module.css";
-import "./Battle.css";
-import "./cards/Cards.css";
 import {IBattle, ICard, IMatch, IPlayerState} from "../../interfaces.ts";
 import {AuthContext, MatchContext} from "../../context.tsx";
 import Board from "./Board.tsx";
@@ -17,6 +14,7 @@ import LoadingScreen from "../../components/LoadingScreen.tsx";
 import BattleInterface from "./ui/BattleInterface.tsx";
 import ResultScreen, {getWinner, MatchResult} from "./ResultScreen.tsx";
 import EffectDisplay from "./EffectDisplay.tsx";
+import styles from "../../styles/battle_page/Battle.module.css";
 
 export enum IncomingBattleEvent {
     turnStarted = "turn-started",

@@ -1,7 +1,7 @@
 import {CSSProperties, FC, ReactNode, useContext, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
-import {MatchContext} from "../context.tsx";
-import {parseElementRectStyles} from "../utils.ts";
+import {MatchContext} from "../../../context.tsx";
+import {parseElementRectStyles} from "../../../utils.ts";
 
 const VirtualParent: FC<{
     virtualParent: Element,

@@ -1,6 +1,5 @@
 .container {
-    @apply fixed left-0 bottom-0;
-    z-index: 1;
+    @apply fixed left-0 bottom-0 z-20;
     margin: 1.6vw;
 }
 

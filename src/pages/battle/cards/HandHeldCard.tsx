@@ -3,8 +3,10 @@ import {ICard} from "../../../interfaces.ts";
 import CardContent from "./CardContent.tsx";
 import Draggable from 'react-draggable';
 import {MatchContext} from "../../../context.tsx";
-import UseCardMenu from "../ui/UseCardMenu.tsx";
+import CardUsageMenu from "../ui/CardUsageMenu.tsx";
 import { draw_cards, use_cards } from "../../../assets/tips.json";
+import styles from "../../../styles/battle_page/Cards.module.css"
+import cardStyles from "../../../styles/battle_page/Cards.module.css";
 
 const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation }) => {
 
@@ -18,9 +20,9 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
 
     useEffect(() => {
         if (!inspect && cardRef.current) {
-            cardRef.current?.classList.add("cancel-inspect-hand-held-card");
+            cardRef.current?.classList.add(styles.cancelInspect);
             setTimeout(() =>
-                cardRef.current?.classList.remove("cancel-inspect-hand-held-card"),
+                cardRef.current?.classList.remove(styles.cancelInspect),
                 200
             );
         }
@@ -83,12 +85,12 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
     return (
         <Suspense fallback={null} >
             { openDeployMenu ?
-                <UseCardMenu card={card} cancel={cancelDeploy} />
+                <CardUsageMenu card={card} cancel={cancelDeploy} />
                 :
                 player?.turnStage === 3 ?
                     <Draggable
-                        axis="y"
-                        handle=".inspect-hand-held-card"
+                        axis={"y"}
+                        handle={`.${styles.inspect}`}
                         nodeRef={cardRef}
                         scale={1}
                         position={{ x: 0, y }}
@@ -99,10 +101,10 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
                             ref={cardRef}
                             onClick={toggleInspect}
                             onMouseLeave={cancelInspect}
-                            className={`hand-held-card card ${card.deck} ${inspect ? "inspect-hand-held-card" : ""}`}
+                            className={`${styles.card} ${styles.handHeld} ${inspect ? styles.inspect : ""}`}
                             style={{
                                 rotate: `${rotation}deg`,
-                                translate: `0 ${Math.abs(rotation)}%`
+                                "--y-offset": `${Math.abs(rotation)}%`,
                             }}
                         >
                             <CardContent card={card} />
@@ -113,10 +115,10 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
                         ref={cardRef}
                         onClick={toggleInspect}
                         onMouseLeave={cancelInspect}
-                        className={`hand-held-card card ${card.deck} ${inspect ? "inspect-hand-held-card" : ""}`}
+                        className={`${styles.card} ${styles.handHeld} ${inspect ? styles.inspect : ""}`}
                         style={{
                             rotate: `${rotation}deg`,
-                            translate: `0 ${Math.abs(rotation)}%`
+                            "--y-offset": `${Math.abs(rotation)}%`,
                         }}
                     >
                         <CardContent card={card} />
@@ -125,6 +127,21 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
         </Suspense>
     );
 
+}
+
+export const HandHeldCardBack: FC<{ rotation: number, color: string }> = ({ rotation, color }) => {
+
+    return (
+        <div
+            className={`${cardStyles.cardBack} ${color}`}
+            style={{
+                rotate: `${rotation * 2}deg`,
+                translate: `-50% ${Math.abs(rotation * 1.5)}%`
+            }}
+        >
+            <div style={{ rotate: `${rotation * 10}deg` }} ></div>
+        </div>
+    );
 }
 
 export default HandHeldCard;

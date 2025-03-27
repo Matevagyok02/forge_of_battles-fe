@@ -3,6 +3,7 @@ import {MatchContext} from "../../../context.tsx";
 import {ICard} from "../../../interfaces.ts";
 import DeployedCard from "./DeployedCard.tsx";
 import styles from "../../../styles/battle_page/Board.module.css";
+import {deckColorStyles} from "../Board.tsx";
 
 export enum WarTrackPos {
     defender = "defender",
@@ -12,6 +13,8 @@ export enum WarTrackPos {
     frontLiner = "frontLiner",
     vanguard = "vanguard"
 }
+
+
 
 const CardSlot: FC<{ pos: WarTrackPos, owner: number }> = ({pos, owner}) => {
 
@@ -35,9 +38,12 @@ const CardSlot: FC<{ pos: WarTrackPos, owner: number }> = ({pos, owner}) => {
     const getColor = (owner: number) => {
         switch (owner) {
             case 1:
-                return player.deck;
+                return deckColorStyles.primary[player.deck];
             case 2:
-                return opponent.deck + (opponent!.deck === player.deck ? "-secondary" : "");
+                return opponent.deck === player.deck ?
+                    deckColorStyles.secondary[opponent.deck]
+                    :
+                    deckColorStyles.primary[opponent.deck];
             default:
                 return "";
         }

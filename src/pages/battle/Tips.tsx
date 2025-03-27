@@ -1,7 +1,7 @@
 import {FC, ReactNode, useContext, useEffect} from "react";
 import {MatchContext} from "../../context.tsx";
 import styles from "../../styles/battle_page/Tips.module.css";
-import BattlePortalWrap from "../../components/BattlePortalWrap.tsx";
+import PortalWrap from "./components/PortalWrap.tsx";
 import tips from "../../assets/tips.json";
 import {IPlayerState} from "../../interfaces.ts";
 
@@ -26,16 +26,16 @@ const Tips: FC = () => {
     }
 
     useEffect(() => {
-        if (!tip && player) {
+        if (!tip) {
             setTip(getTipByState(player));
         }
-    }, [player, tip]);
+    }, [tip]);
 
     useEffect(() => {
         if (player) {
             setTip(getTipByState(player));
         }
-    }, [player?.turnStage, player?.drawsPerTurn]);
+    }, [player.turnStage, player.drawsPerTurn]);
 
     const parseTipText = (text: string) => {
         const stringArr: (string | ReactNode)[] = text
@@ -50,10 +50,10 @@ const Tips: FC = () => {
                 styleClass = styles.btn;
                 break;
             case "acAbl":
-                styleClass = styles.acAbl;
+                styleClass = styles.actionAbility;
                 break;
             case "paAbl":
-                styleClass = styles.paAbl;
+                styleClass = styles.passiveAbility;
                 break;
             case "mana":
                 stringArr[0] = <>&nbsp;&nbsp;&nbsp;</>;
@@ -70,9 +70,9 @@ const Tips: FC = () => {
 
     return(
         tip &&
-            <BattlePortalWrap>
+            <PortalWrap>
                 <div className={styles.display}  >
-                    <i title="Hints" className="fa-solid fa-question-circle" ></i>
+                    <i title="Hints" className={"fa-solid fa-question-circle"} ></i>
                     <p>
                         { tip.split(" ").map((word, i) => {
                             if (word.includes("#")) {
@@ -86,7 +86,7 @@ const Tips: FC = () => {
                         })}
                     </p>
                 </div>
-            </BattlePortalWrap>
+            </PortalWrap>
     );
 }
 

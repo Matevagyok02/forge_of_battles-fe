@@ -1,5 +1,6 @@
 import {IFriend} from "./pages/home/friends_panel/FriendsPanel.tsx";
 import {WarTrackPos} from "./pages/battle/cards/CardSlot.tsx";
+import decks from "./assets/decks.json"
 
 /*---Friend Interfaces---*/
 
@@ -82,17 +83,11 @@ export interface InstantAbility extends IAbility {
     args?: object | string;
 }
 
-enum Deck {
-    light = "light",
-    darkness = "darkness",
-    venom = "venom"
-}
-
 export interface ICard {
     id: string;
     tempId?: string;
     name: string;
-    deck: Deck;
+    deck: keyof decks;
     cost: number;
     attack: number;
     defence: number;
@@ -115,7 +110,7 @@ export interface IDeployedCard {
 
 export interface IPlayerState {
     userId?: string;
-    deck: Deck;
+    deck: keyof decks;
     drawingDeck: string[];
     bonusHealth: number[];
     casualties: string[];

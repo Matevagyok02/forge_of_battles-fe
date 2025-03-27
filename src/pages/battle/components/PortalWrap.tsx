@@ -1,8 +1,8 @@
 import {FC, ReactNode, useContext} from "react";
-import {MatchContext} from "../context.tsx";
+import {MatchContext} from "../../../context.tsx";
 import {createPortal} from "react-dom";
 
-const BattlePortalWrap: FC<{ children: ReactNode }> = ({ children }) => {
+const PortalWrap: FC<{ children: ReactNode }> = ({ children }) => {
 
     const { containerRef } = useContext(MatchContext);
 
@@ -14,4 +14,4 @@ const BattlePortalWrap: FC<{ children: ReactNode }> = ({ children }) => {
     );
 }
 
-export default BattlePortalWrap;
+export default PortalWrap;

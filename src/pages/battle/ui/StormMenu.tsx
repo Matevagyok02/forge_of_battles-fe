@@ -5,17 +5,11 @@ import {MatchContext} from "../../../context.tsx";
 import {ICard, IPlayerState} from "../../../interfaces.ts";
 import Animations from "../animations/Animations.ts";
 import {OutgoingBattleEvent} from "../Battle.tsx";
-import BattleInterfaceOverlay from "../../../components/BattleInterfaceOverlay.tsx";
+import MenuOverlay from "../components/MenuOverlay.tsx";
 import { attack_directly, attack_frontliner, attack_vanguard, convert_to_mana, move_to_frontline, move_to_vanguard } from "../../../assets/hints.json";
-
-export enum WartrackPosition {
-    defender = "defender",
-    supporter = "supporter",
-    attacker = "attacker",
-    stormer = "stormer",
-    frontLiner = "frontLiner",
-    vanguard = "vanguard"
-}
+import styles from "../../../styles/battle_page/Cards.module.css";
+import {WarTrackPos} from "../cards/CardSlot.tsx";
+import {deckColorStyles} from "../Board.tsx";
 
 const StormMenu: FC = () => {
 
@@ -61,7 +55,7 @@ const StormMenu: FC = () => {
         }
     }, [socket, opponent?.deployedCards]);
 
-    const attackPosition = useCallback((position: WartrackPosition) => {
+    const attackPosition = useCallback((position: WarTrackPos) => {
         if (socket && opponent && position in opponent.deployedCards) {
             socket.emit(OutgoingBattleEvent.storm, { posToAttack: position });
             setOpenMenu(false);
@@ -82,7 +76,7 @@ const StormMenu: FC = () => {
         if (opponentState.deployedCards.frontLiner) {
             attackOptions.push({
                 text: "Frontliner",
-                callback: () => attackPosition(WartrackPosition.vanguard),
+                callback: () => attackPosition(WarTrackPos.vanguard),
                 hint: attack_frontliner
             });
         }
@@ -90,7 +84,7 @@ const StormMenu: FC = () => {
         if (opponentState.deployedCards.vanguard) {
             attackOptions.push({
                 text: "Vanguard",
-                callback: () => attackPosition(WartrackPosition.vanguard),
+                callback: () => attackPosition(WarTrackPos.vanguard),
                 hint: attack_vanguard
             });
         }
@@ -132,32 +126,31 @@ const StormMenu: FC = () => {
 
     return( stormerCard && (
             openMenu ?
-                <BattleInterfaceOverlay>
-                    <div className="flex gap-4" >
+                <MenuOverlay>
+                    <menu className={styles.storm} >
                         <div
-                            className={`card card-large`}
+                            className={styles.card}
                             onClick={() => setOpenMenu(true)}
                         >
                             <CardContent card={stormerCard} />
                         </div>
                         <MultipleOptionsButton options={options} />
-                    </div>
-                </BattleInterfaceOverlay>
+                    </menu>
+                </MenuOverlay>
                 :
-                <div className="relative p-2" id={"storm-menu-btn"} >
+                <div className={`${styles.stormButton} ${deckColorStyles.primary[stormerCard.deck]}`}  >
                     <div
                         ref={stormerRef}
-                        className={`card deployed-card ${stormerCard.deck}`}
-                        id={"stormer"}
+                        className={`${styles.card} ${deckColorStyles.primary[stormerCard.deck]}`}
                         onClick={() => setOpenMenu(true)}
                     >
                         <CardContent card={stormerCard} />
                     </div>
                     { animationPlayed &&
-                        <div className="pointer-events-none absolute z-10 top-0 left-0 w-full h-full flex justify-center items-center" >
-                            <div className="storm-btn-placeholder" >
+                        <div className={styles.button} >
+                            <h1>
                                 Storm
-                            </div>
+                            </h1>
                         </div>
                     }
                 </div>

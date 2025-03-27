@@ -3,13 +3,14 @@ import {ICard} from "../../interfaces.ts";
 import CardContent from "./cards/CardContent.tsx";
 import {Icon, IconButton} from "../../components/Button.tsx";
 import {MatchContext} from "../../context.tsx";
-import BattlePortalWrap from "../../components/BattlePortalWrap.tsx";
-import BattleInterfaceOverlay from "../../components/BattleInterfaceOverlay.tsx";
+import PortalWrap from "./components/PortalWrap.tsx";
+import MenuOverlay from "./components/MenuOverlay.tsx";
+import styles from "../../styles/battle_page/Cards.module.css";
 
 export const DrawPile: FC<{
     cardIds: string[],
-    deck: string
-}> = ({ cardIds, deck}) => {
+    deckColor: string
+}> = ({ cardIds, deckColor}) => {
 
     const [rotations, setRotations] = useState<number[]>([]);
 
@@ -20,7 +21,7 @@ export const DrawPile: FC<{
     return (
         cardIds.map((cardId , index) => (
             <div
-                className={`card-back card ${deck}`}
+                className={`${styles.cardBack} ${deckColor}`}
                 style={{ rotate: `${rotations[index]}deg` }}
                 key={index + "-" + cardId}
             >
@@ -30,7 +31,7 @@ export const DrawPile: FC<{
     )
 }
 
-export const DiscardPile: FC<{ cardIds: string[], deck: string }> = ({ cardIds, deck }) => {
+export const DiscardPile: FC<{ cardIds: string[], deckColor: string }> = ({ cardIds, deckColor }) => {
 
     const [rotations, setRotations] = useState<number[]>([]);
 
@@ -59,40 +60,38 @@ export const DiscardPile: FC<{ cardIds: string[], deck: string }> = ({ cardIds, 
         }, []);
 
         return(
-            <BattlePortalWrap>
-                <BattleInterfaceOverlay>
-                    <div className="discard-overview" >
-                        <div className="cancel-discard-overview-btn" >
-                            <IconButton icon={Icon.cancel} onClick={() => setShowOverview(false)} />
-                        </div>
-                        <div className="discard-overview-cards" >
+            <PortalWrap>
+                <MenuOverlay>
+                    <menu className={styles.discard} >
+                        <IconButton text={"Close"} icon={Icon.cancel} onClick={() => setShowOverview(false)} />
+                        <ul>
                             {cards.map((card, index) => (
-                                <div
+                                <li
                                     onClick={() => setShowOverview(true)}
-                                    className={`discarded-card card ${deck}`}
+                                    className={styles.card}
                                     key={index}
                                 >
                                     <CardContent card={card} />
-                                </div>
+                                </li>
                             ))}
-                        </div>
-                    </div>
-                </BattleInterfaceOverlay>
-            </BattlePortalWrap>
+                        </ul>
+                    </menu>
+                </MenuOverlay>
+            </PortalWrap>
         );
     }
 
     return(
         <>
             {cards.map((card, index) => (
-                <div
+                <li
                     onClick={() => setShowOverview(true)}
-                    className={`discarded-card card ${deck}`}
+                    className={styles.card}
                     style={{ rotate: `${rotations[index]}deg` }}
                     key={index}
                 >
                     <CardContent card={card} />
-                </div>
+                </li>
             ))}
             {showOverview && <DiscardOverview />}
         </>

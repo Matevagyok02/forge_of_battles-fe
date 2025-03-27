@@ -1,0 +1,457 @@
+.contrastShadow {
+    filter: drop-shadow(0 0 1px goldenrod)
+    drop-shadow(2px 2px 5px black)
+    drop-shadow(-2px -2px 4px black)
+    drop-shadow(-2px 2px 4px black)
+    drop-shadow(2px -2px 4px black);
+}
+
+.cardShape {
+    @apply w-fit select-none overflow-hidden;
+    aspect-ratio: var(--card-aspect-ratio);
+    border-radius: 4%;
+    height: 25vh;
+    font-size: 2.2vh;
+}
+
+.cardShape:before {
+    @apply absolute w-full h-full bg-center bg-no-repeat;
+    content: "";
+    z-index: 1;
+    background-image: url("../../assets/svg/card_frame.svg");
+    background-size: 99%;
+}
+
+.card {
+    @apply cardShape;
+
+    .image {
+        @apply w-full h-full;
+        border-radius: 10% 0 10% 10%;
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .name {
+        @apply absolute p-0.5;
+        z-index: 2;
+        top: 4%;
+        left: 20%;
+        width: 68%;
+
+        & h1 {
+            @apply gold-text text-center;
+            font-size: 0.64em;
+            filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.6))
+            drop-shadow(-1px -1px 2px rgba(0, 0, 0, 0.6))
+            drop-shadow(-1px 1px 2px rgba(0, 0, 0, 0.6))
+            drop-shadow(1px -1px 2px rgba(0, 0, 0, 0.6));
+        }
+    }
+
+    .attributes {
+
+        & li {
+            @apply absolute flex justify-center items-center bg-center round;
+            z-index: 2;
+            width: 1.6em;
+            height: 1.6em;
+            border: 0.06em solid goldenrod;
+
+            & h1 {
+                color: lightgrey;
+                paint-order: stroke fill;
+                -webkit-text-stroke: 0.04em black;
+                font-size: 1.2em;
+            }
+        }
+
+        & li[data-value="buffed"] {
+            color: forestgreen;
+        }
+
+        & li[data-value="nerfed"] {
+            color: red;
+        }
+
+        .cost {
+            @apply top-0 left-0;
+            background-size: 128%;
+            background-image: url("../../assets/icons/cost.jpg");
+        }
+
+        .attack {
+            @apply bottom-0 left-0;
+            background-size: 192%;
+            background-image: url("../../assets/icons/att.jpg");
+        }
+
+        .defense {
+            @apply bottom-0 right-0;
+            background-size: 108%;
+            background-image: url("../../assets/icons/def.jpg");
+        }
+    }
+
+    .abilities {
+        @apply absolute w-full flex flex-col items-center justify-end text-center overflow-hidden;
+        bottom: 1em;
+        gap: 0.4em;
+        padding-block: 0.8em;
+
+        & li {
+            @apply relative w-full;
+            font-size: 0.48em;
+            padding-block: 0.12em;
+            padding-inline: 0.8em;
+        }
+
+        & li:before {
+            @apply absolute left-0 top-0 w-full h-full bg-cover;
+            content: "";
+            z-index: -1;
+            background-image: url("../../assets/background/card_back_bg.jpg");
+            background-size: cover;
+            opacity: 0.8;
+        }
+
+        .action {
+            filter: drop-shadow(0 0 4px var(--action-color)) drop-shadow(2px 2px 2px black);
+        }
+
+        .passive {
+            filter: drop-shadow(0 0 4px var(--passive-color)) drop-shadow(2px 2px 2px black);
+        }
+    }
+}
+
+.card.selected {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) contrast(1.2);
+}
+
+.cardBack {
+    @apply cardShape absolute;
+    --color: grey;
+    background-color: var(--color);
+    box-shadow: inset 0 0 12px 12px black;
+
+    &:after {
+        @apply contrastShadow absolute w-full h-full bg-center bg-no-repeat;
+        content: "";
+        z-index: 1;
+        background-image: url("../../assets/svg/logo.svg");
+        background-size: 50%;
+    }
+
+    & > div {
+        @apply absolute aspect-square bg-black;
+        height: 300%;
+        translate: -50% -50%;
+        mask-image: url("../../assets/background/card_back_mask.png");
+        mask-repeat: repeat;
+        mask-size: 16vh;
+        mask-position: center;
+    }
+}
+
+/*---DEPLOYED CARD---*/
+.card.deployed {
+    @apply relative cursor-pointer;
+
+    .abilities {
+        visibility: hidden;
+    }
+
+    &:hover {
+        --color: grey;
+        filter: drop-shadow(0 0 8px var(--color));
+    }
+}
+
+.card.deployed.advancePlayer {
+    animation: advance-up 0.5s linear forwards;
+}
+
+.card.deployed.advanceOpponent {
+    animation: advance-down 0.5s linear forwards;
+}
+
+@keyframes advance-up {
+    0% {
+        transform: translateY(100%);
+    }
+    50% {
+        transform: translateY(50%);
+    }
+    100% {
+
+    }
+}
+
+@keyframes advance-down {
+    0% {
+        transform: translateY(-100%);
+    }
+    50% {
+        transform: translateY(-50%);
+    }
+    100% {
+
+    }
+}
+
+/*---HAND HELD CARD---*/
+.card.handHeld {
+    @apply absolute cursor-pointer;
+    --x-offset: -50%;
+    --y-offset: 0;
+    translate: var(--x-offset) var(--y-offset);
+
+    &:hover {
+        z-index: 1;
+        scale: 1.05;
+        filter: drop-shadow(0 0 2px black) brightness(1.2);
+    }
+}
+
+.card.handHeld.inspect {
+    animation: inspect 0.1s linear forwards;
+}
+
+.card.handHeld.cancelInspect {
+    animation: cancel-inspect 0.1s linear forwards;
+}
+
+@keyframes inspect  {
+    0% {}
+    50% {
+        --x-offset: -40%;
+        --y-offset: -2vh;
+        cursor: pointer;
+        z-index: 100;
+        scale: 1.2;
+    }
+    100% {
+        --x-offset: -30%;
+        --y-offset: -4vh;
+        rotate: 0deg;
+        z-index: 100;
+        scale: 1.6;
+    }
+}
+
+@keyframes cancel-inspect  {
+    0% {
+        --x-offset: -30%;
+        --y-offset: -4vh;
+        rotate: 0deg;
+        z-index: 100;
+        scale: 1.6;
+    }
+    50% {
+        --x-offset: -40%;
+        --y-offset: -2vh;
+        z-index: 100;
+        scale: 1.2;
+    }
+    100% {}
+}
+
+/*---INSPECT MENU---*/
+menu.inspect {
+    @apply flex gap-4;
+
+    .card {
+        position: relative;
+        height: 50vh !important;
+        font-size: 4.5vh !important;
+    }
+
+    .closeButton {
+        @apply flex w-full justify-center text-2xl;
+    }
+}
+
+/*---USAGE MENU---*/
+menu.usage {
+    @apply flex gap-4 justify-center items-center;
+
+    & > div:first-child {
+        @apply flex justify-center;
+
+        .card {
+            position: relative;
+            height: 40vh !important;
+            font-size: 3.6vh !important;
+        }
+    }
+}
+
+/*---SACRIFICE MENU---*/
+menu.sacrifice {
+    @apply flex flex-col gap-4;
+
+    & > ul {
+        @apply flex flex-wrap justify-center items-center gap-4 px-4;
+        max-width: 56vw;
+        max-height: 80vh;
+
+        .card {
+            @apply min;
+        }
+    }
+
+    & > p {
+        @apply w-full text-center;
+    }
+
+    & > menu {
+        @apply flex justify-center gap-4 px-4;
+    }
+}
+
+/*---DISCAR MENU---*/
+menu.discard {
+    @apply flex flex-col gap-4 justify-between items-center;
+    gap: 16px;
+    width: 45vw;
+    height: 100vh;
+
+    & > button {
+        @apply text-3xl;
+        margin-top: 2vh;
+    }
+
+    & > ul {
+        @apply flex flex-wrap gap-4 justify-center overflow-y-scroll;
+        height: 100vh;
+        padding-block: 4vh;
+        mask-image: linear-gradient(to bottom, transparent, black 16px, black calc(100% - 16px), transparent);
+
+        .card {
+            @apply large;
+        }
+    }
+}
+
+/*---REDRAW MENU---*/
+menu.redraw {
+    @apply flex flex-col gap-4 items-center;
+
+    & > ul {
+        @apply flex gap-4 px-4;
+
+        .card {
+            @apply large;
+        }
+    }
+
+     & p {
+        @apply text-sm px-4;
+     }
+
+    & menu {
+        @apply flex gap-4;
+    }
+}
+
+/*---STORM MENU---*/
+menu.storm {
+    @apply flex gap-4;
+
+    .card {
+        @apply large;
+    }
+}
+
+.stormButton {
+    @apply relative p-2;
+    --color: grey;
+
+    &:hover {
+        filter: drop-shadow(0 0 8px var(--color));
+
+        .button {
+            filter: drop-shadow(0 0 8px var(--color));
+        }
+    }
+
+    .card {
+        position: relative;
+        height: 32vh !important;
+        font-size: 2.8vh !important;
+
+        .abilities {
+            visibility: hidden;
+        }
+    }
+
+    .button {
+        @apply absolute z-10 top-0 left-0 w-full h-full flex justify-center items-center pointer-events-none;
+
+        & > h1 {
+            @apply w-full text-center py-1;
+            font-size: 1.6em;
+            border: 1px solid;
+            border-image: linear-gradient(
+                    to right,
+                    transparent,
+                    goldenrod,
+                    transparent
+            ) 1;
+            background-image: linear-gradient(
+                    to right,
+                    transparent,
+                    rgba(0, 0, 0, 0.6) 10%,
+                    rgba(0, 0, 0, 0.8),
+                    rgba(0, 0, 0, 0.6) 90%,
+                    transparent
+            );
+        }
+    }
+}
+
+/*---card sizes---*/
+.min {
+    @apply relative cursor-pointer;
+    height: 26vh !important;
+    font-size: 2.2vh !important;
+}
+
+.min:not(.selected):hover {
+    z-index: 10;
+    scale: 1.16;
+}
+
+.min:not(.selected):hover .abilities {
+    visibility: visible;
+}
+
+.min.abilities {
+    visibility: hidden;
+}
+
+.large {
+    position: relative;
+    height: 40vh !important;
+    font-size: 3.6vh !important;
+}
+
+/*---icons---*/
+.icon {
+    display: inline-block;
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+i.mana {
+    @apply icon;
+    background-image: url("../../assets/icons/mana_shard.png");
+    filter: drop-shadow(0 0 2px cyan);
+}
+
+i.sacrifice {
+    @apply icon;
+    background-image: url("../../assets/icons/sacrifice.png");
+    filter: drop-shadow(0 0 2px red);
+}

@@ -1,8 +1,7 @@
 import {ICard} from "../../../interfaces.ts";
 import {FC, useContext, useEffect, useState} from "react";
-import styles from "../../../styles/battle_page/CardContent.module.css";
+import styles from "../../../styles/battle_page/Cards.module.css";
 import {MatchContext} from "../../../context.tsx";
-//TODO: show modified attributes
 
 enum AttrValue {
     buffed = "buffed",
@@ -106,12 +105,13 @@ const CardContent: FC<{ card: ICard, showModifiedAttributes?: boolean }> = ({ ca
 export const FormatAbilityText: FC<{ text?: string }> = ({ text }) => {
 
     return (
-        text && text.split(" ").map((word, index) =>
-            word === "MANA" ?
-                <i key={index} className="mana-icon" >&nbsp;&nbsp;&nbsp;</i>
-                :
-                " " + word
-        )
+        text && text.split(" ").map((word, index) => {
+            switch (word) {
+                case "MANA": return <i className={styles.mana} >&nbsp;&nbsp;&nbsp;</i>;
+                case "SACRIFICE": return <i className={styles.sacrifice} >&nbsp;&nbsp;&nbsp;</i>;
+                default: return " " + word;
+            }
+        })
     );
 }
 

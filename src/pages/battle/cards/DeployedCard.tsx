@@ -5,7 +5,8 @@ import InspectCard from "../ui/InspectCard.tsx";
 import {MatchContext} from "../../../context.tsx";
 import {WarTrackPos} from "./CardSlot.tsx";
 import Animations from "../animations/Animations.ts";
-import { draw_cards } from "../../../assets/tips.json";
+import {draw_cards} from "../../../assets/tips.json";
+import styles from "../../../styles/battle_page/Cards.module.css";
 
 const DeployedCard: FC<{ card: ICard, slot: string ,owner: number, color: string}> = ({ card, slot, owner, color}) => {
 
@@ -29,7 +30,9 @@ const DeployedCard: FC<{ card: ICard, slot: string ,owner: number, color: string
         setPrevTempId((prev) => {
             if (card.tempId !== prev && ref.current) {
                 if (doesSlotAdvance()) {
-                    ref.current!.classList.add(slot + owner);
+                    ref.current!.classList.add(
+                        owner === 1 ? styles.advancePlayer : styles.advanceOpponent
+                    );
                 } else {
                     if (owner === 1) {
                         Animations.placeFrontliner(ref.current!);
@@ -63,7 +66,7 @@ const DeployedCard: FC<{ card: ICard, slot: string ,owner: number, color: string
         <>
             <div
                 ref={ref}
-                className={`deployed-card card ${color}`}
+                className={`${styles.deployed} ${styles.card} ${color}`}
                 onClick={() => setInspect(true)}
             >
                 <CardContent card={card} />

@@ -1,4 +1,4 @@
-import {FC, useCallback, useContext, useEffect, useState} from "react";
+import {CSSProperties, FC, useCallback, useContext, useEffect, useState} from "react";
 import styles from "../../styles/battle_page/Hud.module.css";
 import {IPlayerState, IUser} from "../../interfaces.ts";
 import {findPlayerById} from "../../api/user.ts";
@@ -186,8 +186,7 @@ const Health: FC<{ baseHealth: number, bonusHealth: number }> = ({ baseHealth, b
             <div className={styles.healthDecor} ></div>
             <div
                 className={styles.health}
-                data-health={health}
-                style={{ backgroundImage: `linear-gradient(-45deg, var(--crimson), var(--dark-grey) ${calcHealthPercentage(health)}%`}}
+                style={{ "--health": `${calcHealthPercentage(health)}%` } as CSSProperties}
             >
                 <h1>
                     {health}

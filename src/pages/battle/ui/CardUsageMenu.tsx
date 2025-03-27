@@ -4,13 +4,14 @@ import {MatchContext} from "../../../context.tsx";
 import {ICard, IPlayerState} from "../../../interfaces.ts";
 import CardContent from "../cards/CardContent.tsx";
 import {MultipleOptionsButton, OptionButton} from "../../../components/Button.tsx";
-import BattlePortalWrap from "../../../components/BattlePortalWrap.tsx";
+import PortalWrap from "../components/PortalWrap.tsx";
 import {OutgoingBattleEvent} from "../Battle.tsx";
-import BattleInterfaceOverlay from "../../../components/BattleInterfaceOverlay.tsx";
+import MenuOverlay from "../components/MenuOverlay.tsx";
 import { not_enough_mana, sacrifice_if_no_mana } from "../../../assets/tips.json";
 import { use_action, deploy_card, select_sacrifice } from "../../../assets/hints.json";
+import styles from "../../../styles/battle_page/Cards.module.css"
 
-const UseCardMenu: FC<{ card: ICard, cancel: () => void }> = ({  card, cancel}) => {
+const CardUsageMenu: FC<{ card: ICard, cancel: () => void }> = ({  card, cancel}) => {
 
     const { socket, player, setTip } = useContext(MatchContext);
 
@@ -126,18 +127,18 @@ const UseCardMenu: FC<{ card: ICard, cancel: () => void }> = ({  card, cancel}) 
 
     return (
         !openSelectSacrifice ?
-            <BattlePortalWrap>
-                <BattleInterfaceOverlay>
-                    <div className="flex gap-4 justify-center items-center" >
-                        <div className="flex justify-center" >
-                            <div className={"card-large card"} >
+            <PortalWrap>
+                <MenuOverlay>
+                    <menu className={styles.usage} >
+                        <div>
+                            <div className={styles.card} >
                                 <CardContent card={card} />
                             </div>
                         </div>
                         <MultipleOptionsButton options={openUseActionMenu ? useActionOptions : deployOptions} />
-                    </div>
-                </BattleInterfaceOverlay>
-            </BattlePortalWrap>
+                    </menu>
+                </MenuOverlay>
+            </PortalWrap>
             :
             <SelectSacrifice
                 cardToBeUsed={card.id}
@@ -147,4 +148,4 @@ const UseCardMenu: FC<{ card: ICard, cancel: () => void }> = ({  card, cancel}) 
     );
 }
 
-export default UseCardMenu;
+export default CardUsageMenu;

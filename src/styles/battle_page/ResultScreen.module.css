@@ -1,0 +1,87 @@
+.container {
+    @apply w-fit h-full flex flex-col justify-center items-center gap-4;
+
+    & > h1 {
+        @apply gold-text text-6xl text-center;
+    }
+
+    .playerStatistics {
+        @apply grid grid-cols-2 gap-4 px-8;
+
+        & > div {
+            @apply flex gap-2 flex-col items-center px-4 py-8;
+
+            & > img {
+                @apply w-16;
+            }
+
+            & > h1 {
+                @apply text-2xl;
+            }
+
+            & > ul > li > span:first-child {
+                color: grey;
+            }
+
+            & > ul > li > span:last-child {
+                padding-left: 8px;
+                color: lightgrey;
+            }
+
+            .criitical {
+                color: red !important;
+            }
+        }
+    }
+
+    .statistics {
+        @apply px-2 text-2xl;
+        color: grey;
+
+        & > ul > li > span {
+            color: lightgrey;
+            padding-left: 8px;
+        }
+    }
+}
+
+.victory {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5)) !important;
+}
+
+.defeat {
+    filter: drop-shadow(0 4px 8px darkred) !important;
+    background: linear-gradient(#141414 30%, #0a0a0a 60%, black 80%);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
+
+.draw {
+    background: linear-gradient(lightgrey, grey 70%, dimgrey 90%);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
+
+.winner {
+    background-image: linear-gradient(
+            -45deg,
+            transparent 5%,
+            var(--bg-9),
+            rgba(255, 255, 255, 0.1),
+            var(--bg-9),
+            transparent 95%
+    );
+}
+
+.loser {
+    background-image: linear-gradient(
+            -45deg,
+            transparent 5%,
+            rgba(0, 0, 0, 0.4),
+            rgba(0, 0, 0, 0.6),
+            rgb(0, 0, 0, 0.8),
+            rgba(0, 0, 0, 0.6),
+            rgba(0, 0, 0, 0.4),
+            transparent 95%
+    );
+}

@@ -38,11 +38,11 @@
     border-radius: 4px;
 }
 
-.acAbl {
+.actionAbility {
     color: var(--action-color);
 }
 
-.paAbl {
+.passiveAbility {
     color: var(--passive-color);
 }
 

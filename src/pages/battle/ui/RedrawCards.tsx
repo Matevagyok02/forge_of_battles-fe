@@ -3,9 +3,10 @@ import {Button} from "../../../components/Button.tsx";
 import {MatchContext} from "../../../context.tsx";
 import {ICard} from "../../../interfaces.ts";
 import CardContent from "../cards/CardContent.tsx";
-import BattlePortalWrap from "../../../components/BattlePortalWrap.tsx";
+import PortalWrap from "../components/PortalWrap.tsx";
 import {OutgoingBattleEvent} from "../Battle.tsx";
-import BattleInterfaceOverlay from "../../../components/BattleInterfaceOverlay.tsx";
+import MenuOverlay from "../components/MenuOverlay.tsx";
+import styles from "../../../styles/battle_page/Cards.module.css";
 
 const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
 
@@ -51,33 +52,34 @@ const RedrawCards: FC<{ close: () => void }> = ({ close }) => {
     }, [cardToChange, cards]);
 
     return (
-        <BattlePortalWrap>
-            <BattleInterfaceOverlay>
-                <div className="flex flex-col gap-4 items-center" >
-                    <div className="flex gap-4 px-4" >
+        <PortalWrap>
+            <MenuOverlay>
+                <menu className={styles.redraw} >
+                    <ul>
                         {cards?.map((card, index) =>
-                            <div
+                            <li
                                 key={index}
                                 onClick={() => handleCardClick(card.id, index)}
-                                className={`redrawable-card card ${isSelected(card.id, index)  ? "selected" : ""}`}
+                                className={`${styles.card} ${isSelected(card.id, index)  ? styles.selected : ""}`}
                             >
                                 <CardContent card={card} />
-                            </div>
+                            </li>
                         )}
-                    </div>
-                    <div className="text-sm px-4" >
+                    </ul>
+
+                    <p>
                         Select the card you want to change, or select none to change both
-                    </div>
+                    </p>
 
                     <horizontal-line/>
 
-                    <div className="flex gap-4" >
+                    <menu>
                         <Button text={"Cancel"} onClick={close} />
                         <Button text={"Redraw"} onClick={redraw} />
-                    </div>
-                </div>
-            </BattleInterfaceOverlay>
-        </BattlePortalWrap>
+                    </menu>
+                </menu>
+            </MenuOverlay>
+        </PortalWrap>
     )
 }
 

@@ -1,13 +1,13 @@
 import {FC, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {MatchContext} from "../../context.tsx";
-import "./Board.css";
 import styles from "../../styles/battle_page/Board.module.css";
 import {DiscardPile, DrawPile} from "./CardPiles.tsx";
 import {IPlayerState} from "../../interfaces.ts";
 import RedrawCards from "./ui/RedrawCards.tsx";
-import VirtualParent from "../../components/VirtualParent.tsx";
+import VirtualParent from "./components/VirtualParent.tsx";
 import CardSlot, {WarTrackPos} from "./cards/CardSlot.tsx";
 import {OutgoingBattleEvent} from "./Battle.tsx";
+import decks from "../../assets/decks.json";
 
 interface WarTrackSlot {
     pos: WarTrackPos;
@@ -28,14 +28,14 @@ const warTrackPositions: WarTrackSlot[] = [
 
 export const deckColorStyles = {
     primary: {
-        light: styles.light,
-        darkness: styles.darkness,
-        venom: styles.venom,
+        [decks.light.id]: styles.light,
+        [decks.darkness.id]: styles.darkness,
+        [decks.venom.id]: styles.venom
     },
     secondary: {
-        light: styles.lightSecondary,
-        darkness: styles.darknessSecondary,
-        venom: styles.venomSecondary,
+        [decks.light.id]: styles.lightSecondary,
+        [decks.darkness.id]: styles.darknessSecondary,
+        [decks.venom.id]: styles.venomSecondary
     }
 }
 
@@ -104,19 +104,19 @@ const PlayerCardPiles: FC = () => {
 
     return(
         <div className={styles.cardPiles} data-value={"right"} >
-            <div className={`${styles.discardPile} ${player.deck}`} >
-                <DiscardPile cardIds={player!.casualties} deck={player.deck} />
+            <div className={`${styles.discardPile} ${deckColorStyles.primary[player.deck]}`} >
+                <DiscardPile cardIds={player.casualties} deckColor={deckColorStyles.primary[player.deck]} />
             </div>
             <div
                 ref={playerDrawPileRef}
-                className={`${styles.drawPile} ${player.deck} ${drawPileHovered ? "hovered" : ""}`}
+                className={`${styles.drawPile} ${deckColorStyles.primary[player.deck]} ${drawPileHovered ? styles.hovered : ""}`}
             >
-                <DrawPile cardIds={player!.drawingDeck} deck={player.deck} />
+                <DrawPile cardIds={player.drawingDeck} deckColor={deckColorStyles.primary[player.deck]} />
                 { playerDrawPileRef.current &&
                     <>
                         { player!.drawingDeck.length > 0 &&
                             <VirtualParent virtualParent={playerDrawPileRef.current as Element} >
-                                <div className={`draw-pile-size-indicator`} >
+                                <div className={styles.pileSizeIndicator} >
                                     <div>
                                         <h1>
                                             {player!.drawingDeck.length}
@@ -127,15 +127,15 @@ const PlayerCardPiles: FC = () => {
                         }
                         { (canDraw || canRedraw) &&
                             <VirtualParent virtualParent={playerDrawPileRef.current as Element} >
-                                <div className={`draw-pile-btn-container`} >
-                                    <h1
-                                        className={`draw-pile-btn ${player.deck}`}
+                                <div className={styles.drawButton} >
+                                    <button
+                                        className={deckColorStyles.primary[player.deck]}
                                         onClick={ canDraw ? drawCards : () => setOpenRedraw(true) }
                                         onMouseEnter={() => setDrawPileHovered(true)}
                                         onMouseLeave={() => setDrawPileHovered(false)}
                                     >
                                         { canDraw ? "Draw" : "Redraw" }
-                                    </h1>
+                                    </button>
                                 </div>
                             </VirtualParent>
                         }
@@ -152,15 +152,18 @@ const PlayerCardPiles: FC = () => {
 const OpponentCardPiles: FC = () => {
 
     const { opponent, player } = useContext(MatchContext);
-    const color = opponent.deck + (opponent.deck === player.deck ? "-secondary" : "");
+    const color = opponent.deck === player.deck ?
+        deckColorStyles.secondary[opponent.deck]
+        :
+        deckColorStyles.primary[opponent.deck]
 
     return(
         <div className={styles.cardPiles} data-value={"left"}  >
             <div className={styles.drawPile} >
-                <DrawPile cardIds={opponent.drawingDeck} deck={color} />
+                <DrawPile cardIds={opponent.drawingDeck} deckColor={color} />
             </div>
-            <div className={`${styles.drawPile} ${color}`} >
-                <DiscardPile cardIds={opponent.casualties} deck={color} />
+            <div className={`${styles.discardPile} ${color}`} >
+                <DiscardPile cardIds={opponent.casualties} deckColor={color} />
             </div>
         </div>
     )
