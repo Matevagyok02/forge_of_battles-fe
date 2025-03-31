@@ -71,12 +71,14 @@
                 align-self: flex-end;
                 background-color: rgb(49, 69, 94);
                 border-radius: 8px 8px 0 8px;
+                word-break: break-word;
             }
 
             & li[data-value="partner"] {
                 align-self: flex-start;
                 background-color: rgb(70, 80, 91);
                 border-radius: 8px 8px 8px 0;
+                word-break: break-word;
             }
         }
 

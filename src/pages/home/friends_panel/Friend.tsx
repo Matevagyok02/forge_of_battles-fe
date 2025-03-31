@@ -21,6 +21,7 @@ const Friend: FC<{ friend: IFriend, openChat?: () => void, removeUnseenMsg?: () 
         <li
             className={styles.friend}
             data-value={friend.status}
+            onClick={openChatWithFriend}
         >
             <div>
                 <i className={styles.statusIndicator} title={friend.status} ></i>
