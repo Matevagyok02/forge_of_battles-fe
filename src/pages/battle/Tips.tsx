@@ -1,4 +1,4 @@
-import {FC, ReactNode, useContext, useEffect, useState} from "react";
+import {FC, ReactNode, useContext, useEffect} from "react";
 import {MatchContext} from "../../context.tsx";
 import styles from "../../styles/battle_page/Tips.module.css";
 import PortalWrap from "./components/PortalWrap.tsx";

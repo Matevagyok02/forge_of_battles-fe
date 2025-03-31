@@ -4,7 +4,7 @@ import CardContent from "./CardContent.tsx";
 import Draggable from 'react-draggable';
 import {MatchContext} from "../../../context.tsx";
 import CardUsageMenu from "../ui/CardUsageMenu.tsx";
-import { draw_cards, use_cards } from "../../../assets/tips.json";
+import { use_cards } from "../../../assets/tips.json";
 import styles from "../../../styles/battle_page/Cards.module.css"
 import cardStyles from "../../../styles/battle_page/Cards.module.css";
 

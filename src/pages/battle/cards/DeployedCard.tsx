@@ -5,7 +5,6 @@ import InspectCard from "../ui/InspectCard.tsx";
 import {MatchContext} from "../../../context.tsx";
 import {WarTrackPos} from "./CardSlot.tsx";
 import Animations from "../animations/Animations.ts";
-import {draw_cards} from "../../../assets/tips.json";
 import styles from "../../../styles/battle_page/Cards.module.css";
 
 const DeployedCard: FC<{ card: ICard, slot: string ,owner: number, color: string}> = ({ card, slot, owner, color}) => {

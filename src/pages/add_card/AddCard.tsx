@@ -25,8 +25,6 @@ const emptyCard: CardProto = {
 
 const AddCard: FC = () => {
 
-    const [showPreview, setShowPreview] = useState(false);
-
     const [cardBase, setCardBase] = useState<CardProto>(emptyCard);
     const [actionAbility, setActionAbility] = useState<AbilityProto>({...emptyAbility, type: AbilityType.action});
     const [passiveAbility, setPassiveAbility] = useState<AbilityProto>({...emptyAbility, type: AbilityType.passive});
