@@ -1,6 +1,7 @@
 import {Dispatch, FC, SetStateAction} from "react";
 import {CardProto} from "./cardCreationInterfaces.ts";
 import {formatNumber} from "./AddCard.tsx";
+import decks from "../../assets/decks.json";
 
 const BaseForm: FC<{
     cardBase: CardProto,
@@ -14,61 +15,68 @@ const BaseForm: FC<{
     const setDefence = (e: any) => setCardBase({...cardBase, defence: formatNumber(e.target.value)});
     const setCost = (e: any) => setCardBase({...cardBase, cost: formatNumber(e.target.value)});
 
+    const inputs = [
+        {
+            id: "name",
+            value: cardBase.name,
+            onChange: setName
+        },
+        {
+            id: "cost",
+            value: cardBase.cost,
+            onChange: setCost
+        },
+        {
+            id: "attack",
+            value: cardBase.attack,
+            onChange: setAttack
+        },
+        {
+            id: "defence",
+            value: cardBase.defence,
+            onChange: setDefence
+        },
+        {
+            id: "pieces",
+            value: cardBase.pieces,
+            onChange: setPieces
+        }
+    ];
+
     return(
-        <table className="flex justify-center" >
+        <table>
             <tbody>
             <tr>
                 <th>
-                    <label htmlFor="name">Name:</label>
+                    <label htmlFor={"deck"} >Deck:</label>
                 </th>
                 <td>
-                    <input id="name" type="text" value={cardBase.name} onChange={setName} />
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    <label htmlFor="deck">Deck:</label>
-                </th>
-                <td>
-                    <select id="deck" value={cardBase.deck} onChange={setDeck} >
-                        <option value="light" >Light</option>
-                        <option value="darkness" >Darkness</option>
-                        <option value="" disabled hidden >Select a deck</option>
+                    <select id={"deck"} value={cardBase.deck} onChange={setDeck} >
+                        { Object.keys(decks).map(deck =>
+                            <option key={deck} value={deck}>{deck.toUpperCase()}</option>
+                        )}
+                        <option value={""} disabled hidden >Select a deck</option>
                     </select>
                 </td>
             </tr>
-            <tr>
-                <th>
-                    <label htmlFor="cost">Cost:</label>
-                </th>
-                <td>
-                    <input id="cost" type="number" value={cardBase.cost} onChange={setCost} />
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    <label htmlFor="attack">Attack:</label>
-                </th>
-                <td>
-                    <input id="attack" type="number" value={cardBase.attack} onChange={setAttack} />
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    <label htmlFor="defence">Defence:</label>
-                </th>
-                <td>
-                    <input id="defence" type="number" value={cardBase.defence} onChange={setDefence} />
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    <label htmlFor="pieces">Pieces:</label>
-                </th>
-                <td>
-                    <input id="pieces" type="number" value={cardBase.pieces} onChange={setPieces} />
-                </td>
-            </tr>
+
+            { inputs.map(input =>
+                <tr key={input.id} >
+                    <th>
+                        <label htmlFor={input.id} >
+                            {input.id.charAt(0).toUpperCase() + input.id.slice(1)}:
+                        </label>
+                    </th>
+                    <td>
+                        <input
+                            id={input.id}
+                            type={input.id === "name" ? "text" : "number"}
+                            value={input.value}
+                            onChange={input.onChange}
+                        />
+                    </td>
+                </tr>
+            )}
             </tbody>
         </table>
     );

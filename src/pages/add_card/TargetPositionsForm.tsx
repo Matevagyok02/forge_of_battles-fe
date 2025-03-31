@@ -64,7 +64,7 @@ const TargetPositionsForm: FC<{
                     <label htmlFor="target-positions">Targetable:</label>
                 </th>
                 <td>
-                    <table className="positions-table">
+                    <table>
                         <tbody>
                         <tr>
                             <th>Position</th>

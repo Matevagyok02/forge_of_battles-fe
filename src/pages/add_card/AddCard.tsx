@@ -1,11 +1,11 @@
-import {FC, useCallback, useEffect, useState} from "react";
-import CardContent from "../battle/cards/CardContent.tsx";
+import {FC, useCallback, useState} from "react";
 import {ICard} from "../../interfaces.ts";
-import {createPortal} from "react-dom";
 import {addCard} from "../../api/cards.ts";
 import {AbilityProto, CardProto, InstantAblProto} from "./cardCreationInterfaces.ts";
 import BaseForm from "./BaseForm.tsx";
 import AbilityForm from "./AbilityForm.tsx";
+import styles from "../../styles/add_card_page/AddCard.module.css";
+import CardPreview from "./CardPreview.tsx";
 
 const emptyAbility: AbilityProto = {
     description: "",
@@ -24,6 +24,8 @@ const emptyCard: CardProto = {
 }
 
 const AddCard: FC = () => {
+
+    const [showPreview, setShowPreview] = useState(false);
 
     const [cardBase, setCardBase] = useState<CardProto>(emptyCard);
     const [actionAbility, setActionAbility] = useState<AbilityProto>({...emptyAbility, type: AbilityType.action});
@@ -62,38 +64,33 @@ ${formatJsonString(assembleCard())}
         }
     }, [cardBase, actionAbility, passiveAbility]);
 
-    useEffect(() => {
-        import("./AddCard.css");
-    }, []);
+    const previewJson = () => {
+        alert(formatJsonString(assembleCard()));
+    }
 
     return(
-        <main id={"add-card-form"} >
+        <main className={styles.addCard} >
             <div>
                 <BaseForm cardBase={cardBase} setCardBase={setCardBase} />
-                <AbilityForm ability={actionAbility} setAbility={setActionAbility} />
-                <AbilityForm ability={passiveAbility} setAbility={setPassiveAbility} />
+
+                <CardPreview card={assembleCard() as ICard} />
+
+                <menu>
+                    <button className={styles.save} onClick={save} >
+                        Save
+                    </button>
+                    <button className={styles.preview} onClick={previewJson} >
+                        Preview JSON
+                    </button>
+                    <button className={styles.reset} onClick={reset} >
+                        Reset
+                    </button>
+                </menu>
             </div>
-            <CardPreview card={assembleCard() as ICard} />
-            <span className="flex gap-6 m-8 absolute left-0 bottom-0" >
-                <button id="reset-form-btn" onClick={reset} >
-                    <i className="fa-solid fa-rotate-left bg-transparent" ></i>
-                </button>
-                <button id="save-form-btn" onClick={save} >
-                    Save
-                </button>
-            </span>
+            <AbilityForm ability={actionAbility} setAbility={setActionAbility} />
+            <AbilityForm ability={passiveAbility} setAbility={setPassiveAbility} />
         </main>
     );
-}
-
-const CardPreview: FC<{ card: ICard }> = ({ card }) => {
-
-    return(createPortal(
-        <div className="card card-preview" >
-            <CardContent card={card as ICard} />
-        </div>,
-        document.body
-    ));
 }
 
 export const formatNumber = (numberString: string): number => {

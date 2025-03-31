@@ -1,0 +1,88 @@
+main.addCard {
+    @apply fixed top-0 w-full h-full bg-neutral-800 select-none p-4 flex justify-between text-white;
+    font-family: 'Roboto', sans-serif;
+
+    & menu {
+        @apply flex flex-col w-full gap-4;
+
+        .preview {
+            @apply bg-blue-700;
+        }
+
+        .reset {
+            @apply bg-red-700;
+        }
+
+        .save {
+            @apply bg-green-700;
+        }
+
+        & button {
+            @apply text-center w-full text-2xl p-1;
+
+            &:hover {
+                filter: brightness(1.4);
+                transform: scale(1.05);
+            }
+        }
+    }
+
+    .abilityForm {
+        @apply flex justify-center;
+    }
+
+    .abilityForm[data-value="action"] {
+        @apply bg-red-600;
+    }
+
+    .abilityForm[data-value="passive"] {
+        @apply bg-blue-600;
+    }
+
+    & > table {
+        @apply h-full overflow-y-scroll;
+    }
+
+    & input {
+        @apply w-full bg-transparent text-white;
+        border-bottom: 1px dotted white;
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    & textarea {
+        @apply p-1 w-full bg-transparent;
+        border: 1px dotted white;
+
+        &:focus {
+            outline: none;
+        }
+    }
+
+    & td, & th {
+        @apply py-1 px-2;
+    }
+
+    & tr:nth-child(odd) {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    & > div {
+        @apply w-fit;
+    }
+
+    & > div:first-child {
+        @apply flex flex-col gap-8 justify-between items-center;
+    }
+
+    & select{
+        @apply w-full text-center border border-white rounded bg-transparent p-1;
+        border: 1px dotted white;
+
+        & * {
+            @apply text-neutral-800;
+        }
+    }
+}

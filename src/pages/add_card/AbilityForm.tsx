@@ -3,6 +3,7 @@ import {AbilityProto, AblReqProto} from "./cardCreationInterfaces.ts";
 import {AbilitySubtype, AbilityUsageType, formatVariableName} from "./AddCard.tsx";
 import AbilityRequirementForm from "./AbilityRequirementsForm.tsx";
 import AbilityGroupForm from "./AbilityGroupsForm.tsx";
+import styles from "../../styles/add_card_page/AddCard.module.css";
 
 const AbilityForm: FC<{
     ability: AbilityProto,
@@ -38,7 +39,7 @@ const AbilityForm: FC<{
     const setAbilitySubtype = (e: any) => updateAbility('subtype', e.target.value);
 
     return(
-        <table className={`flex justify-center ${ability["type"]}-ability-form`} >
+        <table data-value={ability.type}  className={styles.abilityForm} >
             <tbody>
             <tr>
                 <th>

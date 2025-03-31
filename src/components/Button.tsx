@@ -47,7 +47,6 @@ export enum Icon {
     music = "music",
     sound = "volume-high",
     friends = "user-group",
-    settings = "gear",
     cancel = "xmark",
     edit = "pen-to-square",
     options = "ellipsis-vertical",
@@ -59,6 +58,7 @@ export enum Icon {
     send = "paper-plane",
     copy = "copy",
     question = "circle-question",
+    refresh = "rotate"
 }
 
 export const getIcon = (icon: Icon) => {

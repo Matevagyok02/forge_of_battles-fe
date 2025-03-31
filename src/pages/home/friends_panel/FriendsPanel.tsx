@@ -147,6 +147,7 @@ const FriendsPanel: FC<{ openChat: (friend: IFriend) => void }> = ({ openChat })
             <div className={`${styles.panel} ${open ? styles.open : styles.closed}`} >
                 <div className={styles.frame}></div>
                 <div className={styles.content}>
+                    {/*<IconButton icon={Icon.refresh} text={"Refresh"} />*/}
                     <ul>
                         {friends &&
                             <>
@@ -167,9 +168,7 @@ const FriendsPanel: FC<{ openChat: (friend: IFriend) => void }> = ({ openChat })
                             </>
                         }
                     </ul>
-                    <div className={styles.addFriendBtn} >
-                        <Button text="+ Friend" onClick={() => openModal(<AddFriend add={addInvitedFriend} />)} />
-                    </div>
+                    <Button text="+ Friend" onClick={() => openModal(<AddFriend add={addInvitedFriend} />)} />
                 </div>
             </div>
         </div>

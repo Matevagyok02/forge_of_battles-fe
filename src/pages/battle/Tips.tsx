@@ -1,41 +1,12 @@
-import {FC, ReactNode, useContext, useEffect} from "react";
+import {FC, ReactNode, useContext, useEffect, useState} from "react";
 import {MatchContext} from "../../context.tsx";
 import styles from "../../styles/battle_page/Tips.module.css";
 import PortalWrap from "./components/PortalWrap.tsx";
 import tips from "../../assets/tips.json";
-import {IPlayerState} from "../../interfaces.ts";
 
 const Tips: FC = () => {
 
     const { tip, setTip, player } = useContext(MatchContext);
-
-    const getTipByState = (playerState: IPlayerState) => {
-        switch (playerState.turnStage) {
-            case 1: {
-                switch (playerState.drawsPerTurn) {
-                    case 0: return tips.draw_cards;
-                    case 1: return tips.change_cards_and_use_passive;
-                    case 2: return tips.use_passive_and_advance;
-                    default: return undefined;
-                }
-            }
-            case 2: return tips.storm;
-            case 3: return tips.deploy_use_action_and_end_turn;
-            default: return undefined;
-        }
-    }
-
-    useEffect(() => {
-        if (!tip) {
-            setTip(getTipByState(player));
-        }
-    }, [tip]);
-
-    useEffect(() => {
-        if (player) {
-            setTip(getTipByState(player));
-        }
-    }, [player.turnStage, player.drawsPerTurn]);
 
     const parseTipText = (text: string) => {
         const stringArr: (string | ReactNode)[] = text
@@ -68,10 +39,41 @@ const Tips: FC = () => {
         return { text: stringArr[0], styleClass };
     }
 
+    const getTipByState = () => {
+        console.log(player.turnStage, player.drawsPerTurn);
+
+        switch (player.turnStage) {
+            case 1: {
+                switch (player.drawsPerTurn) {
+                    case 0: return tips.draw_cards;
+                    case 1: return tips.change_cards_and_use_passive;
+                    case 2: return tips.use_passive_and_advance;
+                    default: return undefined;
+                }
+            }
+            case 2: return tips.storm;
+            case 3: return tips.deploy_use_action_and_end_turn;
+            default: return undefined;
+        }
+    }
+
+    useEffect(() => {
+        console.log("tip:", tip);
+
+        if (!tip) {
+            console.log(1);
+            setTip(getTipByState());
+        }
+    }, [tip]);
+
+    useEffect(() => {
+        setTip(getTipByState());
+    }, [player.turnStage, player.drawsPerTurn]);
+
     return(
         tip &&
             <PortalWrap>
-                <div className={styles.display}  >
+                <div className={styles.display} >
                     <i title="Hints" className={"fa-solid fa-question-circle"} ></i>
                     <p>
                         { tip.split(" ").map((word, i) => {

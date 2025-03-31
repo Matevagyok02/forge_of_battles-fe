@@ -69,10 +69,12 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
     }, [y]);
 
     useEffect(() => {
-        if (inspect && player.turnStage === 3) {
-            setTip(use_cards);
-        } else {
-            setTip(draw_cards);
+        if (player.turnStage === 3) {
+            if (inspect) {
+                setTip(use_cards);
+            } else {
+                setTip(undefined);
+            }
         }
     }, [inspect]);
 

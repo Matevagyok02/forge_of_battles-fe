@@ -5,6 +5,7 @@ import {findPlayerById} from "../../api/user.ts";
 import {AuthContext, MatchContext, UserContext} from "../../context.tsx";
 import {OutgoingBattleEvent} from "./Battle.tsx";
 import AvatarDisplay from "../../components/AvatarDisplay.tsx";
+import {deckColorStyles} from "./Board.tsx";
 
 const maxMana = 10;
 const maxHealth = 8;
@@ -21,19 +22,20 @@ const HudContainer: FC = () => {
 
     const { player, opponent } = useContext(MatchContext);
 
+    const opponentColor = opponent.deck !== player.deck ?
+        deckColorStyles.primary[opponent.deck]
+        :
+        deckColorStyles.secondary[opponent.deck];
+
     return( opponent && player &&
         <div className="hud-container" >
-            <Hud
-                playerState={opponent}
-            />
-            <Hud
-                playerState={player}
-            />
+            <Hud playerState={opponent} color={opponentColor}  />
+            <Hud playerState={player}  color={deckColorStyles.primary[player.deck]} />
         </div>
     )
 }
 
-const Hud: FC<{ playerState: IPlayerState }> = ({ playerState}) => {
+const Hud: FC<{ playerState: IPlayerState, color: string }> = ({ playerState, color}) => {
 
     const calcScale = (screenWidth: number) => {
         return screenWidth / 1800;
@@ -53,7 +55,7 @@ const Hud: FC<{ playerState: IPlayerState }> = ({ playerState}) => {
     }, []);
 
     return(
-        <div className={styles.hud} style={{ transform: `scale(${scale})` }} >
+        <div className={`${styles.hud} ${color}`} style={{ transform: `scale(${scale})` }} >
             <div className={styles.hudInnerContainer} >
                 <ManaPool
                     activeMana={playerState.mana}
@@ -151,7 +153,7 @@ const ManaPool: FC<{ activeMana: number, allMana: number }> = ({ activeMana, all
     }
 
     return(
-        <div>
+        <div className={styles.manaPoolContainer} >
             <div className={styles.manaPool} >
                 { mana.map((mana, index) =>
                     <div
@@ -186,7 +188,7 @@ const Health: FC<{ baseHealth: number, bonusHealth: number }> = ({ baseHealth, b
             <div className={styles.healthDecor} ></div>
             <div
                 className={styles.health}
-                style={{ "--health": `${calcHealthPercentage(health)}%` } as CSSProperties}
+                style={{ "--health": `${calcHealthPercentage(health)}%` } as CSSProperties }
             >
                 <h1>
                     {health}

@@ -59,7 +59,7 @@ const DeployedCard: FC<{ card: ICard, slot: string ,owner: number, color: string
 
     const cancelInspect = () => {
         setInspect(false);
-        setTip(draw_cards);
+        setTip(undefined);
     }
 
     return(

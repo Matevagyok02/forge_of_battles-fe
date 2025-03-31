@@ -2,7 +2,7 @@
     @apply w-fit h-full flex flex-col justify-center items-center gap-4;
 
     & > h1 {
-        @apply gold-text text-6xl text-center;
+        @apply text-6xl text-center;
     }
 
     .playerStatistics {
@@ -46,10 +46,12 @@
 }
 
 .victory {
+    @apply gold-text;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5)) !important;
 }
 
 .defeat {
+    @apply font-amarante;
     filter: drop-shadow(0 4px 8px darkred) !important;
     background: linear-gradient(#141414 30%, #0a0a0a 60%, black 80%);
     -webkit-text-fill-color: transparent;
@@ -57,6 +59,7 @@
 }
 
 .draw {
+    @apply font-amarante;
     background: linear-gradient(lightgrey, grey 70%, dimgrey 90%);
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
