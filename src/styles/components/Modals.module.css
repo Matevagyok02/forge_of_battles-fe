@@ -1,22 +1,12 @@
 .modal {
-    @apply centered;
-    width: fit-content;
-    height: fit-content;
+    @apply centered w-fit h-fit;
 }
 
 .regularModal {
     @apply modal;
 
     .closeButton {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        z-index: 10;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @apply absolute top-2 right-2 z-10 w-5 h-5 flex items-center justify-center;
 
         & button {
             color: goldenrod !important;
@@ -37,5 +27,5 @@
 }
 
 .forcedModal {
-    @apply modal z-50;
+    @apply fixed top-0 w-full h-full flex justify-center items-center z-50 bg-darkSlateBlue-40 backdrop-blur-sm;
 }

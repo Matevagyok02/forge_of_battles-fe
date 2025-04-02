@@ -1,0 +1,109 @@
+.display {
+    @apply fixed grid top-0 left-1/2;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8vw;
+    translate: -50% 0;
+    padding: 2vh;
+    width: 48vw;
+
+    .effectList {
+        display: flex;
+        gap: 1.2vw;
+    }
+
+    .effectList:first-child {
+        justify-content: flex-start;
+    }
+
+    .effectList:last-child {
+        justify-content: flex-end;
+
+        .effect .description {
+            transform-origin: 1.2vw;
+            scale: -1 1;
+
+            & p {
+                scale: -1 1;
+            }
+        }
+    }
+}
+
+.effect {
+    @apply relative aspect-square bg-cover;
+    width: 2.4vw;
+    border-radius: 0.4vw;
+    --color: grey;
+
+    .description {
+        @apply invisible absolute bottom-0 left-0 w-52 text-center py-3 px-4;
+        translate: 0 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        clip-path: polygon(
+                8px 8px,
+                calc(1.2vw - 4px) 8px,
+                1.2vw 0,
+                calc(1.2vw + 4px) 8px,
+                calc(100% - 8px) 8px,
+                calc(100% - 8px) calc(100% - 8px),
+                8px calc(100% - 8px)
+        );
+    }
+
+    &:hover .description {
+        @apply visible;
+    }
+
+    &:before {
+        content: "";
+        @apply absolute w-full h-full;
+        border-radius: inherit;
+        position: absolute;
+        scale: 1.2;
+        box-shadow: inset 0 0 4px 0 var(--color);
+    }
+}
+
+.attribute.buff {
+    background-image: url("../../assets/icons/effect_icons/modifier/attribute_buff.jpg");
+
+    &:before {
+        --color: green;
+    }
+}
+
+.attribute.debuff {
+    background-image: url("../../assets/icons/effect_icons/modifier/attribute_debuff.jpg");
+
+    &:before {
+        --color: red;
+    }
+}
+
+.cost.buff {
+    background-image: url("../../assets/icons/effect_icons/modifier/attribute_buff.jpg");
+}
+
+.cost.debuff {
+    background-image: url("../../assets/icons/effect_icons/modifier/attribute_debuff.jpg");
+}
+
+.eventDriven.draw {
+    background-image: url("../../assets/icons/effect_icons/event_driven/draw.jpg");
+}
+
+.eventDriven.deploy {
+    background-image: url("../../assets/icons/effect_icons/event_driven/deploy.jpg");
+}
+
+.eventDriven.cardDeath {
+    background-image: url("../../assets/icons/effect_icons/event_driven/card_death.jpg");
+}
+
+.eventDriven.discard {
+    background-image: url("../../assets/icons/effect_icons/event_driven/discard.jpg");
+}
+
+.eventDriven.turn {
+    background-image: url("../../assets/icons/effect_icons/event_driven/turn.jpg");
+}
