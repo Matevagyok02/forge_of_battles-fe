@@ -1,29 +1,33 @@
 import {FC, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {FriendStatus, getFriendById, IFriend} from "../friends_panel/FriendsPanel.tsx";
+import {FriendStatus, IFriend} from "../friends_panel/FriendsPanel.tsx";
 import {IMatch, MatchStage} from "../../../interfaces.ts";
-import {abandonMatch, createGame, getLastCreatedGame} from "../../../api/match.ts";
 import Modal from "../../../components/Modal.tsx";
 import {Button, Icon, IconButton} from "../../../components/Button.tsx";
 import {FriendsContext, ModalContext, UserContext} from "../../../context.tsx";
 import {useNavigate} from "react-router-dom";
 import styles from "../../../styles/home_page/OptionCardContent.module.css";
 import AvatarDisplay from "../../../components/AvatarDisplay.tsx";
-import {findPlayerById} from "../../../api/user.ts";
 import RangeSlider from "../../../components/RangeSelect.tsx";
 import {parseTimeLimit} from "../../../utils.ts";
+import {useAbandonMatch, useActiveMatches, useCreateMatch, useUserById} from "../../../api/hooks.tsx";
 
-const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined }> = ({ _lastCreatedMatch, friend}) => {
+const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend }> = ({ _lastCreatedMatch, friend}) => {
 
     const navigate = useNavigate();
 
-    const [match, setMatch] = useState<IMatch>();
+    const [match, setMatch] = useState<IMatch | undefined>(_lastCreatedMatch);
     const [timeLimit, setTimeLimit] = useState<number>();
     const [errorMsg, setErrorMsg] = useState<string>();
-    const [loading, setLoading] = useState<boolean>(false);
-    const [opponent, setOpponent] = useState<IFriend | undefined>(friend);
 
-    const { friends } = useContext(FriendsContext);
+    const [opponentId, setOpponentId] = useState<string>();
+    const [opponentDetails, setOpponentDetails] = useState<IFriend | undefined>(friend);
+
     const { openInfoModal } = useContext(ModalContext);
+
+    const fetchActiveMatch = useActiveMatches();
+    const createMatch = useCreateMatch();
+    const abandonMatch = useAbandonMatch();
+    const fetchUserById = useUserById(opponentId);
 
     const minTimeLimit = 15;
     const maxTimeLimit = 60;
@@ -34,24 +38,31 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
         console.log(input === maxTimeLimit ? undefined : input);
     }
 
-    const abandonCreatedMatch = () => {
-        if (match) {
-            abandonMatch(match.key).then(result => {
-                if (result.ok) {
-                    setMatch(undefined);
-                    setOpponent(undefined);
-                    setErrorMsg(undefined);
-                    changeTimeLimit(maxTimeLimit);
-                } else {
-                    openInfoModal(
-                        <p>
-                            The match could not be deleted, try again later
-                        </p>
-                    );
-                }
-            });
+    useEffect(() => {
+        if (abandonMatch.isSuccess) {
+            setMatch(undefined);
+            setOpponentDetails(undefined);
+            setOpponentId(undefined);
+            setErrorMsg(undefined);
+            changeTimeLimit(maxTimeLimit);
         }
-    }
+    }, [abandonMatch.isSuccess]);
+
+    useEffect(() => {
+        if (fetchUserById.isSuccess) {
+            setOpponentDetails(fetchUserById.data.data);
+        }
+    }, [fetchUserById.data]);
+
+    useEffect(() => {
+        if (abandonMatch.isError) {
+            openInfoModal(
+                <p>
+                    The match could not be deleted, try again later.
+                </p>
+            );
+        }
+    }, [abandonMatch.isError]);
 
     const rejoinMatch = () => {
         const refresh = () => location.reload();
@@ -80,57 +91,37 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
     }
 
     const create = () => {
-        setLoading(true);
-
-        createGame(timeLimit, opponent?.userId).then(result => {
-            if (result.ok && result.body) {
-                setMatch(result.body as IMatch);
-                setErrorMsg(undefined);
-            } else if (result.status === 409 && result.body && "message" in result.body) {
-                setErrorMsg(result.body.message);
-            } else {
-                setErrorMsg("An unexpected server error has occurred, try again later");
-            }
-            setLoading(false);
-        });
+        createMatch.create(timeLimit, opponentDetails?.userId);
     }
 
     useEffect(() => {
-        if (!match) {
-            getLastCreatedGame().then(result => {
-                if (result.ok && result.body) {
-                    const match = result.body as IMatch;
-                    setMatch(match);
-
-                    if (match.player2Id) {
-                        setOpponent(getOpponentDetails(match.player2Id));
-                    }
-                }
-            });
+        if (createMatch.isSuccess && createMatch.data) {
+            setMatch(createMatch.data.data);
         }
-    }, [match]);
-
-    const getOpponentDetails = useCallback((userId: string) => {
-        let opponent: IFriend | undefined;
-
-        if (friends) {
-            opponent = getFriendById(userId, friends.friends);
-        }
-
-        if (!opponent) {
-            findPlayerById(userId).then(result => {
-                if (result.ok && result.body) {
-                    opponent = result.body as IFriend;
-                }
-            });
-        }
-
-        return opponent;
-    }, [friends]);
+    }, [createMatch.isSuccess]);
 
     useEffect(() => {
-        setMatch(_lastCreatedMatch);
-    }, [_lastCreatedMatch]);
+        if (createMatch.error) {
+            if (createMatch.error?.response?.data.message) {
+                setErrorMsg(createMatch.error?.response?.data.message);
+            } else {
+                setErrorMsg("An unexpected server error has occurred, try again later");
+            }
+        }
+    }, [createMatch.error]);
+
+    useEffect(() => {
+        if (fetchActiveMatch.isSuccess && fetchActiveMatch.data.data.created) {
+            setMatch(fetchActiveMatch.data.data.created);
+            setOpponentId(fetchActiveMatch.data.data.created?.player2Id);
+        }
+    }, [fetchActiveMatch.data]);
+
+    useEffect(() => {
+        if (opponentId) {
+            fetchUserById.refetch();
+        }
+    }, [opponentId]);
 
     return(
         <Modal canBeClosed={!match} >
@@ -147,8 +138,8 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
 
                     <div className={styles.creationInterface} >
                         <PlayersDisplay
-                            opponent={opponent}
-                            setOpponent={setOpponent}
+                            opponent={opponentDetails}
+                            setOpponent={setOpponentDetails}
                             isMatchCreated={!!match}
                         />
                         <horizontal-line/>
@@ -180,7 +171,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
                                 }
                                 <p className={styles.instructions} >
                                     { match.stage === MatchStage.pending ?
-                                        opponent ?
+                                        opponentDetails ?
                                             "Wait for your friend to join the game..."
                                             :
                                             "Send the following key or link to your opponent"
@@ -195,7 +186,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
                     { match ?
                         <MatchDisplay
                             match={match}
-                            abandon={abandonCreatedMatch}
+                            abandon={() => abandonMatch.abandon(match!.key)}
                             rejoin={rejoinMatch}
                         />
                         :
@@ -205,7 +196,7 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend | undefined 
                                     {errorMsg}
                                 </p>
                             }
-                            <Button text={"Create"} onClick={create} loading={loading} />
+                            <Button text={"Create"} onClick={create} loading={createMatch.isPending} />
                         </div>
                     }
                 </div>

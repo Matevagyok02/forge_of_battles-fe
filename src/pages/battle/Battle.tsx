@@ -5,7 +5,7 @@ import {AuthContext, MatchContext} from "../../context.tsx";
 import Board from "./Board.tsx";
 import BattleChat from "./BattleChat.tsx";
 import {PlayerHand, OpponentHand} from "./Hands.tsx";
-import {getCardsById} from "../../api/cards.ts";
+import {getCardsById} from "../../api/api.ts";
 import {io, Socket} from "socket.io-client";
 import {keyRegex} from "../home/main_interface_components/JoinGame.tsx";
 import HudContainer from "./Hud.tsx";
@@ -138,8 +138,8 @@ const Battle: FC = () => {
 
         if (notFoundCards.length > 0) {
             const response = await getCardsById(notFoundCards);
-            if (response?.ok && response?.body && Array.isArray(response.body)) {
-                const newCards = [...response.body];
+            if (response.status === 200 && response.data) {
+                const newCards = [...response.data];
                 cardStore.push(...newCards);
                 setCards(prevState => [...prevState, ...newCards]);
             }

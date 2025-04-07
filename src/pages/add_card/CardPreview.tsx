@@ -3,11 +3,11 @@ import {ICard} from "../../interfaces.ts";
 import CardContent from "../battle/cards/CardContent.tsx";
 import cardStyles from "../../styles/battle_page/Cards.module.css";
 
-const CardPreview: FC<{ card: ICard }> = ({ card }) => {
+const CardPreview: FC<{ card?: ICard }> = ({ card }) => {
 
-    return(
+    return(card &&
         <div className={`${cardStyles.card} ${cardStyles.large}`} >
-            <CardContent card={card as ICard} />
+            <CardContent card={card} />
         </div>
     );
 }

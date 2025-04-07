@@ -307,8 +307,6 @@
 
 /*-MANA-*/
 
-
-
 .manaShard.empty {
     filter: grayscale(1) brightness(0.5) drop-shadow(0 0 4px var(--silver));
 }

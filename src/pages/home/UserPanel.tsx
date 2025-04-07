@@ -4,8 +4,8 @@ import {AuthContext, ModalContext, UserContext} from "../../context.tsx";
 import styles from "../../styles/home_page/UserPanel.module.css";
 import avatars from "../../assets/avatars/avatars.ts";
 import AvatarDisplay from "../../components/AvatarDisplay.tsx";
-import {changePicture} from "../../api/user.ts";
 import Modal from "../../components/Modal.tsx";
+import {useChangeAvatar} from "../../api/hooks.tsx";
 
 export const AuthPanel: FC = () => {
 
@@ -56,43 +56,22 @@ export const UserPanel: FC = () => {
 
 const ChangeAvatar: FC = () => {
 
-    const { closeModal } = useContext(ModalContext);
-    const { _user ,setUser } = useContext(UserContext);
-
+    const { _user } = useContext(UserContext);
     const [selected, setSelected] = useState<string>(_user?.picture || "");
-    const [change, setChange] = useState<{ requested: boolean, successful: boolean }>({ requested: false, successful: false});
-    const [loading, setLoading] = useState(false);
+    const { closeModal } = useContext(ModalContext);
 
-    const changeAvatar = () => {
-        setLoading(true);
+    const avatarChange = useChangeAvatar();
 
-        changePicture(selected).then(result => {
-            setChange({
-                requested: true,
-                successful: result.ok
-            });
-
-            if (result.ok) {
-                setUser(prevState => {
-                    if (prevState) {
-                        return {
-                            ...prevState,
-                            picture: selected
-                        }
-                    } else {
-                        return prevState;
-                    }
-                });
-            }
-
-            setLoading(false);
-        });
+    const change = async () => {
+        if (selected !== _user?.picture) {
+            avatarChange.change(selected);
+        }
     }
 
     return(
         <Modal>
             <div className={styles.changeAvatar} >
-                { !change.requested ?
+                { avatarChange.isPending || avatarChange.isIdle ?
                     <>
                         <ul>
                             { Object.keys(avatars).map(avatar =>
@@ -110,15 +89,15 @@ const ChangeAvatar: FC = () => {
 
                         <Button
                             text={"Change Avatar"}
-                            loading={loading}
-                            onClick={changeAvatar}
+                            loading={avatarChange.isPending}
+                            onClick={change}
                             disabled={selected === _user?.picture}
                         />
                     </>
                     :
                     <>
-                        <p className={!change.successful ? styles.error : ""} >
-                            { change.successful ?
+                        <p className={ !avatarChange.isSuccess ? styles.error : ""} >
+                            { avatarChange.isSuccess ?
                                 "Your avatar was changed successfully"
                                 :
                                 "Something went wrong, please try again"
