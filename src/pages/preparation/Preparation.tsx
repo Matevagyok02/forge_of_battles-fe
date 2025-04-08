@@ -6,14 +6,13 @@ import {Frame, WindowFrame} from "../../components/Frame.tsx";
 import {IBattle, IMatch, IUser, MatchStage} from "../../interfaces.ts";
 import {io, Socket} from "socket.io-client";
 import {parseTimeLimit} from "../../utils.ts";
-import {findPlayerById} from "../../api/user.ts";
 import {AuthContext, ModalContext} from "../../context.tsx";
 import LeaveMatchDialog from "./LeaveMatchDialog.tsx";
 import {keyRegex} from "../home/main_interface_components/JoinGame.tsx";
 import LoadingScreen from "../../components/LoadingScreen.tsx";
 import AvatarDisplay from "../../components/AvatarDisplay.tsx";
 import styles from "../../styles/preparation_page/Preparation.module.css";
-import "../../custom-elements.d.ts";
+import {useUserById} from "../../api/hooks.tsx";
 
 const Preparation: FC = () => {
 
@@ -26,7 +25,11 @@ const Preparation: FC = () => {
     const { openForcedModal } = useContext(ModalContext);
 
     const [match, setMatch] = useState<IMatch>();
-    const [opponent, setOpponent] = useState<IUser>();
+    const [opponentId, setOpponentId] = useState<string>();
+    const [opponentDetails, setOpponentDetails] = useState<IUser>();
+
+    const fetchUser = useUserById(opponentId);
+
     const [decks, setDecks] = useState<IDeck[]>(initDecks());
     const [isHost, setIsHost] = useState<boolean>();
     const [isReady, setIsReady] = useState(false);
@@ -60,6 +63,18 @@ const Preparation: FC = () => {
             );
         }
     }, [match]);
+
+    useEffect(() => {
+        if (opponentId) {
+            fetchUser.refetch();
+        }
+    }, [opponentId]);
+
+    useEffect(() => {
+        if (fetchUser.isSuccess) {
+            setOpponentDetails(fetchUser.data.data);
+        }
+    }, [fetchUser.data]);
 
     const leavePage = () => {
         socket?.disconnect();
@@ -99,22 +114,17 @@ const Preparation: FC = () => {
         }
 
         setIsHost(userId === match.player1Id && !match.randomMatch);
+
         const opponentId = [match.player1Id, match.player2Id].find(id => id !== userId);
-        if (!opponentId) {
+        if (opponentId) {
+            setOpponentId(opponentId);
+        } else {
             leavePage();
             return;
         }
 
         if (opponentId in (match.battle as IBattle).playerStates) {
             setOpponentIsReady(true);
-        }
-
-        const opponentResult = await findPlayerById(opponentId);
-        if (opponentResult.ok && opponentResult.body) {
-            setOpponent(opponentResult.body as IUser);
-        } else {
-            leavePage();
-            return;
         }
     }
 
@@ -257,21 +267,25 @@ const Preparation: FC = () => {
                                     Waiting for opponent...
                                 </h1>
                             }
-                            <Button
-                                text={isHost ? "Abandon" : "Leave"}
-                                onClick={() => openForcedModal(<LeaveMatchDialog matchKey={key} isHost={!!isHost} />)}
-                            />
+                            { match &&
+                                <Button
+                                    text={isHost ? "Abandon" : "Leave"}
+                                    onClick={() => openForcedModal(<LeaveMatchDialog matchKey={match!.key} isHost={isHost} />)}
+                                />
+                            }
                         </menu>
                     </div>
 
                     <div className={styles.infoDisplayContainer} >
                         <Frame>
                             <div className={styles.infoDisplay} >
-                                { opponent &&
+                                { opponentDetails &&
                                     <>
                                         <div className={styles.opponentStatus} >
-                                            <AvatarDisplay avatar={opponent.picture} />
-                                            <h1>{opponent.username}</h1>
+                                            <AvatarDisplay avatar={opponentDetails.picture} />
+                                            <h1>
+                                                {opponentDetails.username}
+                                            </h1>
                                             <i
                                                 data-value={opponentIsReady}
                                                 className={`fa-solid fa-${opponentIsReady ? "check animate-pulse" : "spinner animate-spin"}`}

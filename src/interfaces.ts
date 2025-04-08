@@ -1,4 +1,3 @@
-import {IFriend} from "./pages/home/friends_panel/FriendsPanel.tsx";
 import {WarTrackPos} from "./pages/battle/cards/CardSlot.tsx";
 import decks from "./assets/decks.json"
 
@@ -159,9 +158,4 @@ export interface IUser {
     picture: string;
     friends: string[];
     requests: IFriendRequest[];
-}
-
-export interface IUserResponseBody {
-    user: IUser;
-    friends: IFriend[];
 }

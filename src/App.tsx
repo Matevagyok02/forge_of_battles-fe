@@ -1,18 +1,20 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Home from "./pages/home/Home.tsx";
-import {ReactElement, useState} from "react";
+import {ReactElement, useCallback, useState} from "react";
 import {IInfoModal, InfoModal} from "./components/Modal.tsx";
 import {AuthContext, FriendsContext, ModalContext, UserContext} from "./context.tsx";
 import {useAuth0} from "@auth0/auth0-react";
 import {IUser} from "./interfaces.ts";
-import {Friends} from "./pages/home/friends_panel/FriendsPanel.tsx";
+import {Friends, IFriend} from "./pages/home/friends_panel/FriendsPanel.tsx";
 import Preparation from "./pages/preparation/Preparation.tsx";
 import Battle from "./pages/battle/Battle.tsx";
 import Join from "./pages/join/Join.tsx";
 import AdminRoute from "./components/AdminRoute.tsx";
 import AddCard from "./pages/add_card/AddCard.tsx";
+import {useAuthInterceptor} from "./api/interceptorHooks.tsx";
 
 const App = () => {
+    useAuthInterceptor();
 
     const [_user, setUser] = useState<IUser>();
     const [friends, setFriends] = useState<Friends>({friends: [], pending: []});
@@ -22,6 +24,10 @@ const App = () => {
     const [openedForcedModal, setOpenedForcedModal] = useState<ReactElement | null>(null);
 
     const { user, isAuthenticated, logout, loginWithPopup, isLoading } = useAuth0();
+
+    const getFriendById = useCallback((id: string): IFriend | undefined => {
+        return friends.friends.find(friend => friend.userId === id);
+    }, [friends.friends]);
 
     const openModal = (modal: ReactElement) => {
         setOpenedModal(modal);
@@ -85,7 +91,7 @@ const App = () => {
                 }}
             >
                 <UserContext.Provider value={{_user, setUser}}>
-                    <FriendsContext.Provider value={{friends, setFriends}}>
+                    <FriendsContext.Provider value={{friends, setFriends, getFriendById}}>
                         <BrowserRouter>
                             {openedInfoModal.map((infoModal, index) => (
                                 <InfoModal close={() => closeInfoModal(index)} onOk={infoModal.onOk} key={index} >

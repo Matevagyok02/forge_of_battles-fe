@@ -1,7 +1,7 @@
 import {createContext, Dispatch, ReactElement, SetStateAction} from "react";
 import {ICard, IMatch, IPlayerState, IUser} from "./interfaces.ts";
 import {User} from "@auth0/auth0-react";
-import {Friends} from "./pages/home/friends_panel/FriendsPanel.tsx";
+import {Friends, IFriend} from "./pages/home/friends_panel/FriendsPanel.tsx";
 import {Socket} from "socket.io-client";
 
 export interface IModalContext {
@@ -30,6 +30,7 @@ export interface IUserContext {
 export interface IFriendsContext {
     friends: Friends;
     setFriends: Dispatch<SetStateAction<Friends>>;
+    getFriendById: (id: string) => IFriend | undefined;
 }
 
 export interface IMatchContext {

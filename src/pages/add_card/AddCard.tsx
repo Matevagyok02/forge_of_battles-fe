@@ -1,11 +1,11 @@
-import {FC, useCallback, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {ICard} from "../../interfaces.ts";
-import {addCard} from "../../api/cards.ts";
 import {AbilityProto, CardProto, InstantAblProto} from "./cardCreationInterfaces.ts";
 import BaseForm from "./BaseForm.tsx";
 import AbilityForm from "./AbilityForm.tsx";
 import styles from "../../styles/add_card_page/AddCard.module.css";
 import CardPreview from "./CardPreview.tsx";
+import {useAddCard} from "../../api/hooks.tsx";
 
 const emptyAbility: AbilityProto = {
     description: "",
@@ -25,16 +25,20 @@ const emptyCard: CardProto = {
 
 const AddCard: FC = () => {
 
+    const [card, setCard] = useState<ICard>();
+
     const [cardBase, setCardBase] = useState<CardProto>(emptyCard);
     const [actionAbility, setActionAbility] = useState<AbilityProto>({...emptyAbility, type: AbilityType.action});
     const [passiveAbility, setPassiveAbility] = useState<AbilityProto>({...emptyAbility, type: AbilityType.passive});
 
-    const assembleCard = useCallback(() => {
-        return {
+    const addCard = useAddCard();
+
+    useEffect(() => {
+        setCard({
             ...cardBase,
             actionAbility: actionAbility,
             passiveAbility: passiveAbility
-        };
+        } as ICard);
     }, [cardBase, actionAbility, passiveAbility]);
 
     const reset = () => {
@@ -43,27 +47,31 @@ const AddCard: FC = () => {
         setPassiveAbility({...emptyAbility, type: AbilityType.passive});
     };
 
-    const save = useCallback(() => {
-        if (
-            (actionAbility as InstantAblProto).args && typeof (actionAbility as InstantAblProto).args !== "object" ||
-            (passiveAbility as InstantAblProto).args && typeof (passiveAbility as InstantAblProto).args !== "object"
-        ) {
-            alert("Please provide a valid JSON string for the 'args' parameter.");
+    const save = () => {
+        if (!card) {
+            alert("Please fill in all fields in the base form.");
+            return;
+        } else if (hasValidAbilityArgs(actionAbility) && hasValidAbilityArgs(passiveAbility)) {
+            addCard.add(card);
         } else {
-            addCard(assembleCard()).then(response => {
-                if (response.ok) {
-                    alert(`Card inserted successfully.
-${formatJsonString(assembleCard())}
-                    `);
-                } else {
-                    alert("An error occurred while inserting the card.");
-                }
-            });
+            alert("Please provide a valid JSON string for the 'args' parameter.");
         }
-    }, [cardBase, actionAbility, passiveAbility]);
+    }
+
+    useEffect(() => {
+        if (addCard.isSuccess) {
+            alert("Card inserted successfully.");
+        }
+    }, [addCard.isSuccess]);
+
+    useEffect(() => {
+        if (addCard.isError) {
+            alert("An error occurred while inserting the card.");
+        }
+    }, [addCard.isError]);
 
     const previewJson = () => {
-        alert(formatJsonString(assembleCard()));
+        alert(formatJsonString(card as object));
     }
 
     return(
@@ -71,7 +79,7 @@ ${formatJsonString(assembleCard())}
             <div>
                 <BaseForm cardBase={cardBase} setCardBase={setCardBase} />
 
-                <CardPreview card={assembleCard() as ICard} />
+                <CardPreview card={card} />
 
                 <menu>
                     <button className={styles.save} onClick={save} >
@@ -123,6 +131,10 @@ export const formatVariableName = (name: string): string => {
 
 const formatJsonString = (json: object): string => {
     return JSON.stringify(json, null, 10);
+}
+
+const hasValidAbilityArgs = (ability: any) => {
+    return !(ability as InstantAblProto).args || typeof (ability as InstantAblProto).args === "object";
 }
 
 export enum AbilityType {

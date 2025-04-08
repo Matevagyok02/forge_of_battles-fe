@@ -1,11 +1,11 @@
 import {FC, useContext, useEffect, useState} from "react";
 import {Button, Icon, IconButton} from "../../../components/Button.tsx";
-import {getOnlineFriends} from "../../../api/friend.ts";
 import {FriendsContext, ModalContext} from "../../../context.tsx";
-import {getUnseenMsg} from "../../../api/chat.ts";
 import styles from "../../../styles/home_page/FriendsPanel.module.css";
 import AddFriend from "./AddFriend.tsx";
 import Friend from "./Friend.tsx";
+import {useOnlineFriends, useUnseenMessages} from "../../../api/hooks.tsx";
+import {OnlineFriend, UnseenMessage} from "../../../api/api.ts";
 
 export interface Friends {
     friends: IFriend[];
@@ -36,20 +36,8 @@ const FriendsPanel: FC<{ openChat: (friend: IFriend) => void }> = ({ openChat })
     const { openModal } = useContext(ModalContext);
     const { friends, setFriends } = useContext(FriendsContext);
 
-    const addInvitedFriend = (friend: IFriend) => {
-        setFriends(prevState => {
-            if (prevState) {
-                const newState = prevState;
-                newState.pending.push(friend);
-                return newState;
-            } else {
-                return {
-                    friends: [],
-                    pending: [friend]
-                }
-            }
-        });
-    }
+    const fetchOnlineFriends = useOnlineFriends();
+    const fetchUnseenMessages = useUnseenMessages();
 
     const removeUnseenMsg = (userId: string) => {
         setFriends(prevState => {
@@ -70,58 +58,41 @@ const FriendsPanel: FC<{ openChat: (friend: IFriend) => void }> = ({ openChat })
         setOpen(!open);
     }
 
-    const getOnlineFriendsAndUnseenMsg = async (friends: IFriend[]) => {
-        const onlineFriends = await getOnlineFriends();
-        const unseenMessages = await getUnseenMsg();
-
-        const updatedFriends = friends.map(friend => ({
+    const processData = (onlineFriends: OnlineFriend[], unseenMessages: UnseenMessage []) => {
+        const updatedFriends = friends.friends.map(friend => ({
             ...friend,
             status: friend.status || FriendStatus.offline,
             unseenMessage: false
         }));
 
-        if (
-            onlineFriends.body &&
-            "onlineFriends" in onlineFriends.body &&
-            Array.isArray(onlineFriends.body.onlineFriends)
-        ) {
-            onlineFriends.body.onlineFriends.forEach(friend => {
-                const index = updatedFriends.findIndex(entry => entry.userId === friend.userId);
-                if (index !== -1) {
-                    updatedFriends[index].status = friend[FriendStatus.busy] ? FriendStatus.busy : FriendStatus.online;
+        onlineFriends.forEach(friend => {
+            const index = updatedFriends.findIndex(entry => entry.userId === friend.userId);
+            if (index !== -1) {
+                updatedFriends[index].status = friend[FriendStatus.busy] ? FriendStatus.busy : FriendStatus.online;
+            }
+        });
+
+        unseenMessages.forEach(friend => {
+            const index = updatedFriends.findIndex(entry => entry.userId === friend.userId);
+            if (index !== -1) {
+                updatedFriends[index].unseenMessage = true;
+            }
+        });
+
+        setFriends(
+            prevState => {
+                return {
+                    friends: updatedFriends,
+                    pending: prevState ? prevState.pending : []
                 }
             });
-        }
-
-        if (
-            unseenMessages.ok &&
-            unseenMessages.body &&
-            Array.isArray(unseenMessages.body)
-        ) {
-            unseenMessages.body.forEach(friend => {
-                const index = updatedFriends.findIndex(entry => entry.userId === friend["otherUserId"][0].userId);
-                if (index !== -1) {
-                    updatedFriends[index].unseenMessage = true;
-                }
-            });
-        }
-
-        return updatedFriends;
     }
 
     useEffect(() => {
-        if (friends && friends.friends.length > 0) {
-            getOnlineFriendsAndUnseenMsg(friends.friends).then(updatedFriends => {
-                setFriends(
-                    prevState => {
-                        return {
-                            friends: updatedFriends,
-                            pending: prevState ? prevState.pending : []
-                        }
-                    });
-            });
+        if (fetchOnlineFriends.isSuccess && fetchUnseenMessages.isSuccess) {
+            processData(fetchOnlineFriends.data.data, fetchUnseenMessages.data.data);
         }
-    }, []);
+    }, [fetchOnlineFriends.data, fetchUnseenMessages.data]);
 
     useEffect(() => {
         if (friends) {
@@ -168,7 +139,7 @@ const FriendsPanel: FC<{ openChat: (friend: IFriend) => void }> = ({ openChat })
                             </>
                         }
                     </ul>
-                    <Button text="+ Friend" onClick={() => openModal(<AddFriend add={addInvitedFriend} />)} />
+                    <Button text="+ Friend" onClick={() => openModal(<AddFriend/>)} />
                 </div>
             </div>
         </div>

@@ -1,11 +1,11 @@
 import {CSSProperties, FC, useCallback, useContext, useEffect, useState} from "react";
 import styles from "../../styles/battle_page/Hud.module.css";
-import {IPlayerState, IUser} from "../../interfaces.ts";
-import {findPlayerById} from "../../api/user.ts";
-import {AuthContext, MatchContext, UserContext} from "../../context.tsx";
+import {IPlayerState} from "../../interfaces.ts";
+import {MatchContext} from "../../context.tsx";
 import {OutgoingBattleEvent} from "./Battle.tsx";
 import AvatarDisplay from "../../components/AvatarDisplay.tsx";
 import {deckColorStyles} from "./Board.tsx";
+import {useUserById} from "../../api/hooks.tsx";
 
 const maxMana = 10;
 const maxHealth = 8;
@@ -263,28 +263,22 @@ const TimeLeftDisplay: FC<{ turnStartedAt?: number, prevTimeLeft: number, should
 const PlayerDetails: FC<{ playerId?: string }> = ({ playerId }) => {
 
     const [userDetails, setUserDetails] = useState<{username: string, picture: string}>();
-
-    const userId = useContext(AuthContext).user?.sub;
-    const { setUser } = useContext(UserContext);
+    const fetchUser = useUserById(playerId);
 
     useEffect(() => {
         if (playerId) {
-            findPlayerById(playerId).then(response => {
-                if (response?.ok && response?.body) {
-                    const playerDetails = response.body as IUser
+            fetchUser.refetch();
+        }
+    }, [playerId]);
 
-                    if (playerDetails.userId === userId) {
-                        setUser(playerDetails);
-                    }
-
-                    setUserDetails({
-                        username: playerDetails.username,
-                        picture: playerDetails.picture
-                    });
-                }
+    useEffect(() => {
+        if (fetchUser.isSuccess) {
+            setUserDetails({
+                username: fetchUser.data.data.username,
+                picture: fetchUser.data.data.picture
             });
         }
-    }, []);
+    }, [fetchUser.data]);
 
     return(
         <>

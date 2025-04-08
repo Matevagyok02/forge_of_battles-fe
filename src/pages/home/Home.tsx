@@ -1,7 +1,6 @@
 import styles from "../../styles/home_page/Home.module.css";
 import {useContext, useEffect, useRef, useState} from "react";
-import {getUser} from "../../api/user.ts";
-import {IMatch, IReceiver, ISender, IUser, IUserResponseBody} from "../../interfaces.ts";
+import {IMatch, IReceiver, ISender, IUser} from "../../interfaces.ts";
 import FriendsPanel, {FriendStatus, IFriend} from "./friends_panel/FriendsPanel.tsx";
 import {io, Socket} from "socket.io-client";
 import {AuthContext, FriendsContext, ModalContext, UserContext} from "../../context.tsx";
@@ -9,13 +8,13 @@ import JoinGame from "./main_interface_components/JoinGame.tsx";
 import {AuthPanel, UserPanel} from "./UserPanel.tsx";
 import Registration from "./Registration.tsx";
 import CreateGame from "./main_interface_components/CreateGame.tsx";
-import {FriendRequest, GameRequest} from "./Requests.tsx";
+import Requests from "./Requests.tsx";
 import {useNavigate} from "react-router-dom";
-import {getActiveMatch, getLastCreatedGame} from "../../api/match.ts";
 import OptionCardButtons from "./main_interface_components/OptionCardButton.tsx";
 import AvatarDisplay from "../../components/AvatarDisplay.tsx";
 import {WindowFrame} from "../../components/Frame.tsx";
 import Chat, {ChatRef} from "./chat/Chat.tsx";
+import {useActiveMatches, useUser} from "../../api/hooks.tsx";
 
 const Home = () => {
 
@@ -23,11 +22,11 @@ const Home = () => {
     const { user, isAuthenticated } = useContext(AuthContext);
     const { _user, setUser } = useContext(UserContext);
     const { friends, setFriends } = useContext(FriendsContext);
-    const { openInfoModal, openedModal, closeModal, openModal, openForcedModal, closeForcedModal} = useContext(ModalContext);
+    const { openInfoModal, openedModal, openModal, openForcedModal} = useContext(ModalContext);
 
     const [socket, setSocket] = useState<Socket>();
-    const [friendRequests, setFriendRequests] = useState<ISender[]>();
-    const [gameRequests, setGameRequests] = useState<IMatch[]>();
+    const [friendRequests, setFriendRequests] = useState<ISender[]>([]);
+    const [gameRequests, setGameRequests] = useState<IMatch[]>([]);
 
     const chatRef = useRef<ChatRef | null>(null);
 
@@ -37,66 +36,77 @@ const Home = () => {
         }
     }
 
-    const loadUser = () => {
-        getUser().then( userObj => {
-            if (user && userObj.ok && userObj.body) {
-                const userResponseObj = userObj.body as IUserResponseBody;
+    const fetchUser = useUser();
 
-                sessionStorage.setItem("user", JSON.stringify(userResponseObj.user));
-                localStorage.setItem("signedUp", "true");
+    useEffect(() => {
+        if (fetchUser.isSuccess) {
+            const data = fetchUser.data.data;
 
-                const newUser = userResponseObj.user as IUser;
+            const requests = processRequests(data.user);
 
-                setUser(newUser);
+            setFriends({
+                friends: data.friends,
+                pending: requests.outgoing
+            });
+            setFriendRequests(requests.incoming);
+            setUser(data.user);
+        }
+    }, [fetchUser.data]);
 
-                const requests = newUser.requests;
+    useEffect(() => {
+        if (fetchUser.isError && fetchUser.error.status === 404) {
+            openForcedModal(
+                <Registration/>
+            );
+        }
+    }, [fetchUser.isError]);
 
-                if (Array.isArray(requests)) {
-                    const incomingRequests: ISender[] = [];
-                    const outgoingRequests: IReceiver[] = [];
+    useEffect(() => {
+        if (isAuthenticated && user?.sub) {
+            setUpSocket(user.sub);
+        } else if (socket) {
+            socket.disconnect();
+            setSocket(undefined);
 
-                    requests.forEach(request => {
-                        if (request.fromId !== newUser.userId) {
-                            const sender = {
-                                userId: request.fromId,
-                                username: request.userProps.username,
-                                picture: request.userProps.picture,
-                            }
-                            incomingRequests.push(sender);
-                        } else {
-                            const receiver = {
-                                userId: request.toId,
-                                username: request.userProps.username,
-                                picture: request.userProps.picture,
-                                status: "pending",
-                                unseenMessage: false
-                            }
-                            outgoingRequests.push(receiver);
-                        }
-                    });
+        }
+    }, [isAuthenticated, user?.sub]);
 
-                    setFriends({
-                        friends: userResponseObj.friends,
-                        pending: outgoingRequests
-                    });
+    const processRequests = (user: IUser) => {
+        const incoming: ISender[] = [];
+        const outgoing: IReceiver[] = [];
 
-                    setFriendRequests(incomingRequests);
+        user.requests.forEach(request => {
+            if (request.fromId !== user.userId) {
+                const sender = {
+                    userId: request.fromId,
+                    username: request.userProps.username,
+                    picture: request.userProps.picture,
                 }
-            } else if (userObj.status === 404) {
-                openForcedModal(<Registration/>);
+                incoming.push(sender);
+            } else {
+                const receiver = {
+                    userId: request.toId,
+                    username: request.userProps.username,
+                    picture: request.userProps.picture,
+                    status: FriendStatus.pending,
+                    unseenMessage: false
+                }
+                outgoing.push(receiver);
             }
         });
+
+        return { incoming, outgoing };
     }
 
     const refreshGameCreation = () => {
         openModal(<CreateGame/>)
     };
 
-    const setUpSocket = () => {
+    const setUpSocket = (userId: string) => {
         const socket = io(
             import.meta.env.VITE_SOCKET_URL,
             {
-                auth: { userId: user!.sub },
+                auth: { userId: userId },
             }
         );
 
@@ -258,63 +268,44 @@ const Home = () => {
         setSocket(socket);
     }
 
+    const fetchActiveMatch = useActiveMatches();
+
     useEffect(() => {
-        if (isAuthenticated) {
-            if (!_user) {
-                loadUser();
+        if(fetchActiveMatch.isSuccess) {
+            const activeMatches = fetchActiveMatch.data.data;
+            if (activeMatches.created) {
+                openModal(<CreateGame _lastCreatedMatch={activeMatches.created} />);
+            } else if (activeMatches.active) {
+                openModal(<JoinGame activeMatch={activeMatches.active} />);
+            } else if (activeMatches.inQueue) {
+                openModal(<JoinGame inQueue={true} />);
             }
-            setUpSocket();
-        } else {
-            if (socket) {
-                socket.disconnect();
-                setSocket(undefined);
-            }
         }
-    }, [isAuthenticated]);
+    }, [fetchActiveMatch.data]);
 
-    useEffect(() => {
-        if (gameRequests && gameRequests!.length > 0) {
-            openForcedModal(
-                <GameRequest
-                    match={gameRequests[0]}
-                    onResolve={() => setGameRequests(gameRequests!.slice(1, gameRequests!.length - 1))}
-                />
-            );
-        } else if (friendRequests && friendRequests!.length > 0) {
-            openForcedModal(
-                <FriendRequest
-                    sender={friendRequests[0]}
-                    onResolve={() => setFriendRequests(friendRequests!.slice(1, friendRequests!.length - 1))}
-                />
-            );
-        } else {
-            closeForcedModal();
-        }
-    }, [friendRequests, gameRequests]);
-
-    useEffect(() => {
-        if (_user) {
-            getLastCreatedGame().then(result => {
-                if (result.ok && result.body) {
-                    const match = result.body as IMatch;
-
-                    openModal(<CreateGame _lastCreatedMatch={match} />);
-                } else {
-                    getActiveMatch().then(result => {
-                        if (result.ok && result.body) {
-                            if ((result.body as IMatch).key) {
-                                openModal(<JoinGame activeMatch={result.body as IMatch} />);
-                            } else {
-                                openModal(<JoinGame inQueue={true} />);
-                            }
-                        } else {
-                            closeModal();
-                        }
-                    });
-                }
-            });
-        }
-    }, [_user]);
+    // useEffect(() => {
+    //     if (_user) {
+    //         getLastCreatedGame().then(result => {
+    //             if (result.ok && result.body) {
+    //                 const match = result.body as IMatch;
+    //
+    //                 openModal(<CreateGame _lastCreatedMatch={match} />);
+    //             } else {
+    //                 getActiveMatch().then(result => {
+    //                     if (result.ok && result.body) {
+    //                         if ((result.body as IMatch).key) {
+    //                             openModal(<JoinGame activeMatch={result.body as IMatch} />);
+    //                         } else {
+    //                             openModal(<JoinGame inQueue={true} />);
+    //                         }
+    //                     } else {
+    //                         closeModal();
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //     }
+    // }, [_user]);
 
     return(
         <WindowFrame>
@@ -337,6 +328,12 @@ const Home = () => {
                                         openChat={openChat}
                                     />
                                     <Chat ref={chatRef} />
+                                    <Requests
+                                        gameReq={gameRequests}
+                                        friendReq={friendRequests}
+                                        setGameReq={setGameRequests}
+                                        setFriendReq={setFriendRequests}
+                                    />
                                 </>
                             }
                         </>

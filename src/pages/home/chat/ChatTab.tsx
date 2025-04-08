@@ -10,9 +10,9 @@ import {
 } from "react";
 import {IFriend} from "../friends_panel/FriendsPanel.tsx";
 import {Icon, IconButton} from "../../../components/Button.tsx";
-import {getChatMessages, sendChatMessage} from "../../../api/chat.ts";
 import styles from "../../../styles/home_page/Chat.module.css";
 import {UserContext} from "../../../context.tsx";
+import {useChatMessages, useSendChatMessage} from "../../../api/hooks.tsx";
 
 export interface Message {
     senderId: string;
@@ -43,6 +43,9 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
 
     const chatEndRef = useRef<HTMLDivElement | null>(null);
 
+    const fetchMessages = useChatMessages(props.friend.userId);
+    const sendMessage = useSendChatMessage();
+
     useImperativeHandle(ref, () => ({
         addMessage: (message: Message) => {
             setMessages(prevState => [...prevState, message]);
@@ -57,14 +60,19 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
     }));
 
     useEffect(() => {
-        getChatMessages(props.friend.userId).then(response => {
-            if (response.ok && response.body && "messages" in response.body) {
-                (response.body.messages as Message[]).forEach((message: Message) => {
-                    message.selfWritten = message.senderId === userId;
-                });
-                setMessages(response.body.messages as Message[]);
-            }
-        });
+        if (fetchMessages.isSuccess && fetchMessages.data) {
+            const messages = fetchMessages.data.data;
+
+            messages.map((message: Message) => {
+                message.selfWritten = message.senderId === userId;
+            });
+
+            setMessages(messages);
+        }
+    }, [fetchMessages.data]);
+
+    useEffect(() => {
+        fetchMessages.refetch();
     }, []);
 
     useEffect(() => {
@@ -77,30 +85,32 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
         }
     }, [messages, minimized]);
 
-    const sendMessage = () => {
-        if (messageText.trim() && userId) {
-            const text = messageText.trim();
-            setMessageText("");
+    const send = () => {
+        const text = messageText.trim();
 
+        if (text && userId) {
+            sendMessage.send(props.friend.userId, text);
+        }
+    }
+
+    useEffect(() => {
+        if (sendMessage.isSuccess && userId) {
             const message = {
                 senderId: userId,
-                messageText: text,
+                messageText: messageText.trim(),
                 createdAt: new Date(),
                 selfWritten: true
             }
 
-            sendChatMessage(props.friend.userId, text).then(response => {
-                if (response.ok) {
-                    setMessages(prevState => [...prevState, message]);
-                }
-            });
+            setMessages(prevState => [...prevState, message]);
+            setMessageText("");
         }
-    }
+    }, [sendMessage.submittedAt, sendMessage.isSuccess]);
 
     const handleEnterPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            sendMessage();
+            send();
         }
     }
 
@@ -112,7 +122,6 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
 
     return(
         minimized ?
-            status && unseenMessages !== null &&
             <li
                 className={`${styles.minTab} ${unseenMessages ? styles.unseenMsg : ""}`}
                 onClick={() => setMinimized(false)}
@@ -162,7 +171,7 @@ const ChatTab = forwardRef((props: ChatProps, ref) => {
                             onChange={e => input(e)}
                             onKeyDown={(e) => handleEnterPress(e)}
                         ></textarea>
-                    <IconButton icon={Icon.send} onClick={sendMessage} />
+                    <IconButton icon={Icon.send} onClick={send} />
                 </div>
             </li>
     );

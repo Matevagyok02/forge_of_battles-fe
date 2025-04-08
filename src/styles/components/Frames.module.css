@@ -71,6 +71,8 @@
 
     .content.background {
         @apply bg-darkSlateBlue-80 backdrop-blur-sm;
+        box-shadow: black 0 0 8px 0 inset;
+        border-radius: 20px;
     }
 
     .decorationContainer {

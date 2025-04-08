@@ -1,58 +1,72 @@
 import {FC, useContext, useEffect, useState} from "react";
 import {IMatch, ISender} from "../../interfaces.ts";
-import {acceptFriendRequest, declineFriendRequest} from "../../api/friend.ts";
-import {IFriend, getFriendById} from "./friends_panel/FriendsPanel.tsx";
+import {IFriend} from "./friends_panel/FriendsPanel.tsx";
 import {ForcedModal} from "../../components/Modal.tsx";
 import {Button} from "../../components/Button.tsx";
 import {FriendsContext, ModalContext} from "../../context.tsx";
 import {useNavigate} from "react-router-dom";
-import {declineMatch, joinMatch} from "../../api/match.ts";
 import AvatarDisplay from "../../components/AvatarDisplay.tsx";
+import {useResolveFriendRequest, useResolveGameRequest} from "../../api/hooks.tsx";
 
-export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sender, onResolve}) => {
+const Requests: FC<{
+    gameReq: IMatch[],
+    friendReq: ISender[]
+    setGameReq: (req: IMatch[]) => void,
+    setFriendReq: (req: ISender[]) => void
+}> = ({ gameReq, friendReq, setGameReq, setFriendReq }) => {
 
-    const [loading, setLoading] = useState(false);
-    const { setFriends } = useContext(FriendsContext);
+    const {openForcedModal, closeForcedModal} = useContext(ModalContext);
 
-    const addFriend = (friend: IFriend) => {
-        setFriends(prevState => {
-            if (prevState) {
-                return {
-                    friends: [...prevState.friends, friend],
-                    pending: prevState.pending
-                }
-            } else {
-                return prevState;
-            }
-        });
-    }
+    useEffect(() => {
+        if (gameReq && gameReq!.length > 0) {
+            openForcedModal(
+                <GameRequest
+                    match={gameReq[0]}
+                    onResolve={() => setGameReq(gameReq!.slice(1, gameReq.length - 1))}
+                />
+            );
+        } else if (friendReq && friendReq!.length > 0) {
+            openForcedModal(
+                <FriendRequest
+                    sender={friendReq[0]}
+                    onResolve={() => setFriendReq(friendReq.slice(1, friendReq!.length - 1))}
+                />
+            );
+        } else {
+            closeForcedModal();
+        }
+    }, [friendReq, gameReq]);
 
-    const acceptRequest = () => {
-        setLoading(true);
+    return null;
+}
 
-        acceptFriendRequest(sender.userId).then(result => {
-            if (result.ok) {
-                addFriend(sender as IFriend);
-                onResolve();
-            } else {
-                setLoading(false);
-                alert("An unexpected server error has occurred");
-            }
-        });
-    }
+const FriendRequest: FC<{ sender: ISender, onResolve: () => void }> = ({sender, onResolve}) => {
+    const resolve = useResolveFriendRequest();
 
-    const declineRequest = () => {
-        setLoading(true);
+    // const addFriend = (friend: IFriend) => {
+    //     setFriends(prevState => {
+    //         if (prevState) {
+    //             return {
+    //                 friends: [...prevState.friends, friend],
+    //                 pending: prevState.pending
+    //             }
+    //         } else {
+    //             return prevState;
+    //         }
+    //     });
+    // }
 
-        declineFriendRequest(sender.userId).then(result => {
-            if (result.ok) {
-                onResolve();
-            } else {
-                setLoading(false);
-                alert("An unexpected server error has occurred");
-            }
-        });
-    }
+    useEffect(() => {
+        if (resolve.acceptMutation.isSuccess || resolve.declineMutation.isSuccess) {
+            onResolve();
+        }
+    }, [resolve.acceptMutation.isSuccess, resolve.declineMutation.isSuccess]);
+
+    useEffect(() => {
+        if (resolve.declineMutation.isError || resolve.acceptMutation.isError) {
+            location.reload();
+        }
+    }, [resolve.acceptMutation.isError, resolve.declineMutation.isError]);
 
     return(
         <ForcedModal>
@@ -68,13 +82,15 @@ export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sen
                 <div className="flex gap-4" >
                     <Button
                         text="Decline"
-                        onClick={declineRequest}
-                        loading={loading}
+                        onClick={() => resolve.decline(sender.userId)}
+                        loading={resolve.declineMutation.isPending}
+                        disabled={resolve.declineMutation.isPending || resolve.acceptMutation.isPending}
                     />
                     <Button
                         text="Accept"
-                        onClick={acceptRequest}
-                        loading={loading}
+                        onClick={() => resolve.accept(sender.userId)}
+                        loading={resolve.acceptMutation.isPending}
+                        disabled={resolve.declineMutation.isPending || resolve.acceptMutation.isPending}
                     />
                 </div>
             </div>
@@ -82,67 +98,64 @@ export const FriendRequest: FC<{sender: ISender, onResolve: () => void}> = ({sen
     );
 }
 
-export const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, onResolve}) => {
+const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, onResolve}) => {
 
     const navigate = useNavigate();
-
-    const [loading, setLoading] = useState(false);
     const [inviter, setInviter] = useState<IFriend>();
     const [searchInterval, setSearchInterval] = useState<number | undefined>();
 
     const { openInfoModal } = useContext(ModalContext);
-    const { friends } = useContext(FriendsContext);
+    const { getFriendById } = useContext(FriendsContext);
 
-    const acceptRequest = () => {
-        setLoading(true);
+    const resolve = useResolveGameRequest();
 
-        if (match) {
-            setLoading(true);
-
-            joinMatch(match.key).then(result => {
-                if (result.ok) {
-                    onResolve();
-                    setTimeout(
-                        () => navigate("/preparation/" + match.key),
-                        10
-                    )
-                } else {
-                    setLoading(false);
-                    openInfoModal(
-                        <p>
-                            The match could not be joined, try again later
-                        </p>
-                    )
-                }
-                setLoading(false);
-                onResolve();
-            });
+    useEffect(() => {
+        if (resolve.acceptMutation.isSuccess) {
+            setTimeout(
+                () => navigate("/preparation/" + match.key),
+                10
+            )
         }
-    }
+    }, [resolve.acceptMutation.isSuccess]);
 
-    const declineRequest = () => {
-        if (match) {
-            setLoading(true);
-            declineMatch(match.key).then(() => {
-                onResolve();
-            });
+    useEffect(() => {
+        if (resolve.acceptMutation.isError) {
+            openInfoModal(
+                <p>
+                    The match could not be joined, try again later
+                </p>
+            )
         }
-    }
+    }, [resolve.acceptMutation.isError]);
+
+    useEffect(() => {
+        if (
+            resolve.declineMutation.isSuccess ||
+            resolve.declineMutation.isError ||
+            resolve.acceptMutation.isSuccess ||
+            resolve.acceptMutation.isError
+        ) {
+            onResolve();
+        }
+    }, [
+        resolve.declineMutation.isSuccess,
+        resolve.acceptMutation.isSuccess,
+        resolve.declineMutation.isError,
+        resolve.declineMutation.isError
+    ]);
 
     useEffect(() => {
         let interval: number | undefined;
 
-        if (friends && "player1Id" in match) {
-            const friend = getFriendById(match.player1Id, friends.friends);
-            if (friend) {
-                interval = setInterval(() => {
-                    setInviter(
-                        friend
-                    );
-                }, 1000);
+        const friend = getFriendById(match.player1Id);
+        if (friend) {
+            interval = setInterval(() => {
+                setInviter(
+                    friend
+                );
+            }, 1000);
 
-                setSearchInterval(interval);
-            }
+            setSearchInterval(interval);
         }
 
         return () => {
@@ -173,16 +186,20 @@ export const GameRequest: FC<{match: IMatch, onResolve: () => void}> = ({match, 
                 <div className="flex gap-4" >
                     <Button
                         text={"Decline"}
-                        onClick={declineRequest}
-                        loading={loading}
+                        onClick={() => resolve.decline(match.key)}
+                        loading={resolve.declineMutation.isPending}
+                        disabled={resolve.declineMutation.isPending || resolve.acceptMutation.isPending}
                     />
                     <Button
                         text={"Accept"}
-                        onClick={acceptRequest}
-                        loading={loading}
+                        onClick={() => resolve.accept(match.key)}
+                        loading={resolve.acceptMutation.isPending}
+                        disabled={resolve.declineMutation.isPending || resolve.acceptMutation.isPending}
                     />
                 </div>
             </div>
         </ForcedModal>
     );
 }
+
+export default Requests;

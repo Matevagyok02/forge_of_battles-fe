@@ -4,12 +4,11 @@ import {Button} from "../../components/Button.tsx";
 import {useNavigate} from "react-router-dom";
 import {parseTimeLimit} from "../../utils.ts";
 import {AuthContext, ModalContext, UserContext} from "../../context.tsx";
-import {findPlayerById} from "../../api/user.ts";
 import {calcTimeLeft, criticalTime} from "./Hud.tsx";
-import {sendFriendInvite} from "../../api/friend.ts";
 import MenuOverlay from "./components/MenuOverlay.tsx";
 import styles from "../../styles/battle_page/ResultScreen.module.css";
 import AvatarDisplay from "../../components/AvatarDisplay.tsx";
+import {useSendFriendRequest, useUserById} from "../../api/hooks.tsx";
 
 export enum MatchResult {
     victory = "Victory",
@@ -110,6 +109,9 @@ const PlayerStatistics: FC<{ player: IPlayerState, hasWon?: boolean}> = ({ playe
     const { _user } = useContext(UserContext);
     const health = player.bonusHealth.length + player.drawingDeck.length;
 
+    const friendRequest = useSendFriendRequest();
+    const fetchUser = useUserById(player.userId);
+
     useEffect(() => {
         if (_user && _user.userId === player.userId) {
             setDetails({
@@ -117,36 +119,39 @@ const PlayerStatistics: FC<{ player: IPlayerState, hasWon?: boolean}> = ({ playe
                 picture: _user.picture
             });
         } else if (player.userId) {
-            findPlayerById(player.userId).then(response => {
-                if (response?.ok && response?.body) {
-                    const userDetails = response.body as IUser
-
-                    if (userId && areNotFriends(userId, userDetails)) {
-                        setCanAddFriend(true);
-                    }
-
-                    setDetails({
-                        username: userDetails.username,
-                        picture: userDetails.picture
-                    })
-                }
-            });
+            fetchUser.refetch();
         }
     }, [player.userId]);
 
+    useEffect(() => {
+        if (fetchUser.isSuccess) {
+            if (userId && areNotFriends(userId, fetchUser.data.data)) {
+                setCanAddFriend(true);
+            }
+
+            setDetails({
+                username: fetchUser.data.data.username,
+                picture: fetchUser.data.data.picture
+            })
+        }
+    }, [fetchUser.data]);
+
     const sendFriendRequest = async () => {
         if (canAddFriend && player.userId) {
-            const response = await sendFriendInvite(player.userId);
-            if (!response.ok) {
-                openInfoModal(
-                    <p className="w-80 text-center text-lg" >
-                        The friend request has been sent to {details?.username}
-                    </p>
-                );
-            }
+            friendRequest.sendRequest(player.userId);
             setCanAddFriend(false);
         }
     }
+
+    useEffect(() => {
+        if (friendRequest.isSuccess) {
+            openInfoModal(
+                <p className="w-80 text-center text-lg" >
+                    The friend request has been sent to {details?.username}
+                </p>
+            );
+        }
+    }, [friendRequest.isSuccess]);
 
     const areNotFriends = (user1Id: string, user2: IUser) => {
         if (user1Id !== user2.userId)
@@ -192,7 +197,13 @@ const PlayerStatistics: FC<{ player: IPlayerState, hasWon?: boolean}> = ({ playe
                     </li>
                 }
             </ul>
-            { canAddFriend && <Button text={"Add Friend"} onClick={sendFriendRequest} /> }
+            { canAddFriend &&
+                <Button
+                    text={"Add Friend"}
+                    loading={friendRequest.isPending}
+                    onClick={sendFriendRequest}
+                />
+            }
         </div>
     );
 }
