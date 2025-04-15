@@ -143,7 +143,7 @@ export enum AbilityType {
 }
 
 export enum AbilityUsageType {
-    basic = "basic", //automatically applied when the card is placed on the war track and removed together with the card
+    basic = "basic", //automatically applied when the card is placed on the battlefield and removed together with the card
     eventDriven = "eventDriven", //effect is applied when the specified event occurs
     turnBased = "turnBased", //lasts till the end of the turn/till the effect is used (these effects have a cost and always have modifier subtype)
     instant = "instant", //the effect is instantly applied after paying the cost (and lasts forever)

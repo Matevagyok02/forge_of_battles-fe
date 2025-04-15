@@ -66,11 +66,11 @@
         }
 
         & li[data-value="buffed"] {
-            color: forestgreen;
+            box-shadow: limegreen 0 0 0.6em 0 inset;
         }
 
         & li[data-value="nerfed"] {
-            color: red;
+            box-shadow: red 0 0 0.6em 0 inset;
         }
 
         .cost {

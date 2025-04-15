@@ -1,7 +1,8 @@
 main.decksAndCards {
-    @apply fixed w-full h-full top-0 flex justify-center items-center py-24;
+    @apply fixed w-full h-full top-0 flex justify-end items-center;
     background-image: url("../../assets/background/decks_and_cards_bg.jpg");
     box-shadow: black inset 0 0 100px 20px;
+    padding: 4vh;
 
     & > * {
         @apply h-full;
@@ -13,8 +14,8 @@ main.decksAndCards {
 
         & > div {
             @apply flex flex-col w-fit h-full p-2.5 gap-2.5 relative rounded-md;
-            animation: bgTransition 5s linear forwards;
             box-shadow: black 0 0 8px 4px;
+            background-color: var(--color);
 
             & > button {
                 z-index: 10;
@@ -46,9 +47,15 @@ main.decksAndCards {
         background-color: black;
 
         & > h1 {
-            @apply text-2xl font-amarante p-2.5;
-            color: var(--color);
-            text-shadow: 0 0 10px black;
+            @apply text-2xl gold-text p-2.5;
+            --color-2: color-mix(in srgb, var(--color) 80%, white);
+            --color-3: color-mix(in srgb, var(--color) 60%, black);
+            background-image: linear-gradient(var(--color-2), var(--color), var(--color-3) 80%) !important;
+
+            filter:
+                    drop-shadow(0 0 1px var(--color))
+                    drop-shadow(0 2px 2px black)
+                    drop-shadow(0 2px 4px black);
         }
 
         & > div {
@@ -58,8 +65,8 @@ main.decksAndCards {
             height: 70%;
 
             & p {
-                color: white;
-                text-shadow: 0 0 4px black;
+                color: lightgrey;
+                text-shadow: 0 0 8px black;
             }
         }
     }
@@ -95,6 +102,31 @@ main.decksAndCards {
     background-image: url("../../assets/decks/darkness.jpg");
     background-size: 100%;
 }
+.bgTransition {
+    animation: bgTransition 0.4s linear forwards;
+}
+
+@keyframes bgTransition {
+    0% {
+        background-color: black;
+    }
+    20% {
+        background-color: color-mix(in srgb, var(--color) 20%, black);
+    }
+    40% {
+        background-color: color-mix(in srgb, var(--color) 40%, black);
+    }
+    60% {
+        background-color: color-mix(in srgb, var(--color) 60%, black);
+    }
+    80% {
+        background-color: color-mix(in srgb, var(--color) 80%, black);
+    }
+    100% {
+        background-color: var(--color);
+    }
+}
+
 @keyframes opening {
     from {
         height: 52px;
@@ -102,29 +134,4 @@ main.decksAndCards {
     to {
         height: 216px;
     }
-}
-.opening {
-    animation: opening 1s linear;
-}
-
-@keyframes bgTransition {
-    0% {
-        background-color: var(--prev-color);
-    }
-    50% {
-        background-color: color-mix(in srgb ,var(--color), var(--prev-color));
-    }
-    100% {
-        background-color: var(--color);
-    }
-}
-
-.prevLight {
-    --prev-color: var(--light-1);
-}
-.prevDarkness {
-    --prev-color: var(--darkness-2);
-}
-.prevVenom {
-    --prev-color: var(--venom-1);
 }

@@ -1,10 +1,10 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {FC, Suspense, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {IBattle, ICard, IMatch, IPlayerState} from "../../interfaces.ts";
+import {IBattle, ICard, IMatch, IPlayerState, MatchStage} from "../../interfaces.ts";
 import {AuthContext, MatchContext} from "../../context.tsx";
 import Board from "./Board.tsx";
 import BattleChat from "./BattleChat.tsx";
-import {PlayerHand, OpponentHand} from "./Hands.tsx";
+import {OpponentHand, PlayerHand} from "./Hands.tsx";
 import {getCardsById} from "../../api/api.ts";
 import {io, Socket} from "socket.io-client";
 import {keyRegex} from "../home/main_interface_components/JoinGame.tsx";
@@ -12,7 +12,7 @@ import HudContainer from "./Hud.tsx";
 import EventDisplay, {EventDisplayHandle} from "./EventDisplay.tsx";
 import LoadingScreen from "../../components/LoadingScreen.tsx";
 import BattleInterface from "./ui/BattleInterface.tsx";
-import ResultScreen, {getWinner, MatchResult} from "./ResultScreen.tsx";
+import ResultScreen, {getWinner, hasPlayerLost, MatchResult} from "./ResultScreen.tsx";
 import EffectDisplay from "./EffectDisplay.tsx";
 import styles from "../../styles/battle_page/Battle.module.css";
 
@@ -226,8 +226,14 @@ const Battle: FC = () => {
     }, [match, player, opponent, socket]);
 
     useEffect(() => {
-        if (player && opponent && match?.stage === "finished") {
-            const _winner = match && getWinner(player, opponent);
+        if (
+            player &&
+            hasPlayerLost(player) ||
+            opponent &&
+            hasPlayerLost(opponent) ||
+            match?.stage === MatchStage.finished
+        ) {
+            const _winner = match && getWinner(player!, opponent!);
             if (_winner) {
                 switch (_winner) {
                     case MatchResult.draw:
@@ -247,7 +253,7 @@ const Battle: FC = () => {
                 });
             }
         }
-    }, [match?.stage]);
+    }, [match?.stage, player, opponent]);
 
     return(
         <main className={styles.battle} >
@@ -286,6 +292,5 @@ const Battle: FC = () => {
         </main>
     );
 }
-
 
 export default Battle;

@@ -308,6 +308,16 @@
     mask-image: linear-gradient(to right, transparent, black 160px);
 }
 
+@media (max-width: 1344px) {
+    .background {
+        display: none;
+    }
+
+    .createGamePanel, .joinGamePanel {
+        @apply flex justify-center items-center;
+    }
+}
+
 .optionCardContent {
     display: grid;
     grid-template-columns: 1fr 1fr;

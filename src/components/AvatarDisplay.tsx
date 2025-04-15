@@ -1,6 +1,6 @@
 import {FC} from "react";
 import avatars from "../assets/avatars/avatars.ts";
-import styles from "../styles/components/components.module.css";
+import styles from "../styles/components/AvatarDisplay.module.css";
 
 const AvatarDisplay: FC<{ avatar?: string }> = ({ avatar }) => {
 

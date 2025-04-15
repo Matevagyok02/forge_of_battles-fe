@@ -48,16 +48,22 @@ type DefaultError = AxiosError<MessageResponse>;
 
 type QueryRes<T> = UseQueryResult<AxiosResponse<T>, DefaultError>;
 
+const defaultQueryOptions = {
+    refetchOnWindowFocus: false,
+    retry: false
+}
+
 export const useUser = (): QueryRes<{ user: IUser, friends: IFriend[] }> => useQuery({
     queryKey: ["user"],
     queryFn: getUser,
     enabled: useAuth0().isAuthenticated,
-    retry: false
+    ...defaultQueryOptions
 });
 
 export const useUsernames = (): QueryRes<string[]> => useQuery({
     queryKey: ["usernames"],
-    queryFn: getAllUsernames
+    queryFn: getAllUsernames,
+    ...defaultQueryOptions
 });
 
 export const useRegistration = () => {
@@ -105,21 +111,21 @@ export const useUserByUsername = (query: string): QueryRes<IFriend> => useQuery(
     queryKey: ["user", query],
     queryFn: () => findByUsername(query),
     enabled: false,
-    retry: false
+    ...defaultQueryOptions
 });
 
 export const useUserById = (id?: string): QueryRes<IUser> => useQuery({
     queryKey: ["opponent", id],
     queryFn: () => findUserById(id!),
-    enabled: false,
-    retry: false
+    enabled: !!id,
+    ...defaultQueryOptions
 });
 
 export const useActiveMatches = (): QueryRes<ActiveMatchesResponse> => useQuery({
     queryKey: ["activeMatches"],
     queryFn: getActiveMatches,
     enabled: useAuth0().isAuthenticated,
-    retry: false
+    ...defaultQueryOptions
 });
 
 export const useSendFriendRequest = () => {
@@ -170,25 +176,25 @@ export const useResolveFriendRequest = () => {
 }
 
 export const useOnlineFriends = (): QueryRes<OnlineFriend[]> => useQuery({
-        queryKey: ["onlineFriends"],
-        queryFn: getOnlineFriends,
-        enabled: useAuth0().isAuthenticated,
-        retry: false,
-        staleTime: 1000 * 60 * 5 // 5 minutes
+    queryKey: ["onlineFriends"],
+    queryFn: getOnlineFriends,
+    enabled: useAuth0().isAuthenticated,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    ...defaultQueryOptions
 });
 
 export const useUnseenMessages = (): QueryRes<UnseenMessage[]> =>  useQuery({
     queryKey: ["unseenMessages"],
     queryFn: getUnseenMsg,
     enabled: useAuth0().isAuthenticated,
-    retry: false
+    ...defaultQueryOptions
 });
 
 export const useChatMessages = (id: string): QueryRes<Message[]> => useQuery({
     queryKey: ["chat", id],
     queryFn: () => getChatMessages(id),
     enabled: false,
-    retry: false
+    ...defaultQueryOptions
 });
 
 export const useSendChatMessage = () => {

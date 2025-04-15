@@ -1,27 +1,26 @@
 .deck {
-    aspect-ratio: var(--card-aspect-ratio);
+    @apply absolute flex justify-center items-end bg-black cursor-pointer bg-cover;
+
     height: 256px;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    background-color: black;
+    aspect-ratio: var(--card-aspect-ratio);
     border-radius: 8px;
     transform-origin: center bottom;
-    cursor: pointer;
     filter: drop-shadow(0 24px 16px black);
+    box-shadow: var(--color) 0 0 8px 0;
     rotate: x 10deg;
-    background-size: cover;
+    background-image: var(--bg);
 
-    & h1 {
-        @apply gold-text;
-        font-size: 32px;
-        pointer-events: none;
-    }
-
-    & span {
+    & > span {
+        --color: inherit;
         height: 64px;
-        filter: drop-shadow(0 0 4px black) drop-shadow(0 0 8px black) drop-shadow(0 0 16px black);
+        filter: drop-shadow(0 0 8px black);
+
+        & > h1 {
+            @apply deckName;
+            --color: inherit;
+            font-size: 32px;
+            pointer-events: none;
+        }
     }
 
     &::before {
@@ -35,6 +34,32 @@
         background-size: cover;
         filter: drop-shadow(0 0 8px goldenrod) drop-shadow(0 0 16px black);
     }
+}
+
+.deckName {
+    @apply gold-text;
+
+    --color: white;
+    --color-2: color-mix(in srgb, var(--color) 80%, white);
+    --color-3: color-mix(in srgb, var(--color) 40%, black);
+
+    filter: drop-shadow(0 0 1px var(--color)) drop-shadow(0 0 4px black);
+    background-image: linear-gradient(var(--color-2), var(--color), var(--color-3));
+}
+
+.light {
+    --bg: url("../../assets/decks/light.jpg");
+    --color: var(--light-1) !important;
+}
+
+.darkness {
+    --bg: url("../../assets/decks/darkness.jpg");
+    --color: var(--darkness-1) !important;
+}
+
+.venom {
+    --bg: url("../../assets/decks/venom.jpg");
+    --color: var(--venom-1) !important;
 }
 
 main.preparation {
@@ -61,7 +86,7 @@ main.preparation {
                 @apply flex px-2 gap-2 h-10;
 
                 & > h1 {
-                    @apply text-2xl;
+                    @apply text-2xl deckName;
                 }
 
                 & i {
@@ -85,7 +110,7 @@ main.preparation {
                 @apply px-2;
 
                 & h1 {
-                    @apply text-2xl;
+                    @apply text-2xl deckName;
                 }
             }
         }
@@ -106,7 +131,8 @@ main.preparation {
         }
 
         & > h1 {
-            @apply text-4xl py-8;
+            @apply text-4xl py-8 text-gold;
+            filter: drop-shadow(0 0 2px goldenrod) drop-shadow(0 0 4px black);
         }
 
         & menu {
@@ -124,19 +150,19 @@ main.preparation {
 }
 
 .center {
-    transform: translate(0, 100px) scale(1); /* Center card, larger */
-}
-
-.right:hover, .left:hover {
-    filter: drop-shadow(0 0 4px goldenrod) drop-shadow(0 24px 16px black);
+    transform: translate(0, 100px) scale(1);
 }
 
 .right {
-    transform: translate(260px) scale(0.8); /* Right card, smaller */
+    transform: translate(260px) scale(0.8);
 }
 
 .left {
-    transform: translate(-260px) scale(0.8); /* Left card, smaller */
+    transform: translate(-260px) scale(0.8);
+}
+
+.right:hover, .left:hover {
+    box-shadow: var(--color) 0 0 12px 2px;
 }
 
 .center::after {
@@ -189,10 +215,10 @@ main.preparation {
         transform: translate(260px, 0) scale(0.8);
     }
     25% {
-        transform: translate(230px, 40px) scale(0.85);
+        transform: translate(240px, 30px) scale(0.85);
     }
     50% {
-        transform: translate(200px, 80px) scale(0.9);
+        transform: translate(200px, 60px) scale(0.9);
     }
     75% {
         transform: translate(100px, 90px) scale(0.95);
@@ -210,10 +236,10 @@ main.preparation {
         transform: translate(-100px, 90px) scale(0.95);
     }
     50% {
-        transform: translate(-200px, 80px) scale(0.9);
+        transform: translate(-200px, 60px) scale(0.9);
     }
     75% {
-        transform: translate(-230px, 40px) scale(0.85);
+        transform: translate(-240px, 30px) scale(0.85);
     }
     100% {
         transform: translate(-260px) scale(0.8);
@@ -225,13 +251,13 @@ main.preparation {
         transform: translate(-260px) scale(0.8);
     }
     25% {
-        transform: translate(-130px, -100px) scale(0.7);
+        transform: translate(-200px, -100px) scale(0.7);
     }
     50% {
         transform: translate(0px, -150px) scale(0.6);
     }
     75% {
-        transform: translate(130px, -100px) scale(0.7);
+        transform: translate(200px, -100px) scale(0.7);
     }
     100% {
         transform: translate(260px) scale(0.8);
@@ -243,10 +269,10 @@ main.preparation {
         transform: translate(-260px, 0) scale(0.8);
     }
     25% {
-        transform: translate(-230px, 40px) scale(0.85);
+        transform: translate(-240px, 30px) scale(0.85);
     }
     50% {
-        transform: translate(-200px, 80px) scale(0.9);
+        transform: translate(-200px, 60px) scale(0.9);
     }
     75% {
         transform: translate(-100px, 90px) scale(0.95);
@@ -264,10 +290,10 @@ main.preparation {
         transform: translate(100px, 90px) scale(0.95);
     }
     50% {
-        transform: translate(200px, 80px) scale(0.9);
+        transform: translate(200px, 60px) scale(0.9);
     }
     75% {
-        transform: translate(230px, 40px) scale(0.85);
+        transform: translate(240px, 30px) scale(0.85);
     }
     100% {
         transform: translate(260px) scale(0.8);
@@ -279,13 +305,13 @@ main.preparation {
         transform: translate(260px) scale(0.8);
     }
     25% {
-        transform: translate(130px, -100px) scale(0.7);
+        transform: translate(200px, -100px) scale(0.7);
     }
     50% {
         transform: translate(0px, -150px) scale(0.6);
     }
     75% {
-        transform: translate(-130px, -100px) scale(0.7);
+        transform: translate(-200px, -100px) scale(0.7);
     }
     100% {
         transform: translate(-260px) scale(0.8);

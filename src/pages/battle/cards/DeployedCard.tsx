@@ -3,7 +3,7 @@ import {FC, useContext, useEffect, useRef, useState} from "react";
 import CardContent from "./CardContent.tsx";
 import InspectCard from "../ui/InspectCard.tsx";
 import {MatchContext} from "../../../context.tsx";
-import {WarTrackPos} from "./CardSlot.tsx";
+import {BattlefieldPos} from "./CardSlot.tsx";
 import Animations from "../animations/Animations.ts";
 import styles from "../../../styles/battle_page/Cards.module.css";
 
@@ -16,9 +16,9 @@ const DeployedCard: FC<{ card: ICard, slot: string ,owner: number, color: string
 
     const doesSlotAdvance = () => {
         switch (slot) {
-            case WarTrackPos.defender:
-            case WarTrackPos.supporter:
-            case WarTrackPos.attacker:
+            case BattlefieldPos.defender:
+            case BattlefieldPos.supporter:
+            case BattlefieldPos.attacker:
                 return true;
             default:
                 return false;
@@ -68,7 +68,7 @@ const DeployedCard: FC<{ card: ICard, slot: string ,owner: number, color: string
                 className={`${styles.deployed} ${styles.card} ${color}`}
                 onClick={() => setInspect(true)}
             >
-                <CardContent card={card} />
+                <CardContent card={card} showModifiedAttributes={true} />
             </div>
             { inspect &&
                 <InspectCard card={card} slot={slot} cancel={cancelInspect} owner={owner} />

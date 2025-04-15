@@ -31,7 +31,6 @@ const CardContent: FC<{ card: ICard, showModifiedAttributes?: boolean }> = ({ ca
     }, [card.deck, card.name]);
 
     const getAttributeValues = async () => {
-
         const compareValue = (original: number, current: number) => {
             if (original < current) {
                 return AttrValue.buffed;
@@ -59,7 +58,7 @@ const CardContent: FC<{ card: ICard, showModifiedAttributes?: boolean }> = ({ ca
 
     useEffect(() => {
         getAttributeValues().then(values => setAttributeValues(values));
-    }, [match]);
+    }, [card]);
 
     return(
         <>

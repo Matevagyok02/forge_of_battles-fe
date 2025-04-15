@@ -8,7 +8,7 @@ import {OutgoingBattleEvent} from "../Battle.tsx";
 import MenuOverlay from "../components/MenuOverlay.tsx";
 import { attack_directly, attack_frontliner, attack_vanguard, convert_to_mana, move_to_frontline, move_to_vanguard } from "../../../assets/hints.json";
 import styles from "../../../styles/battle_page/Cards.module.css";
-import {WarTrackPos} from "../cards/CardSlot.tsx";
+import {BattlefieldPos} from "../cards/CardSlot.tsx";
 import {deckColorStyles} from "../Board.tsx";
 
 const StormMenu: FC = () => {
@@ -55,7 +55,7 @@ const StormMenu: FC = () => {
         }
     }, [socket, opponent?.deployedCards]);
 
-    const attackPosition = useCallback((position: WarTrackPos) => {
+    const attackPosition = useCallback((position: BattlefieldPos) => {
         if (socket && opponent && position in opponent.deployedCards) {
             socket.emit(OutgoingBattleEvent.storm, { posToAttack: position });
             setOpenMenu(false);
@@ -76,7 +76,7 @@ const StormMenu: FC = () => {
         if (opponentState.deployedCards.frontLiner) {
             attackOptions.push({
                 text: "Frontliner",
-                callback: () => attackPosition(WarTrackPos.vanguard),
+                callback: () => attackPosition(BattlefieldPos.vanguard),
                 hint: attack_frontliner
             });
         }
@@ -84,7 +84,7 @@ const StormMenu: FC = () => {
         if (opponentState.deployedCards.vanguard) {
             attackOptions.push({
                 text: "Vanguard",
-                callback: () => attackPosition(WarTrackPos.vanguard),
+                callback: () => attackPosition(BattlefieldPos.vanguard),
                 hint: attack_vanguard
             });
         }

@@ -40,8 +40,6 @@ const Tips: FC = () => {
     }
 
     const getTipByState = () => {
-        console.log(player.turnStage, player.drawsPerTurn);
-
         switch (player.turnStage) {
             case 1: {
                 switch (player.drawsPerTurn) {
@@ -58,10 +56,7 @@ const Tips: FC = () => {
     }
 
     useEffect(() => {
-        console.log("tip:", tip);
-
         if (!tip) {
-            console.log(1);
             setTip(getTipByState());
         }
     }, [tip]);

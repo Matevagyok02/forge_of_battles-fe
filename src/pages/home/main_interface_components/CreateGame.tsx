@@ -117,12 +117,6 @@ const CreateGame: FC<{ _lastCreatedMatch?: IMatch ,friend?: IFriend }> = ({ _las
         }
     }, [fetchActiveMatch.data]);
 
-    useEffect(() => {
-        if (opponentId) {
-            fetchUserById.refetch();
-        }
-    }, [opponentId]);
-
     return(
         <Modal canBeClosed={!match} >
             <div className={styles.createGamePanel} >

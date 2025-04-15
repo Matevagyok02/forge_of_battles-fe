@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router-dom";
-import Deck, {IDeck, initDecks, Pos, Animation, Positions, Animations} from "./Deck.tsx";
+import Deck, {IDeck, initDecks, Pos, Animation, Positions, Animations, deckNameStyles} from "./Deck.tsx";
 import {FC, Suspense, useCallback, useContext, useEffect, useState} from "react";
 import {Button} from "../../components/Button.tsx";
 import {Frame, WindowFrame} from "../../components/Frame.tsx";
@@ -37,11 +37,17 @@ const Preparation: FC = () => {
     const [selectedDeck, setSelectedDeck] = useState<IDeck>(decks[0]);
     const [socket, setSocket] = useState<Socket>();
 
+    const TEST_KEY = "test";
+
     useEffect( () => {
         if (key && isAuthenticated) {
-            if (key.match(keyRegex) && user) {
-                if (!socket) {
+            if ((key.match(keyRegex) || key === TEST_KEY) && user) {
+                if (!socket && key && key !== TEST_KEY) {
                     setUpSocket(key, user.sub!)
+                }
+
+                if (key === TEST_KEY) {
+                    setLoading(false);
                 }
             } else {
                 leavePage();
@@ -63,12 +69,6 @@ const Preparation: FC = () => {
             );
         }
     }, [match]);
-
-    useEffect(() => {
-        if (opponentId) {
-            fetchUser.refetch();
-        }
-    }, [opponentId]);
 
     useEffect(() => {
         if (fetchUser.isSuccess) {
@@ -244,7 +244,6 @@ const Preparation: FC = () => {
                                 <Deck
                                     key={deck.id}
                                     name={deck.name}
-                                    background={deck.background}
                                     id={deck.id}
                                     pos={deck.pos!}
                                     animation={deck.animation!}
@@ -263,7 +262,7 @@ const Preparation: FC = () => {
                                     />
                                 </span>
                                 :
-                                <h1 className="animate-pulse" >
+                                <h1 className={"animate-pulse"} >
                                     Waiting for opponent...
                                 </h1>
                             }
@@ -303,9 +302,7 @@ const Preparation: FC = () => {
                                     </>
                                 }
                                 <div className={styles.deckInfo} >
-                                    <h1
-                                        style={{ color: `var(--${selectedDeck.id}-1)` }}
-                                    >
+                                    <h1 className={deckNameStyles[selectedDeck.id]} >
                                         {selectedDeck.name}
                                     </h1>
                                     <p>
