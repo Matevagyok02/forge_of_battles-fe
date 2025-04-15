@@ -103,9 +103,7 @@
     }
 
     .statusIndicator {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
+        @apply round h-3 aspect-square;
 
         &[title="offline"] {
             background-color: dimgrey;

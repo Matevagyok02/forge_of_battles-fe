@@ -2,8 +2,10 @@ import {FC} from "react";
 import Modal from "../../../components/Modal.tsx";
 import {Button} from "../../../components/Button.tsx";
 import styles from "../../../styles/home_page/OptionCardContent.module.css";
+import {useNavigate} from "react-router-dom";
 
 const RulesAndCards: FC = () => {
+    const navigate = useNavigate()
 
     return(
         <Modal>
@@ -23,7 +25,7 @@ const RulesAndCards: FC = () => {
                     <p>
                         Browse cards from each deck, learn their about their abilities and how to use them
                     </p>
-                    <Button text="Cards     " onClick={() => alert("TODO")} />
+                    <Button text="Cards     " onClick={() => navigate("decks-and-cards")} />
                 </div>
             </div>
         </Modal>
