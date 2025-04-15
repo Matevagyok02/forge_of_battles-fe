@@ -128,16 +128,6 @@ main.preparation {
             & > * {
                 translate: 0 -64px;
             }
-
-            &::after {
-                content: "";
-                z-index: 50;
-                width: 59%;
-                height: 240px;
-                border-radius: 50%;
-                border: 2px dotted red;
-                translate: 0 44px;
-            }
         }
 
         & > h1 {
@@ -160,19 +150,19 @@ main.preparation {
 }
 
 .center {
-    transform: translate(0, 100px) scale(1); /* Center card, larger */
+    transform: translate(0, 100px) scale(1);
+}
+
+.right {
+    transform: translate(260px) scale(0.8);
+}
+
+.left {
+    transform: translate(-260px) scale(0.8);
 }
 
 .right:hover, .left:hover {
     box-shadow: var(--color) 0 0 12px 2px;
-}
-
-.right {
-    transform: translate(260px) scale(0.8); /* Right card, smaller */
-}
-
-.left {
-    transform: translate(-260px) scale(0.8); /* Left card, smaller */
 }
 
 .center::after {
@@ -195,29 +185,29 @@ main.preparation {
 }
 
 .leftToCenter {
-    animation: left-to-center 02.5s linear forwards;
+    animation: left-to-center 0.5s linear forwards;
 }
 
 .centerToRight {
-    animation: center-to-right 02.5s linear forwards;
+    animation: center-to-right 0.5s linear forwards;
 }
 
 .rightToLeft {
     z-index: -1;
-    animation: right-to-left 02.5s linear forwards;
+    animation: right-to-left 0.5s linear forwards;
 }
 
 .centerToLeft {
-    animation: center-to-left 02.5s linear forwards;
+    animation: center-to-left 0.5s linear forwards;
 }
 
 .leftToRight {
     z-index: -1;
-    animation: left-to-right 02.5s linear forwards;
+    animation: left-to-right 0.5s linear forwards;
 }
 
 .rightToCenter {
-    animation: right-to-center 02.5s linear forwards;
+    animation: right-to-center 0.5s linear forwards;
 }
 
 @keyframes right-to-center {
@@ -225,10 +215,10 @@ main.preparation {
         transform: translate(260px, 0) scale(0.8);
     }
     25% {
-        transform: translate(230px, 40px) scale(0.85);
+        transform: translate(240px, 30px) scale(0.85);
     }
     50% {
-        transform: translate(200px, 80px) scale(0.9);
+        transform: translate(200px, 60px) scale(0.9);
     }
     75% {
         transform: translate(100px, 90px) scale(0.95);
@@ -246,10 +236,10 @@ main.preparation {
         transform: translate(-100px, 90px) scale(0.95);
     }
     50% {
-        transform: translate(-200px, 80px) scale(0.9);
+        transform: translate(-200px, 60px) scale(0.9);
     }
     75% {
-        transform: translate(-230px, 40px) scale(0.85);
+        transform: translate(-240px, 30px) scale(0.85);
     }
     100% {
         transform: translate(-260px) scale(0.8);
@@ -261,13 +251,13 @@ main.preparation {
         transform: translate(-260px) scale(0.8);
     }
     25% {
-        transform: translate(-130px, -100px) scale(0.7);
+        transform: translate(-200px, -100px) scale(0.7);
     }
     50% {
         transform: translate(0px, -150px) scale(0.6);
     }
     75% {
-        transform: translate(130px, -100px) scale(0.7);
+        transform: translate(200px, -100px) scale(0.7);
     }
     100% {
         transform: translate(260px) scale(0.8);
@@ -279,10 +269,10 @@ main.preparation {
         transform: translate(-260px, 0) scale(0.8);
     }
     25% {
-        transform: translate(-230px, 40px) scale(0.85);
+        transform: translate(-240px, 30px) scale(0.85);
     }
     50% {
-        transform: translate(-200px, 80px) scale(0.9);
+        transform: translate(-200px, 60px) scale(0.9);
     }
     75% {
         transform: translate(-100px, 90px) scale(0.95);
@@ -300,10 +290,10 @@ main.preparation {
         transform: translate(100px, 90px) scale(0.95);
     }
     50% {
-        transform: translate(200px, 80px) scale(0.9);
+        transform: translate(200px, 60px) scale(0.9);
     }
     75% {
-        transform: translate(230px, 40px) scale(0.85);
+        transform: translate(240px, 30px) scale(0.85);
     }
     100% {
         transform: translate(260px) scale(0.8);
@@ -315,13 +305,13 @@ main.preparation {
         transform: translate(260px) scale(0.8);
     }
     25% {
-        transform: translate(130px, -100px) scale(0.7);
+        transform: translate(200px, -100px) scale(0.7);
     }
     50% {
         transform: translate(0px, -150px) scale(0.6);
     }
     75% {
-        transform: translate(-130px, -100px) scale(0.7);
+        transform: translate(-200px, -100px) scale(0.7);
     }
     100% {
         transform: translate(-260px) scale(0.8);

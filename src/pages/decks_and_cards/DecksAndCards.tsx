@@ -1,21 +1,12 @@
-import {FC, useEffect, useState} from "react";
-import styles from "../../styles/decks_and_cards/DecksAndCards.module.css";
+import {FC, useEffect, useRef, useState} from "react";
+import styles from "../../styles/decks_and_cards_page/DecksAndCards.module.css";
 import decks from "../../assets/decks.json";
 import { Frame } from "../../components/Frame.tsx";
 
 const DeckStyles = {
-    [decks.light.id]: {
-        def: styles.light,
-        prev: styles.prevLight,
-    },
-    [decks.darkness.id]: {
-        def: styles.darkness,
-        prev: styles.prevDarkness,
-    },
-    [decks.venom.id]: {
-        def: styles.venom,
-        prev: styles.prevVenom,
-    },
+    [decks.light.id]: styles.light,
+    [decks.darkness.id]:  styles.darkness,
+    [decks.venom.id]: styles.venom,
 };
 
 type Deck = keyof typeof DeckStyles;
@@ -32,18 +23,21 @@ const DecksAndCards = () => {
 
 const DeckSelectPanel: FC<{ deck: Deck; setDeck: (deck: Deck) => void }> = ({ deck, setDeck }) => {
 
-    const [currDeck, setCurrDeck] = useState<Deck>(deck);
-    const [prevDeck, setPrevDeck] = useState<Deck>(deck);
+    const ref = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        setPrevDeck(currDeck);
-        setCurrDeck(deck);
+        if (ref.current) {
+            setTimeout(() => {
+                ref.current?.classList?.remove(styles.bgTransition);
+                }, 500
+            );
+        }
     }, [deck]);
 
     return (
         <Frame>
             <div className={styles.selectPanel}>
-                <div className={`${DeckStyles[currDeck].def} ${DeckStyles[prevDeck].prev}`} >
+                <div ref={ref} className={`${DeckStyles[deck]} ${styles.bgTransition}`} >
                     {Object.values(decks).map((d) => (
                         <button
                             key={d.id}
@@ -67,7 +61,7 @@ const DeckButton: FC<{ name: string; id: string; description: string }> = ({ nam
 
     return (
         <Frame>
-            <div className={`${styles.deckButton} ${DeckStyles[id].def}`}>
+            <div className={`${styles.deckButton} ${DeckStyles[id]}`}>
                 <h1>{name}</h1>
                 <div>
                     <p>{description}</p>
