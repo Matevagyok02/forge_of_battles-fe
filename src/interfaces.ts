@@ -1,5 +1,6 @@
-import {WarTrackPos} from "./pages/battle/cards/CardSlot.tsx";
+import {BattlefieldPos} from "./pages/battle/cards/CardSlot.tsx";
 import decks from "./assets/decks.json"
+import {TriggerEvent} from "./pages/add_card/AddCard.tsx";
 
 /*---Friend Interfaces---*/
 
@@ -82,6 +83,11 @@ export interface InstantAbility extends IAbility {
     args?: object | string;
 }
 
+export interface EventDrivenAbility extends IAbility {
+    event: TriggerEvent[];
+    args?: object | string;
+}
+
 export interface ICard {
     id: string;
     tempId?: string;
@@ -98,12 +104,12 @@ export interface ICard {
 /*---Match Interfaces---*/
 
 export interface IDeployedCard {
-    [WarTrackPos.defender]?: ICard;
-    [WarTrackPos.supporter]?: ICard;
-    [WarTrackPos.attacker]?: ICard;
-    [WarTrackPos.stormer]?: ICard;
-    [WarTrackPos.frontLiner]?: ICard;
-    [WarTrackPos.vanguard]?: ICard;
+    [BattlefieldPos.defender]?: ICard;
+    [BattlefieldPos.supporter]?: ICard;
+    [BattlefieldPos.attacker]?: ICard;
+    [BattlefieldPos.stormer]?: ICard;
+    [BattlefieldPos.frontLiner]?: ICard;
+    [BattlefieldPos.vanguard]?: ICard;
 }
 
 

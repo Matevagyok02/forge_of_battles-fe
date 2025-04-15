@@ -1,8 +1,8 @@
 import {FC, useContext} from "react";
 import styles from "../../styles/battle_page/EffectDisplay.module.css";
-import {AttributeModifierAbility, CostModifierAbility, IAbility, IMatch} from "../../interfaces.ts";
+import {AttributeModifierAbility, CostModifierAbility, EventDrivenAbility, IAbility, IMatch} from "../../interfaces.ts";
 import {MatchContext} from "../../context.tsx";
-import {AbilitySubtype} from "../add_card/AddCard.tsx";
+import {AbilitySubtype, AbilityUsageType, TriggerEvent} from "../add_card/AddCard.tsx";
 import {FormatAbilityText} from "./cards/CardContent.tsx";
 
 const EffectDisplay: FC = () => {
@@ -49,6 +49,13 @@ const Effect: FC<{ effect: IAbility }> = ({ effect }) => {
                     } else {
                         stylesClasses.push(styles.debuff);
                     }
+
+                    if (attrModEffect.targetPositions?.self.length > 0) {
+                        stylesClasses.push(styles.self);
+                    } else {
+                        stylesClasses.push(styles.opponent);
+                    }
+
                     break;
                 }
                 case AbilitySubtype.costModifier: {
@@ -59,6 +66,26 @@ const Effect: FC<{ effect: IAbility }> = ({ effect }) => {
                         stylesClasses.push(styles.buff);
                     } else {
                         stylesClasses.push(styles.debuff);
+                    }
+                    break;
+                }
+                case AbilitySubtype.instant: {
+                    switch (effect.usageType) {
+                        case AbilityUsageType.eventDriven: {
+                            stylesClasses.push(styles.eventDriven);
+                            const event = (effect as EventDrivenAbility).event[0];
+
+                            switch (event) {
+                                case TriggerEvent.deploy: stylesClasses.push(styles.deploy); break;
+                                case TriggerEvent.draw: stylesClasses.push(styles.draw); break;
+                                case TriggerEvent.turn: stylesClasses.push(styles.turn); break;
+                                case TriggerEvent.discard: stylesClasses.push(styles.discard); break;
+                                case TriggerEvent.cardDeath: stylesClasses.push(styles.cardDeath); break;
+                                default: break;
+                            }
+                            break;
+                        }
+                        default: break;
                     }
                     break;
                 }

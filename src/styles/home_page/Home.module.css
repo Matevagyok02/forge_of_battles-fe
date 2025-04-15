@@ -20,11 +20,15 @@ main.home {
     background-image: url("../../assets/svg/title.svg");
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 512px 64px;
+    background-size: 60%;
+    filter:
+            drop-shadow(0 0 4px goldenrod)
+            drop-shadow(2px 2px 1px black)
+            drop-shadow(-2px 2px 1px black);
 }
 
 @media screen and (max-width: 1024px) {
     .textLogo {
-        display: none;
+        visibility: hidden;
     }
 }

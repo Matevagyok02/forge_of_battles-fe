@@ -283,30 +283,6 @@ const Home = () => {
         }
     }, [fetchActiveMatch.data]);
 
-    // useEffect(() => {
-    //     if (_user) {
-    //         getLastCreatedGame().then(result => {
-    //             if (result.ok && result.body) {
-    //                 const match = result.body as IMatch;
-    //
-    //                 openModal(<CreateGame _lastCreatedMatch={match} />);
-    //             } else {
-    //                 getActiveMatch().then(result => {
-    //                     if (result.ok && result.body) {
-    //                         if ((result.body as IMatch).key) {
-    //                             openModal(<JoinGame activeMatch={result.body as IMatch} />);
-    //                         } else {
-    //                             openModal(<JoinGame inQueue={true} />);
-    //                         }
-    //                     } else {
-    //                         closeModal();
-    //                     }
-    //                 });
-    //             }
-    //         });
-    //     }
-    // }, [_user]);
-
     return(
         <WindowFrame>
             <main className={styles.home} >

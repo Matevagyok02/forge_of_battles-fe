@@ -5,25 +5,25 @@ import {DiscardPile, DrawPile} from "./CardPiles.tsx";
 import {IPlayerState} from "../../interfaces.ts";
 import RedrawCards from "./ui/RedrawCards.tsx";
 import VirtualParent from "./components/VirtualParent.tsx";
-import CardSlot, {WarTrackPos} from "./cards/CardSlot.tsx";
+import CardSlot, {BattlefieldPos} from "./cards/CardSlot.tsx";
 import {OutgoingBattleEvent} from "./Battle.tsx";
 import decks from "../../assets/decks.json";
 
-interface WarTrackSlot {
-    pos: WarTrackPos;
+interface BattlefielSlot {
+    pos: BattlefieldPos;
     owner: 0 | 1 | 2;
 }
 
-const warTrackPositions: WarTrackSlot[] = [
-    { pos: WarTrackPos.defender, owner: 2 },
-    { pos: WarTrackPos.frontLiner, owner: 2 },
-    { pos: WarTrackPos.attacker, owner: 1 },
-    { pos: WarTrackPos.supporter, owner: 2 },
-    { pos: WarTrackPos.vanguard, owner: 0 },
-    { pos: WarTrackPos.supporter, owner: 1 },
-    { pos: WarTrackPos.attacker, owner: 2 },
-    { pos: WarTrackPos.frontLiner, owner: 1 },
-    { pos: WarTrackPos.defender, owner: 1 }
+const battlefielPositions: BattlefielSlot[] = [
+    { pos: BattlefieldPos.defender, owner: 2 },
+    { pos: BattlefieldPos.frontLiner, owner: 2 },
+    { pos: BattlefieldPos.attacker, owner: 1 },
+    { pos: BattlefieldPos.supporter, owner: 2 },
+    { pos: BattlefieldPos.vanguard, owner: 0 },
+    { pos: BattlefieldPos.supporter, owner: 1 },
+    { pos: BattlefieldPos.attacker, owner: 2 },
+    { pos: BattlefieldPos.frontLiner, owner: 1 },
+    { pos: BattlefieldPos.defender, owner: 1 }
 ];
 
 export const deckColorStyles = {
@@ -47,7 +47,7 @@ const Board: FC = () => {
                 <OpponentCardPiles />
 
                 <div className={styles.battlefield} >
-                    {warTrackPositions.map((slot: WarTrackSlot, index) =>
+                    {battlefielPositions.map((slot: BattlefielSlot, index) =>
                         <CardSlot
                             key={index}
                             pos={slot.pos}

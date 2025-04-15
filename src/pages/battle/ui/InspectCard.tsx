@@ -127,7 +127,7 @@ const InspectCard: FC<{ card: ICard, slot: string, owner: number, cancel: () => 
                 <MenuOverlay>
                     <menu className={`${styles.inspect} ${ options ? "" : "flex-col items-center" }`} >
                         <div className={styles.card} >
-                            <CardContent card={card} />
+                            <CardContent card={card} showModifiedAttributes />
                         </div>
                         { options ?
                             <MultipleOptionsButton options={options} />

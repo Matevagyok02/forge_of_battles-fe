@@ -4,7 +4,7 @@
     gap: 0.8vw;
     translate: -50% 0;
     padding: 2vh;
-    width: 48vw;
+    width: 52vw;
 
     .effectList {
         display: flex;
@@ -33,7 +33,7 @@
     @apply relative aspect-square bg-cover;
     width: 2.4vw;
     border-radius: 0.4vw;
-    --color: grey;
+    --color: var(--passive-color);
 
     .description {
         @apply invisible absolute bottom-0 left-0 w-52 text-center py-3 px-4;
@@ -66,18 +66,18 @@
 
 .attribute.buff {
     background-image: url("../../assets/icons/effect_icons/modifier/attribute_buff.jpg");
-
-    &:before {
-        --color: green;
-    }
 }
 
 .attribute.debuff {
     background-image: url("../../assets/icons/effect_icons/modifier/attribute_debuff.jpg");
+}
 
-    &:before {
-        --color: red;
-    }
+.buff.self:before, .debuff.opponent:before {
+    --color: green;
+}
+
+.buff.opponent:before, .debuff.self:before {
+    --color: red;
 }
 
 .cost.buff {

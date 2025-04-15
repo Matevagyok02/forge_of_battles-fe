@@ -5,7 +5,7 @@ import DeployedCard from "./DeployedCard.tsx";
 import styles from "../../../styles/battle_page/Board.module.css";
 import {deckColorStyles} from "../Board.tsx";
 
-export enum WarTrackPos {
+export enum BattlefieldPos {
     defender = "defender",
     supporter = "supporter",
     attacker = "attacker",
@@ -16,7 +16,7 @@ export enum WarTrackPos {
 
 
 
-const CardSlot: FC<{ pos: WarTrackPos, owner: number }> = ({pos, owner}) => {
+const CardSlot: FC<{ pos: BattlefieldPos, owner: number }> = ({pos, owner}) => {
 
     const { opponent, player } = useContext(MatchContext);
     const [card, setCard] = useState<ICard | undefined>(undefined);

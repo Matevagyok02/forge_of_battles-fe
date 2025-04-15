@@ -16,10 +16,11 @@ export enum MatchResult {
     draw = "Draw"
 }
 
+export const hasPlayerLost = (player: IPlayerState) => {
+    return player.bonusHealth.length + player.drawingDeck.length < 1 || (player.timeLeft && player.timeLeft < 1);
+}
+
 export const getWinner = (player1: IPlayerState, player2: IPlayerState): string | undefined => {
-    const hasPlayerLost = (player: IPlayerState) => {
-        return player.bonusHealth.length + player.drawingDeck.length <= 0 || (player.timeLeft && player.timeLeft < 1);
-    }
 
     if (hasPlayerLost(player1) && !hasPlayerLost(player2)) {
         return player2.userId;
