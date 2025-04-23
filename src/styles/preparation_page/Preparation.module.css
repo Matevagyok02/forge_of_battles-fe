@@ -8,7 +8,13 @@
     filter: drop-shadow(0 24px 16px black);
     box-shadow: var(--color) 0 0 8px 0;
     rotate: x 10deg;
-    background-image: var(--bg);
+
+    .background {
+        @apply absolute w-full h-full left-0 top-0 bg-cover;
+        z-index: -2;
+        border-radius: inherit;
+        background-image: var(--bg);
+    }
 
     & > span {
         --color: inherit;
@@ -24,15 +30,31 @@
     }
 
     &::before {
+        @apply absolute w-full h-full left-0 top-0 bg-cover;
         content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
         background-image: url("../../assets/svg/card_frame.svg");
-        background-size: cover;
         filter: drop-shadow(0 0 8px goldenrod) drop-shadow(0 0 16px black);
+    }
+}
+
+.deck.locked {
+    .background {
+        filter: grayscale(1);
+    }
+
+    .lock {
+        @apply absolute w-full h-full left-0 top-0;
+        border-radius: inherit;
+        z-index: -1;
+        background-size: 106%;
+        background-position: center -40px;
+        background-image: url("../../assets/background/lock.png");
+        filter: drop-shadow(0 0 4px var(--color));
+        mask-image: radial-gradient(circle, black 70%, transparent);
+    }
+
+    &::before, &::after  {
+        filter: grayscale(1) brightness(0.8);
     }
 }
 

@@ -28,12 +28,20 @@ export const Positions = {
 
 export type Pos = typeof Positions[keyof typeof Positions];
 
+interface IDeckBaseInfo {
+    name: string;
+    id: string;
+    description: string;
+    locked?: boolean;
+}
+
 export interface IDeck {
     name: string;
     id: string;
     description: string;
     animation?: Animation;
     pos?: Pos;
+    locked?: boolean;
 }
 
 const Deck: FC<{
@@ -41,14 +49,19 @@ const Deck: FC<{
     id: string,
     pos: Pos,
     animation: Animation,
-    onClick: (pos: Pos) => void
-}> = ({name, id, pos, animation, onClick}) => {
+    onClick: (pos: Pos) => void,
+    locked?: boolean
+}> = ({name, id, pos, animation, onClick, locked}) => {
 
     return(
         <div
-            className={`${styles.deck} ${deckNameStyles[id]} ${animation} ${pos}`}
+            className={`${styles.deck} ${deckNameStyles[id]} ${animation} ${pos} ${locked ? styles.locked : ""}`}
             onClick={() => onClick(pos)}
         >
+            <div className={styles.background}></div>
+            { locked &&
+                <div className={styles.lock}></div>
+            }
             <span>
                 <h1>{name}</h1>
             </span>
@@ -60,11 +73,9 @@ export const initDecks = () => {
     const decks: IDeck[] = [];
     const positions = Object.values(Positions);
 
-    Object.values(decksBaseInfo).forEach(deck => {
+    Object.values(decksBaseInfo).forEach((deck: IDeckBaseInfo) => {
         decks.push({
-            name: deck.name,
-            id: deck.id,
-            description: deck.description,
+            ...deck,
             animation: Animations.none,
             pos: positions.shift()
         });

@@ -4,7 +4,7 @@
     color: goldenrod;
 }
 
-.framedButton:hover label.negative, .iconButton.negative:hover i {
+.framedButton:hover label.negative, .iconButton.negative:hover {
     filter: drop-shadow(0 0 4px red) !important;
 }
 
@@ -38,7 +38,7 @@ button:active {
         @apply block w-fit;
     }
 
-    &:hover i {
+    &:hover {
         filter: drop-shadow(0 0 2px goldenrod);
     }
 }

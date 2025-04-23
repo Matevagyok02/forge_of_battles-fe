@@ -1,11 +1,83 @@
+.deckName {
+    @apply gold-text;
+    --color-2: color-mix(in srgb, var(--color) 80%, white);
+    --color-3: color-mix(in srgb, var(--color) 60%, black);
+    background-image: linear-gradient(var(--color-2), var(--color), var(--color-3) 80%) !important;
+
+    filter:
+            drop-shadow(0 0 1px var(--color))
+            drop-shadow(0 2px 2px black)
+            drop-shadow(0 2px 4px black);
+}
+
+.deckNameDecoration {
+    width: 60%;
+    height: 4px;
+    border-radius: 4px;
+    content: "";
+    background-image: linear-gradient(
+        to right,
+        var(--color) 8%,
+        color-mix(in srgb, var(--color) 40%, transparent) 16%,
+        color-mix(in srgb, var(--color) 20%, transparent) 32%,
+        transparent 80%
+    );
+}
+
 main.decksAndCards {
-    @apply fixed w-full h-full top-0 flex justify-end items-center;
-    background-image: url("../../assets/background/decks_and_cards_bg.jpg");
-    box-shadow: black inset 0 0 100px 20px;
-    padding: 4vh;
+    @apply fixed w-full h-full top-0 flex gap-4 justify-center items-center;
+    padding: 32px;
+
+    .background {
+        @apply absolute w-full h-full;
+
+        &::after {
+            @apply absolute w-full h-full;
+            content: "";
+            background-color: black;
+            box-shadow: black inset 0 0 80px 20px;
+            z-index: -1;
+        }
+
+        &::before {
+            @apply absolute w-full h-full;
+            mask-image: url("../../assets/background/home_bg_mask.png");
+            mask-size: cover;
+            background-color: color-mix(in srgb, var(--color) 50%, black);
+            content: "";
+            box-shadow: black inset 0 0 80px 20px;
+        }
+    }
 
     & > * {
         @apply h-full;
+    }
+
+    .backBtn {
+        @apply absolute top-4 left-4 z-10 text-xl;
+    }
+
+    .cardDisplay {
+        @apply flex flex-col;
+
+        & > h1 {
+            @apply text-5xl w-full inline-flex items-center gap-4 deckName;
+
+            &::after {
+                @apply deckNameDecoration;
+            }
+
+            &::before {
+                @apply deckNameDecoration;
+                scale: -1 1;
+            }
+        }
+
+        & > ul {
+            @apply flex flex-wrap justify-evenly gap-4 overflow-y-scroll py-4;
+            mask-image: linear-gradient(transparent, black 1rem, black calc(100% - 1rem), transparent);
+            max-width: calc(90vw - 256px);
+        }
     }
 
     .selectPanel{
@@ -44,18 +116,15 @@ main.decksAndCards {
         @apply flex flex-col justify-between text-left;
         --color: grey;
         width: 216px;
-        background-color: black;
+
+        &::before {
+            @apply absolute w-full h-full;
+            z-index: -1;
+            content: "";
+        }
 
         & > h1 {
-            @apply text-2xl gold-text p-2.5;
-            --color-2: color-mix(in srgb, var(--color) 80%, white);
-            --color-3: color-mix(in srgb, var(--color) 60%, black);
-            background-image: linear-gradient(var(--color-2), var(--color), var(--color-3) 80%) !important;
-
-            filter:
-                    drop-shadow(0 0 1px var(--color))
-                    drop-shadow(0 2px 2px black)
-                    drop-shadow(0 2px 4px black);
+            @apply text-2xl p-2.5 deckName;
         }
 
         & > div {
@@ -67,6 +136,25 @@ main.decksAndCards {
             & p {
                 color: lightgrey;
                 text-shadow: 0 0 8px black;
+            }
+        }
+    }
+
+    .locked {
+        @apply pointer-events-none;
+
+        .deckButton {
+            &::before {
+                filter: grayscale(1);
+            }
+
+            &::after {
+                @apply absolute w-full h-full bg-no-repeat;
+                filter: drop-shadow(0 0 4px var(--color));
+                content: "";
+                background-image: url("../../assets/background/lock.png");
+                background-size: 28%;
+                background-position: 60% 80%;
             }
         }
     }
@@ -83,7 +171,7 @@ main.decksAndCards {
 .venom{
     --color: var(--venom-1) !important;
 }
-.deckButton.venom {
+.deckButton.venom::before {
     background-image: url("../../assets/decks/venom.jpg");
     background-size: 120%;
     background-position: 0 -30px;
@@ -91,14 +179,14 @@ main.decksAndCards {
 .light{
     --color: var(--light-1) !important;
 }
-.deckButton.light{
+.deckButton.light::before {
     background-image: url("../../assets/decks/light.jpg");
     background-size: 100%;
 }
 .darkness{
-    --color: var(--darkness-2) !important;
+    --color: var(--darkness-1) !important;
 }
-.deckButton.darkness {
+.deckButton.darkness::before {
     background-image: url("../../assets/decks/darkness.jpg");
     background-size: 100%;
 }

@@ -50,7 +50,7 @@ const Effect: FC<{ effect: IAbility }> = ({ effect }) => {
                         stylesClasses.push(styles.debuff);
                     }
 
-                    if (attrModEffect.targetPositions?.self.length > 0) {
+                    if (attrModEffect.targetPositions?.self?.length && attrModEffect.targetPositions.self.length > 0) {
                         stylesClasses.push(styles.self);
                     } else {
                         stylesClasses.push(styles.opponent);

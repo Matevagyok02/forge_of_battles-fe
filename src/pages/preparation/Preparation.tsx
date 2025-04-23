@@ -248,6 +248,7 @@ const Preparation: FC = () => {
                                     pos={deck.pos!}
                                     animation={deck.animation!}
                                     onClick={handleOnClick}
+                                    locked={deck.locked}
                                 />
                             )}
                         </div>
@@ -258,7 +259,7 @@ const Preparation: FC = () => {
                                     <Button
                                         text={"Ready"}
                                         onClick={confirmReady}
-                                        disabled={selectedDeck.id === "venom"}
+                                        disabled={selectedDeck.locked}
                                     />
                                 </span>
                                 :
