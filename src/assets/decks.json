@@ -2,16 +2,19 @@
   "light": {
     "name": "Light",
     "id": "light",
-    "description": "A deck that focuses on healing and buffing allies."
+    "description": "A deck that focuses on healing and buffing allies.",
+    "locked": false
   },
   "darkness": {
     "name": "Darkness",
     "id": "darkness",
-    "description": "A deck that focuses on debuffing enemies and dealing damage."
+    "description": "A deck that focuses on debuffing enemies and dealing damage.",
+    "locked": false
   },
   "venom": {
     "name": "Venom",
     "id": "venom",
-    "description": "A deck that focuses on poisoning enemies and dealing damage. (This deck is still under development)"
+    "description": "A deck that focuses on poisoning enemies and dealing damage. (This deck is still under development)",
+    "locked": true
   }
 }

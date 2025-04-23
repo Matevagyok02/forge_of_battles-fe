@@ -27,6 +27,7 @@ interface IconButtonProps {
     onClick?: () => void;
     deactivated?: boolean;
     bg?: boolean;
+    showText?: boolean;
 }
 
 export interface OptionButton {
@@ -58,7 +59,9 @@ export enum Icon {
     send = "paper-plane",
     copy = "copy",
     question = "circle-question",
-    refresh = "rotate"
+    refresh = "rotate",
+    left = "chevron-left",
+    right = "chevron-right",
 }
 
 export const getIcon = (icon: Icon) => {
@@ -137,6 +140,9 @@ export const IconButton: FC<IconButtonProps> = (props) => {
             onClick={props.onClick}
         >
             <i className={getIcon(props.icon)} ></i>
+            { props.showText && props.text &&
+                <span>&nbsp;{props.text}</span>
+            }
         </button>
     )
 }
