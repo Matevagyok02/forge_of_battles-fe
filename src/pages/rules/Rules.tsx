@@ -54,7 +54,7 @@ const Rules: FC = () => {
                     <div className={styles.themeSelect} >
                         <IconButton icon={Icon.left} text={"Previous"} onClick={prevTheme} />
                         <ul>
-                            {themes.map((theme, index) => (
+                            {themes.map((_, index) => (
                                 <li
                                     key={index}
                                     data-value={themeIndex === index}
