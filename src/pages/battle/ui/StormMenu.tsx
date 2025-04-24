@@ -149,7 +149,7 @@ const StormMenu: FC = () => {
                     { animationPlayed &&
                         <div className={styles.button} >
                             <h1>
-                                Storm
+                                Engage
                             </h1>
                         </div>
                     }

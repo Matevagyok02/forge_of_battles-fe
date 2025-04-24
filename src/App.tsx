@@ -13,6 +13,7 @@ import AdminRoute from "./components/AdminRoute.tsx";
 import AddCard from "./pages/add_card/AddCard.tsx";
 import {useAuthInterceptor} from "./api/interceptorHooks.tsx";
 import DecksAndCards from "./pages/decks_and_cards/DecksAndCards.tsx";
+import Rules from "./pages/rules/Rules.tsx";
 
 const App = () => {
     useAuthInterceptor();
@@ -110,6 +111,7 @@ const App = () => {
                                 <Route path="/join/:key" element={<Join/>} />
                                 <Route path="/add-card" element={<AdminRoute element={<AddCard/>} />} />
                                 <Route path="/decks-and-cards" element={<DecksAndCards/>} />
+                                <Route path="/rules" element={<Rules/>} />
                             </Routes>
                         </BrowserRouter>
                     </FriendsContext.Provider>
