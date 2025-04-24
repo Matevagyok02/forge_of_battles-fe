@@ -38,10 +38,6 @@
 }
 
 .deck.locked {
-    .background {
-        filter: grayscale(1);
-    }
-
     .lock {
         @apply absolute w-full h-full left-0 top-0;
         border-radius: inherit;
@@ -54,7 +50,7 @@
     }
 
     &::before, &::after  {
-        filter: grayscale(1) brightness(0.8);
+        filter: brightness(0.8);
     }
 }
 

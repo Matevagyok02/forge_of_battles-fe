@@ -1,7 +1,7 @@
 import {FC, useCallback, useContext} from "react";
 import {MatchContext} from "../../../context.tsx";
 import {Button} from "../../../components/Button.tsx";
-import StormMenu from "./StormMenu.tsx";
+import EngagementMenu from "./StormMenu.tsx";
 import Tips from "../Tips.tsx";
 import {IPlayerState} from "../../../interfaces.ts";
 import {OutgoingBattleEvent} from "../Battle.tsx";
@@ -37,7 +37,7 @@ const BattleInterface: FC = () => {
                 <Button text={"Advance"} onClick={advance} />
             }
             { player.turnStage === 2 &&
-                <StormMenu />
+                <EngagementMenu />
             }
             { player.turnStage === 3 &&
                 <Button text="End Turn" onClick={endTurn} />

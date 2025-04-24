@@ -15,7 +15,7 @@ const RulesAndCards: FC = () => {
                     <p>
                         Check our set of rules to learn how to play the game
                     </p>
-                    <Button text="Rules     " onClick={() => alert("TODO")} />
+                    <Button text="Rules     " onClick={() => navigate("rules")} />
                 </div>
 
                 <vertical-line/>
