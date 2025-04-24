@@ -26,7 +26,6 @@
 
 main.decksAndCards {
     @apply fixed w-full h-full top-0 flex gap-4 justify-center items-center;
-    padding: 32px;
 
     .background {
         @apply absolute w-full h-full;
@@ -49,19 +48,15 @@ main.decksAndCards {
         }
     }
 
-    & > * {
-        @apply h-full;
-    }
-
     .backBtn {
         @apply absolute top-4 left-4 z-10 text-xl;
     }
 
     .cardDisplay {
-        @apply flex flex-col;
+        @apply flex flex-col h-full;
 
         & > h1 {
-            @apply text-5xl w-full inline-flex items-center gap-4 deckName;
+            @apply mt-4 text-5xl w-full inline-flex items-center gap-4 deckName;
 
             &::after {
                 @apply deckNameDecoration;
@@ -81,7 +76,8 @@ main.decksAndCards {
     }
 
     .selectPanel{
-        @apply w-fit h-full p-4;
+        @apply w-fit p-4;
+        height: calc(100vh - 64px);
         background-image: url("../../assets/background/deck_select_panel_bg.jpg");
 
         & > div {
