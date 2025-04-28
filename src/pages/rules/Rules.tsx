@@ -3,16 +3,15 @@ import styles from "../../styles/rules_page/Rules.module.css";
 import {Frame} from "../../components/Frame.tsx";
 import {Icon, IconButton} from "../../components/Button.tsx";
 import {useNavigate} from "react-router-dom";
-import Overview from "../../styles/rules_page/themes/Overview.tsx";
-import TurnSequence from "../../styles/rules_page/themes/TurnSequence.tsx";
+import Overview from "./themes/Overview.tsx";
+import TurnSequence from "./themes/TurnSequence.tsx";
+import GameComponents from "./themes/GameComponents.tsx";
 
 const themes = [
     { title: "What is Forge of Battles?", content: <Overview /> },
-    { title: "Game Components", content: <p></p> },
+    { title: "Game Components", content: <GameComponents/> },
     { title: "Card Anatomy", content: <p></p> },
-    { title: "Turn Sequence", content: <TurnSequence/> },
-    { title: "How to Play Cards", content: <p></p> },
-    { title: "Engagement Options", content: <p></p> }
+    { title: "Turn Sequence", content: <TurnSequence/> }
 ]
 
 const Rules: FC = () => {
