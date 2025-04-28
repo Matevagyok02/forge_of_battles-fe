@@ -5,11 +5,12 @@ import {Icon, IconButton} from "../../components/Button.tsx";
 import {useNavigate} from "react-router-dom";
 import Overview from "../../styles/rules_page/themes/Overview.tsx";
 import TurnSequence from "../../styles/rules_page/themes/TurnSequence.tsx";
+import CardAnatomy from "../../styles/rules_page/themes/CardAnatomy.tsx";
 
 const themes = [
     { title: "What is Forge of Battles?", content: <Overview /> },
     { title: "Game Components", content: <p></p> },
-    { title: "Card Anatomy", content: <p></p> },
+    { title: "Card Anatomy", content: <CardAnatomy /> },
     { title: "Turn Sequence", content: <TurnSequence/> },
     { title: "How to Play Cards", content: <p></p> },
     { title: "Engagement Options", content: <p></p> }

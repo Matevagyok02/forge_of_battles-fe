@@ -128,3 +128,7 @@ main.rules {
         }
     }
 }
+
+.cardAnatomy{
+    @apply flex flex-col centered w-1/2;
+}
