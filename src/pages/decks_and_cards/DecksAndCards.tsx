@@ -10,6 +10,7 @@ import LoadingScreen from "../../components/LoadingScreen.tsx";
 import {deckNameStyles} from "../preparation/Deck.tsx";
 import {Icon, IconButton} from "../../components/Button.tsx";
 import {useNavigate} from "react-router-dom";
+import FloatableCard from "../../components/FloatableCard.tsx";
 
 const DeckStyles = {
     [decks.light.id]: styles.light,
@@ -47,9 +48,9 @@ const DecksAndCards = () => {
                     </h1>
                     <ul>
                         {cards.map((card) => (
-                            <li key={card.id} className={`${cardStyles.card} ${cardStyles.large}`} >
+                            <FloatableCard key={card.id} className={`${cardStyles.card} ${cardStyles.large} ${cardStyles.hoverEffect}`}>
                                 <CardContent card={card} />
-                            </li>
+                            </FloatableCard>
                         ))}
                     </ul>
                 </div>
