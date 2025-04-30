@@ -1,0 +1,9 @@
+.card{
+    perspective: 400px;
+    height: fit-content;
+    width: fit-content;
+
+    &:hover {
+        filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+    }
+}

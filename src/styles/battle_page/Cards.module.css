@@ -21,6 +21,10 @@
     background-image: url("../../assets/svg/card_frame.svg");
     background-size: 99%;
 }
+.hoverEffect {
+    transition: transform 0.1s ease-in-out;
+    will-change: transform;
+}
 
 .card {
     @apply cardShape;
