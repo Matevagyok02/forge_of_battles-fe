@@ -1,11 +1,11 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {FC, Suspense, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {IBattle, ICard, IMatch, IPlayerState, MatchStage} from "../../interfaces.ts";
-import {AuthContext, MatchContext} from "../../context.tsx";
+import {AuthContext, MatchContext, ModalContext} from "../../context.tsx";
 import Board from "./Board.tsx";
 import BattleChat from "./BattleChat.tsx";
 import {OpponentHand, PlayerHand} from "./Hands.tsx";
-import {getCardsById} from "../../api/api.ts";
+import {getCardsById, isMatchAbandoned} from "../../api/api.ts";
 import {io, Socket} from "socket.io-client";
 import {keyRegex} from "../home/main_interface_components/JoinGame.tsx";
 import HudContainer from "./Hud.tsx";
@@ -15,6 +15,8 @@ import BattleInterface from "./ui/BattleInterface.tsx";
 import ResultScreen, {getWinner, hasPlayerLost, MatchResult} from "./ResultScreen.tsx";
 import EffectDisplay from "./EffectDisplay.tsx";
 import styles from "../../styles/battle_page/Battle.module.css";
+import events from "../../assets/events.json";
+import MatchCancelledDialog from "./MatchCancelledDialog.tsx";
 
 export enum IncomingBattleEvent {
     turnStarted = "turn-started",
@@ -64,6 +66,7 @@ const Battle: FC = () => {
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     const {user, isAuthenticated} = useContext(AuthContext);
+    const { openForcedModal } = useContext(ModalContext);
 
     const setBattleData = (data: { battle: IBattle } | IMatch) => {
         setMatch(prevState =>
@@ -94,12 +97,40 @@ const Battle: FC = () => {
         });
 
         socket.on("error", () => {
-            displayEvent("Oops! Something went wrong. Try again.", true);
+            displayEvent(events.error, true);
         });
 
         socket.on("connected", setMatch);
 
+        setTimeout(
+            () => socket.on("opponent-connected", () => displayEvent(events.opponent_connected)),
+            5000
+        );
+
+        socket.on("opponent-left", () => {
+            displayEvent(events.opponent_disconnected, true);
+            setTimeout(async () => {
+                const isAbandoned = (await isMatchAbandoned(matchKey)).data.isAbandoned;
+
+                if (isAbandoned) {
+                    openForcedModal(
+                        <MatchCancelledDialog />
+                    );
+                }
+            }, 1000);
+        });
+
         socket.on("match-ended", setMatch);
+
+        socket.on("match-cancelled", () => {
+            if (match) {
+                openForcedModal(
+                    <MatchCancelledDialog/>
+                );
+            } else {
+                leavePage();
+            }
+        });
 
         Object.values(IncomingBattleEvent).forEach(event => {
             socket.on("opponent-" + event, event !== IncomingBattleEvent.turnEnded ?
@@ -115,7 +146,7 @@ const Battle: FC = () => {
                 :
                 (data: { battle: IBattle }) => {
                     setBattleData(data);
-                    displayEvent("Your turn has started!");
+                    displayEvent(events.turn_started);
                 });
         });
 

@@ -28,6 +28,10 @@ main.battle {
     .mainUi {
         @apply fixed right-0 bottom-0 flex gap-4 z-20;
         margin: 1.6vw;
+
+        .musicControl {
+            @apply flex items-end;
+        }
     }
 }
 

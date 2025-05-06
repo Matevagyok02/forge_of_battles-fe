@@ -84,6 +84,19 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
         setInspect(false);
     }
 
+    useEffect(() => {
+        const hand = document.getElementById("player-hand");
+
+        if (hand) {
+            if (inspect) {
+                hand.classList.add("z-10");
+            } else {
+                hand.classList.remove("z-10");
+
+            }
+        }
+    }, [inspect]);
+
     return (
         <Suspense fallback={null} >
             { openDeployMenu ?
@@ -92,6 +105,7 @@ const HandHeldCard: FC<{ card: ICard, rotation: number }> = ({ card, rotation })
                 player?.turnStage === 3 ?
                     <Draggable
                         axis={"y"}
+                        // bounds={{ top: -10, bottom: 5 }}
                         handle={`.${styles.inspect}`}
                         nodeRef={cardRef}
                         scale={1}

@@ -14,7 +14,7 @@ interface BattlefielSlot {
     owner: 0 | 1 | 2;
 }
 
-const battlefielPositions: BattlefielSlot[] = [
+export const battlefieldPositions: BattlefielSlot[] = [
     { pos: BattlefieldPos.defender, owner: 2 },
     { pos: BattlefieldPos.frontLiner, owner: 2 },
     { pos: BattlefieldPos.attacker, owner: 1 },
@@ -47,7 +47,7 @@ const Board: FC = () => {
                 <OpponentCardPiles />
 
                 <div className={styles.battlefield} >
-                    {battlefielPositions.map((slot: BattlefielSlot, index) =>
+                    {battlefieldPositions.map((slot: BattlefielSlot, index) =>
                         <CardSlot
                             key={index}
                             pos={slot.pos}

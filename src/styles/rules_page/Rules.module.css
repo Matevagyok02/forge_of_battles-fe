@@ -65,8 +65,12 @@ main.rules {
         }
     }
 
-    .backBtn {
-        @apply absolute top-0 left-0 m-2 z-10 text-xl;
+    & > menu {
+        @apply absolute top-0 right-0 m-2 z-10 text-xl flex flex-col gap-2 justify-center items-center;
+
+        & > button:first-child {
+            @apply text-xl;
+        }
     }
 }
 
@@ -106,17 +110,17 @@ main.rules {
 }
 
 .turnSequence {
-    @apply flex flex-col items-center w-full;
+    @apply text-left;
 
     & > p {
         @apply text-xl text-center;
     }
 
     & > ul {
-        @apply flex items-center w-full;
+        @apply flex w-full py-4;
 
         & > li {
-            @apply flex-grow flex flex-col items-center gap-4 w-1/3 p-4;
+            @apply flex-grow flex flex-col items-center gap-4 w-1/3 p-4 pl-8;
 
             & > h1 {
                 @apply text-2xl text-gold;
@@ -125,10 +129,150 @@ main.rules {
             & > * {
                 @apply w-fit;
             }
+
+            & ol {
+                @apply flex flex-col gap-2;
+
+                & ol {
+                    @apply pl-4;
+                }
+            }
         }
     }
 }
 
-.cardAnatomy{
-    @apply flex flex-col centered w-1/2;
+.gameComponents {
+    @apply grid w-full gap-4;
+    grid-template-columns: 3fr 2fr;
+
+    & > div {
+        @apply flex flex-col gap-4 items-end;
+    }
+
+    & > img {
+        filter: drop-shadow(4px 4px 4px black);
+    }
+
+    .descriptions {
+        @apply flex flex-col gap-2 pr-4;
+        list-style: decimal;
+
+        & > li {
+            & span {
+                font-size: 1.2em;
+                color: goldenrod;
+
+                &::after {
+                    content: "-";
+                    padding-inline: 2px;
+                    color: grey;
+                }
+            }
+        }
+    }
+}
+
+.gameComponents .legend {
+    @apply w-full flex justify-evenly text-xl;
+
+    & > li {
+        @apply flex items-center gap-2;
+
+        &::before {
+            content: "○";
+            color: var(--color);
+            font-size: 1.4em;
+            -webkit-text-stroke-width: 2px;
+            -webkit-text-stroke-color: var(--color);
+            filter: drop-shadow(0 0 2px var(--color));
+        }
+    }
+
+    & > li:first-child::before {
+        --color: var(--light-1);
+    }
+
+    & > li:last-child::before {
+        --color: var(--darkness-1);
+    }
+}
+
+.gameComponents > div > p {
+    @apply text-center;
+    font-size: 1.1em;
+
+    & > span {
+        @apply text-gold;
+    }
+}
+
+.gameComponents.battlefield {
+    @apply flex gap-12;
+
+    .visualBattlefield {
+        @apply grid gap-4 w-fit;
+        justify-items: center;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+
+        & > li {
+            @apply flex justify-center items-center text-xl p-4 text-center select-none;
+            aspect-ratio: var(--card-aspect-ratio);
+            width: calc(100vh / 6);
+            overflow: hidden;
+            border-radius: 8%;
+            --color: grey;
+            color: var(--color);
+            box-shadow: var(--color) 0 0 8px 2px inset;
+            background-image: radial-gradient(
+                circle at 50% 50%,
+                rgba(0, 0, 0, 0.5),
+                transparent
+            );
+
+            &:hover {
+                filter: brightness(1.2);
+                scale: 1.02;
+            }
+        }
+
+        & > li[data-value="1"] {
+            --color: var(--light-1);
+        }
+
+        & > li[data-value="2"] {
+            --color: var(--darkness-1);
+        }
+    }
+}
+
+.cardAnatomy {
+    @apply grid w-full gap-4;
+    grid-template-columns: repeat(2, 1fr);
+
+    & > img {
+        filter: drop-shadow(4px 4px 4px black);
+    }
+
+    & > div {
+        @apply flex justify-end;
+
+        & > ol {
+            @apply flex flex-col gap-2 pl-4;
+            list-style: circle;
+
+            & > li {
+                & span {
+                    font-size: 1.2em;
+                    color: goldenrod;
+
+                    &::after {
+                        content: " - ";
+                        font-size: 1.2em;
+                        color: grey;
+                    }
+                }
+            }
+        }
+    }
 }

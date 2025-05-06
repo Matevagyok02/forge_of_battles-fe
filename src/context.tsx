@@ -44,6 +44,11 @@ export interface IMatchContext {
     containerRef?: HTMLElement;
 }
 
+export interface IBgMusicContext {
+    musicVolume: number;
+    setMusicVolume: (volume: number) => void;
+}
+
 export const ModalContext = createContext<IModalContext>({} as IModalContext);
 
 export const AuthContext = createContext({} as IAuthContext);
@@ -53,3 +58,5 @@ export const UserContext = createContext({} as IUserContext);
 export const FriendsContext = createContext({} as IFriendsContext);
 
 export const MatchContext = createContext({} as IMatchContext);
+
+export const BgMusicContext = createContext({} as IBgMusicContext);

@@ -18,7 +18,7 @@ button:active {
 }
 
 .deactivated {
-    color: dimgrey !important;
+    color: grey !important;
 }
 
 .loader {
@@ -44,7 +44,7 @@ button:active {
 }
 
 .iconButton.decorated {
-    @apply hexagonFrame;
+    @apply hexagonFrame min-w-8;
 }
 
 .iconButton.bg {
@@ -56,7 +56,6 @@ button:active {
     & i:after {
         @apply absolute w-full h-full top-0 left-0;
         content: "";
-        rotate: -90deg;
         background-color: rgba(0, 0, 0, 0.4);
         clip-path: polygon(
                 50% 0,
@@ -69,8 +68,14 @@ button:active {
     }
 }
 
-.iconButton.deactivated:hover i {
-    filter: drop-shadow(0 0 2px black) !important;
+.iconButton.deactivated {
+    & i:after {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    &:hover {
+        filter: drop-shadow(0 0 2px grey) !important;
+    }
 }
 
 /*---FRAMED BUTTON---*/

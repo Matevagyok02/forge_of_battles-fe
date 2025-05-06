@@ -11,6 +11,7 @@ import {deckNameStyles} from "../preparation/Deck.tsx";
 import {Icon, IconButton} from "../../components/Button.tsx";
 import {useNavigate} from "react-router-dom";
 import FloatableCard from "../../components/FloatableCard.tsx";
+import {MusicVolumeControl} from "../../components/BgMusic.tsx";
 
 const DeckStyles = {
     [decks.light.id]: styles.light,
@@ -39,10 +40,11 @@ const DecksAndCards = () => {
             :
             <main className={styles.decksAndCards}>
                 <div className={`${styles.background} ${deckNameStyles[deck]}`} ></div>
+                <menu>
+                    <IconButton icon={Icon.left} text={"Home"} showText onClick={() => navigate("/")} />
+                    <MusicVolumeControl />
+                </menu>
                 <div className={styles.cardDisplay} >
-                    <span className={styles.backBtn} >
-                        <IconButton icon={Icon.left} text={"Home"} showText onClick={() => navigate("/")} />
-                    </span>
                     <h1 className={deckNameStyles[deck]} >
                         {decks[deck].name}
                     </h1>

@@ -1,9 +1,9 @@
 import {FC, useContext, useEffect} from "react";
-import {ForcedModal} from "../../components/Modal.tsx";
-import {ModalContext} from "../../context.tsx";
-import {Button} from "../../components/Button.tsx";
+import {ForcedModal} from "./Modal.tsx";
+import {ModalContext} from "../context.tsx";
+import {Button} from "./Button.tsx";
 import {useNavigate} from "react-router-dom";
-import {useAbandonMatch, useLeaveMatch} from "../../api/hooks.tsx";
+import {useAbandonMatch, useLeaveMatch} from "../api/hooks.tsx";
 
 const LeaveMatchDialog: FC<{ matchKey: string, isHost?: boolean }> = ({matchKey, isHost}) => {
 
@@ -43,7 +43,9 @@ const LeaveMatchDialog: FC<{ matchKey: string, isHost?: boolean }> = ({matchKey,
 
     const handleClick = isHost ? () => abandonMatch.abandon(matchKey) : leaveMatch.leave;
 
-    return (
+    const pending = !(leaveMatch.isSuccess || abandonMatch.isSuccess || leaveMatch.isError || abandonMatch.isError);
+
+    return( pending &&
         <ForcedModal>
             <div className="flex flex-col items-center gap-4 p-4" >
                 <p className="text-center text-xl px-2 w-60" >

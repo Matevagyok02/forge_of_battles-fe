@@ -1,14 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import {useRef, useEffect, ReactNode, FC} from "react";
 import styles from "../styles/components/FloatableCard.module.css";
-
-interface Props {
-    children: React.ReactNode;
-    className?: string;
-}
 
 const ANGLE = 4;
 
-const FloatableCard: React.FC<Props> = ({ children, className }) => {
+const FloatableCard: FC<{ children: ReactNode, className?: string; }> = ({ children, className }) => {
     const panelRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
 
