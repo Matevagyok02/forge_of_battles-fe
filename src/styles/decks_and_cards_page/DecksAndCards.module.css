@@ -73,7 +73,7 @@ main.decksAndCards {
         }
 
         & > ul {
-            @apply flex flex-wrap justify-evenly gap-4 overflow-y-scroll py-4;
+            @apply flex flex-wrap flex-grow justify-evenly gap-4 overflow-y-scroll p-4;
             mask-image: linear-gradient(transparent, black 1rem, black calc(100% - 1rem), transparent);
             max-width: calc(80vw - 256px);
         }
