@@ -6,6 +6,7 @@ import avatars from "../../assets/avatars/avatars.ts";
 import AvatarDisplay from "../../components/AvatarDisplay.tsx";
 import Modal from "../../components/Modal.tsx";
 import {useChangeAvatar} from "../../api/hooks.tsx";
+import {MusicVolumeControl} from "../../components/BgMusic.tsx";
 
 export const AuthPanel: FC = () => {
 
@@ -20,8 +21,8 @@ export const AuthPanel: FC = () => {
                 </>
             }
             <menu>
-                <IconButton bg icon={Icon.music} decorated onClick={() => alert("TODO")} />
-                <IconButton bg icon={Icon.sound} decorated onClick={() => alert("TODO")} />
+                <MusicVolumeControl />
+                {/*<IconButton bg icon={Icon.sound} decorated onClick={() => alert("TODO")} />*/}
             </menu>
         </div>
     );
@@ -46,8 +47,8 @@ export const UserPanel: FC = () => {
                 </div>
             </div>
             <menu>
-                <IconButton icon={Icon.music} text={"Music"} bg decorated onClick={() => alert("TODO")} />
-                <IconButton icon={Icon.sound} text={"Sounds"} bg decorated onClick={() => alert("TODO")} />
+                <MusicVolumeControl />
+                {/*<IconButton icon={Icon.sound} text={"Sounds"} bg decorated onClick={() => alert("TODO")} />*/}
                 <IconButton icon={Icon.logout} text={"Log Out"} bg decorated onClick={logout} />
             </menu>
         </div>

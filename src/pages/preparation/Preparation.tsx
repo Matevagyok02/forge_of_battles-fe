@@ -7,7 +7,7 @@ import {IBattle, IMatch, IUser, MatchStage} from "../../interfaces.ts";
 import {io, Socket} from "socket.io-client";
 import {parseTimeLimit} from "../../utils.ts";
 import {AuthContext, ModalContext} from "../../context.tsx";
-import LeaveMatchDialog from "./LeaveMatchDialog.tsx";
+import LeaveMatchDialog from "../../components/LeaveMatchDialog.tsx";
 import {keyRegex} from "../home/main_interface_components/JoinGame.tsx";
 import LoadingScreen from "../../components/LoadingScreen.tsx";
 import AvatarDisplay from "../../components/AvatarDisplay.tsx";
@@ -267,12 +267,10 @@ const Preparation: FC = () => {
                                     Waiting for opponent...
                                 </h1>
                             }
-                            { match &&
-                                <Button
-                                    text={isHost ? "Abandon" : "Leave"}
-                                    onClick={() => openForcedModal(<LeaveMatchDialog matchKey={match!.key} isHost={isHost} />)}
-                                />
-                            }
+                            <Button
+                                text={isHost ? "Abandon" : "Leave"}
+                                onClick={() => openForcedModal(<LeaveMatchDialog matchKey={match?.key as string} isHost={isHost} />)}
+                            />
                         </menu>
                     </div>
 

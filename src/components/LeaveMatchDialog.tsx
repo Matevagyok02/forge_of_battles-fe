@@ -1,9 +1,9 @@
 import {FC, useContext, useEffect} from "react";
-import {ForcedModal} from "../../components/Modal.tsx";
-import {ModalContext} from "../../context.tsx";
-import {Button} from "../../components/Button.tsx";
+import {ForcedModal} from "./Modal.tsx";
+import {ModalContext} from "../context.tsx";
+import {Button} from "./Button.tsx";
 import {useNavigate} from "react-router-dom";
-import {useAbandonMatch, useLeaveMatch} from "../../api/hooks.tsx";
+import {useAbandonMatch, useLeaveMatch} from "../api/hooks.tsx";
 
 const LeaveMatchDialog: FC<{ matchKey: string, isHost?: boolean }> = ({matchKey, isHost}) => {
 

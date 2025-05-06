@@ -5,13 +5,17 @@ import {Icon, IconButton} from "../../components/Button.tsx";
 import {useNavigate} from "react-router-dom";
 import Overview from "./themes/Overview.tsx";
 import TurnSequence from "./themes/TurnSequence.tsx";
-import GameComponents from "./themes/GameComponents.tsx";
+import {CardPilesAndHand, HUD, Battlefield} from "./themes/GameComponents.tsx";
+import CardAnatomy from "./themes/CardAnatomy.tsx";
+import {MusicVolumeControl} from "../../components/BgMusic.tsx";
 
 const themes = [
     { title: "What is Forge of Battles?", content: <Overview /> },
-    { title: "Game Components", content: <GameComponents/> },
-    { title: "Card Anatomy", content: <p></p> },
-    { title: "Turn Sequence", content: <TurnSequence/> }
+    { title: "Card Anatomy", content: <CardAnatomy /> },
+    { title: "Turn Sequence", content: <TurnSequence /> },
+    { title: "Card Piles & Hand", content: <CardPilesAndHand /> },
+    { title: "HUD", content: <HUD/> },
+    { title: "Battlefield", content: <Battlefield /> }
 ]
 
 const Rules: FC = () => {
@@ -39,9 +43,10 @@ const Rules: FC = () => {
 
     return (
         <main className={styles.rules} >
-            <span className={styles.backBtn} >
+            <menu>
                 <IconButton icon={Icon.left} text={"Home"} showText onClick={() => navigate("/")} />
-            </span>
+                <MusicVolumeControl />
+            </menu>
             <Frame bg >
                 <div className={styles.container} >
                     <h1 className={styles.title} >

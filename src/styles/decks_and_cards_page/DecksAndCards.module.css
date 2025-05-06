@@ -48,8 +48,12 @@ main.decksAndCards {
         }
     }
 
-    .backBtn {
-        @apply absolute top-4 left-4 z-10 text-xl;
+    & > menu {
+        @apply absolute top-0 right-0 m-2 z-10 flex flex-col gap-2 items-end;
+
+        & > button:first-child {
+            @apply text-xl;
+        }
     }
 
     .cardDisplay {
@@ -71,7 +75,7 @@ main.decksAndCards {
         & > ul {
             @apply flex flex-wrap justify-evenly gap-4 overflow-y-scroll py-4;
             mask-image: linear-gradient(transparent, black 1rem, black calc(100% - 1rem), transparent);
-            max-width: calc(90vw - 256px);
+            max-width: calc(80vw - 256px);
         }
     }
 
