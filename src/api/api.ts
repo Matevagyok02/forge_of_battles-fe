@@ -94,6 +94,13 @@ export const abandonMatch = (key: string): R<MessageResponse> => api.delete("/ma
         key
     }
 });
+
+export const isMatchAbandoned = (key: string): R<{ isAbandoned: boolean }> => api.get("/match/is-abandoned", {
+    params: {
+        key
+    }
+});
+
 export const getCardsById = (ids: string[]): R<ICard[]> => api.get("/cards", {
     params: {
         cards: ids.join(",")

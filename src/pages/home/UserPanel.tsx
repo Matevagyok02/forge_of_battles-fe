@@ -22,7 +22,6 @@ export const AuthPanel: FC = () => {
             }
             <menu>
                 <MusicVolumeControl />
-                {/*<IconButton bg icon={Icon.sound} decorated onClick={() => alert("TODO")} />*/}
             </menu>
         </div>
     );
@@ -48,7 +47,6 @@ export const UserPanel: FC = () => {
             </div>
             <menu>
                 <MusicVolumeControl />
-                {/*<IconButton icon={Icon.sound} text={"Sounds"} bg decorated onClick={() => alert("TODO")} />*/}
                 <IconButton icon={Icon.logout} text={"Log Out"} bg decorated onClick={logout} />
             </menu>
         </div>

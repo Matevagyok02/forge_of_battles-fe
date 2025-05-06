@@ -1,0 +1,6 @@
+{
+  "turn_started": "Your turn has started!",
+  "opponent_connected": "Your opponent has joined the game",
+  "opponent_disconnected": "Your opponent has left the game",
+  "error": "Oops! Something went wrong. Try again."
+}

@@ -43,7 +43,9 @@ const LeaveMatchDialog: FC<{ matchKey: string, isHost?: boolean }> = ({matchKey,
 
     const handleClick = isHost ? () => abandonMatch.abandon(matchKey) : leaveMatch.leave;
 
-    return (
+    const pending = !(leaveMatch.isSuccess || abandonMatch.isSuccess || leaveMatch.isError || abandonMatch.isError);
+
+    return( pending &&
         <ForcedModal>
             <div className="flex flex-col items-center gap-4 p-4" >
                 <p className="text-center text-xl px-2 w-60" >

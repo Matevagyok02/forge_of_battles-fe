@@ -15,7 +15,7 @@
 }
 
 .cardShape:before {
-    @apply absolute w-full h-full bg-center bg-no-repeat;
+    @apply absolute w-full h-full left-0 top-0 bg-center bg-no-repeat;
     content: "";
     z-index: 1;
     background-image: url("../../assets/svg/card_frame.svg");
