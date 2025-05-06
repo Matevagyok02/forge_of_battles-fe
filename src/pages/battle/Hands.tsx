@@ -46,6 +46,7 @@ export const PlayerHand: FC = () => {
             onMouseLeave={cancelInteraction}
             className={styles.playerHand}
             style={ interacting ? { zIndex: 10 } : {} }
+            id={"player-hand"}
         >
             <ul style={ getListStyle(player.onHand.length) } >
                 {cardRotations && cards.map((card, index) => (

@@ -47,9 +47,7 @@ const DeployedCard: FC<{ card: ICard, slot: string ,owner: number, color: string
     useEffect(() => {
         let timeout: number;
 
-        if (ref.current?.classList.contains(slot + owner)) {
-            timeout = setTimeout(() => {ref.current!.classList.remove(slot + owner)}, 1000)
-        }
+        timeout = setTimeout(() => ref.current!.classList.remove(styles.advancePlayer, styles.advanceOpponent), 1000);
 
         return () => {
             if (timeout) clearTimeout(timeout);

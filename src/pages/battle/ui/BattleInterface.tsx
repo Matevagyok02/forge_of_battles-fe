@@ -56,7 +56,9 @@ const BattleInterface: FC = () => {
                     onClick={() => openForcedModal(<LeaveMatchDialog matchKey={match.key} isHost={isHost} />)}
                 />
             }
-            <MusicVolumeControl expandUpward />
+            <div className={styles.musicControl}>
+                <MusicVolumeControl />
+            </div>
             <Tips />
         </div>
     );

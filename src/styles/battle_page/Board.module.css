@@ -22,6 +22,7 @@
                     aspect-ratio: var(--card-aspect-ratio);
                     font-size: 3vh;
                     border-radius: 4%;
+                    animation: placeholderAppear 1s linear forwards;
 
                     --color: grey;
                     box-shadow: inset 0 0 8px 2px var(--color);
@@ -150,4 +151,21 @@
 }
 .venomSecondary {
     --color: var(--venom-2) !important;
+}
+
+@keyframes placeholderAppear {
+    0% {
+        opacity: 0;
+    }
+    25% {
+        opacity: 0.25;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    75% {
+        opacity: 0.75;
+    }
+    100% {
+    }
 }
