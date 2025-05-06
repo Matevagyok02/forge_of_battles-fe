@@ -58,7 +58,7 @@ export const MusicVolumeControl: FC<{ expandUpward?: boolean }> = ({ expandUpwar
     );
 }
 
-export const BackgroundMusicPlayer = () => {
+export const BackgroundMusicPlayer: FC = () => {
 
     const { musicVolume } = useContext(BgMusicContext);
 
@@ -127,9 +127,11 @@ export const BackgroundMusicPlayer = () => {
             gainNodeRef.current!.gain.value = musicVolume;
         }
     }, [musicVolume]);
+
+    return <></>;
 };
 
-export const AutoMusicController = () => {
+export const AutoMusicController: FC = () => {
     const { setMusicVolume } = useContext(BgMusicContext);
     const location = useLocation();
 
@@ -146,4 +148,6 @@ export const AutoMusicController = () => {
             setMusicVolume(loadMusicVolume());
         }
     }, [location]);
+
+    return <></>;
 }
