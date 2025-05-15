@@ -1,0 +1,89 @@
+.attackDisplay {
+    @apply fixed w-full h-full top-0 left-0 z-50 flex justify-center items-center;
+
+    .sword {
+        position: absolute;
+        top: 10vh;
+        background-image: url("../../assets/background/sword.png");
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        width: 50%;
+        height: 80%;
+        filter: drop-shadow(0 0 10px var(--color));
+
+        animation: attack 3s linear forwards;
+    }
+
+    &:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50vw;
+        height: 20vw;
+        background-image: radial-gradient(
+            110% 110% at left top,
+            transparent,
+            red
+        );
+        mask-image: radial-gradient(
+            110% 110% at right bottom,
+            transparent 90%,
+            black
+        );
+
+        animation: takeDamage 3s linear forwards;
+    }
+}
+
+.attackDisplay.opponentAttack {
+    &:before {
+        left: auto;
+        right: 0;
+        scale: -1 1;
+    }
+
+    .sword {
+        rotate: 180deg;
+    }
+}
+
+@keyframes takeDamage {
+    0% {
+        opacity: 0;
+    }
+    40% {
+        opacity: 0;
+    }
+    45% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes attack {
+    0% {
+        opacity: 0;
+        transform: translateY(20%);
+    }
+    30% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(10%);
+    }
+    45% {
+        transform: translateY(-10%);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-12%);
+        opacity: 0;
+    }
+}

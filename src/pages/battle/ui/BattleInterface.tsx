@@ -1,7 +1,7 @@
 import {FC, useCallback, useContext} from "react";
 import {MatchContext, ModalContext} from "../../../context.tsx";
 import {Button} from "../../../components/Button.tsx";
-import EngagementMenu from "./StormMenu.tsx";
+import EngagementMenu from "./EngagementMenu.tsx";
 import Tips from "../Tips.tsx";
 import {IPlayerState} from "../../../interfaces.ts";
 import {OutgoingBattleEvent} from "../Battle.tsx";
@@ -57,7 +57,7 @@ const BattleInterface: FC = () => {
                 />
             }
             <div className={styles.musicControl}>
-                <MusicVolumeControl />
+                <MusicVolumeControl expandUpward />
             </div>
             <Tips />
         </div>

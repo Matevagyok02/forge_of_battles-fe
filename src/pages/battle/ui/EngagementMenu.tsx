@@ -11,7 +11,7 @@ import styles from "../../../styles/battle_page/Cards.module.css";
 import {BattlefieldPos} from "../cards/CardSlot.tsx";
 import {deckColorStyles} from "../Board.tsx";
 
-const StormMenu: FC = () => {
+const EngagementMenu: FC = () => {
 
     const { player, opponent, socket } = useContext(MatchContext);
     const [openMenu, setOpenMenu] = useState<boolean>(false);
@@ -50,14 +50,14 @@ const StormMenu: FC = () => {
 
     const attack = useCallback(() => {
         if (socket) {
-            socket.emit(OutgoingBattleEvent.storm);
+            socket.emit(OutgoingBattleEvent.attack);
             setOpenMenu(false);
         }
     }, [socket, opponent?.deployedCards]);
 
     const attackPosition = useCallback((position: BattlefieldPos) => {
         if (socket && opponent && position in opponent.deployedCards) {
-            socket.emit(OutgoingBattleEvent.storm, { posToAttack: position });
+            socket.emit(OutgoingBattleEvent.attack, { posToAttack: position });
             setOpenMenu(false);
         }
     }, [socket, opponent?.deployedCards]);
@@ -158,4 +158,4 @@ const StormMenu: FC = () => {
     );
 }
 
-export default StormMenu;
+export default EngagementMenu;

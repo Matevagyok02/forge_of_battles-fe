@@ -32,7 +32,7 @@ import {
     MatchCrereationParams,
     getChatMessages,
     sendChatMessage,
-    ChatMessageParams, addCard, getCardsByDeck
+    ChatMessageParams, addCard, getCardsByDeck, testServer
 } from "./api.ts";
 import {AxiosError, AxiosResponse} from "axios";
 import {ICard, IMatch, IUser} from "../interfaces.ts";
@@ -348,4 +348,11 @@ export const useAddCard = () => {
 export const useCardByDeck = (deck: string): QueryRes<ICard[]> => useQuery({
     queryKey: ["cards", deck],
     queryFn: () => getCardsByDeck(deck)
+});
+
+export const useIsServerAvailable = (): QueryRes<any> => useQuery({
+    queryKey: ["serverTest"],
+    queryFn: () => testServer(),
+    retryDelay: 5 * 1000,
+    retry: 99,
 });

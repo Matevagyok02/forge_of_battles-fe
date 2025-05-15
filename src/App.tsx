@@ -15,12 +15,17 @@ import {useAuthInterceptor} from "./api/interceptorHooks.tsx";
 import DecksAndCards from "./pages/decks_and_cards/DecksAndCards.tsx";
 import Rules from "./pages/rules/Rules.tsx";
 import {BackgroundMusicPlayer, AutoMusicController, loadMusicVolume} from "./components/BgMusic.tsx";
+import {useIsServerAvailable} from "./api/hooks.tsx";
+import LoadingScreen from "./components/LoadingScreen.tsx";
+import ServerUnavailableScreenBlock from "./components/ServerUnavailableScreenBlock.tsx";
 
 const App = () => {
     useAuthInterceptor();
 
     const [_user, setUser] = useState<IUser>();
     const [friends, setFriends] = useState<Friends>({friends: [], pending: []});
+
+    const isServerAvailable= useIsServerAvailable();
 
     const [openedInfoModal, setOpenedInfoModal] = useState<IInfoModal[]>([]);
     const [openedModal, setOpenedModal] = useState<ReactElement | null>(null);
@@ -74,14 +79,19 @@ const App = () => {
         await loginWithPopup();
     }
 
-    return(
+    if (isServerAvailable.isLoading) {
+        if (isServerAvailable.failureCount > 0)
+            return <ServerUnavailableScreenBlock />;
+        else
+            return <LoadingScreen />;
+    } else return(
         <AuthContext.Provider
             value={{
                 user,
                 isAuthenticated: isAuthenticated && !isLoading,
                 login: customLogin,
                 logout: customLogout
-        }}
+            }}
         >
             <ModalContext.Provider
                 value={{
@@ -125,7 +135,7 @@ const App = () => {
                 </BgMusicContext.Provider>
             </ModalContext.Provider>
         </AuthContext.Provider>
-    )
+    );
 }
 
 export default App;
