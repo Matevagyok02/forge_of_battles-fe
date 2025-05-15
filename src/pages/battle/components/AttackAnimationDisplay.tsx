@@ -1,4 +1,4 @@
-import {forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useState} from "react";
+import {forwardRef, useContext, useEffect, useImperativeHandle, useState} from "react";
 import styles from "../../../styles/battle_page/AttackAnimationDisplay.module.css";
 import {deckColorStyles} from "../Board.tsx";
 import {MatchContext} from "../../../context.tsx";
@@ -11,7 +11,7 @@ export interface AttackAnimationHandle {
 const AttackAnimationDisplay = forwardRef((_, ref) => {
 
     const { opponent, player } = useContext(MatchContext);
-    const [color, setColor] = useState<keyof deckColorStyles | null>(null);
+    const [color, setColor] = useState<string | null>(null);
     const [isOpponentAttack, setIsOpponentAttack] = useState<boolean>(false);
 
     const playerAttack = () => {

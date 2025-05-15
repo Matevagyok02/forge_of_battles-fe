@@ -64,6 +64,13 @@
             width: 360px;
             height: 40px;
 
+            .manaShard {
+                height: 32px;
+                width: 32px;
+                background-image: url("../../assets/icons/mana_shard.png");
+                background-size: 100% 100%;
+            }
+
             &::after {
                 content: "";
                 position: absolute;
@@ -125,13 +132,6 @@
                         calc(var(--h) / 2 + 1px) 2px,
                         3px calc(var(--h) / 2)
                 );
-            }
-
-            .manaShard {
-                height: 32px;
-                width: 32px;
-                background-image: url("../../assets/icons/mana_shard.png");
-                background-size: 100% 100%;
             }
         }
 
@@ -337,7 +337,7 @@
 
 @keyframes emptyToActive {
     0% {
-        @apply empty;
+        filter: grayscale(1) brightness(0.5) drop-shadow(0 0 4px var(--silver));
     }
     20% {
         filter: grayscale(0.8) brightness(0.6) drop-shadow(0 0 6px var(--silver));
@@ -357,7 +357,7 @@
 
 @keyframes activeToEmpty {
     0% {
-        @apply active;
+        filter: drop-shadow(0 0 4px var(--cyan));
     }
     20% {
         filter: grayscale(0.2) brightness(0.1) drop-shadow(0 0 6px var(--cyan));
@@ -377,7 +377,7 @@
 
 @keyframes activeToUsed {
     0% {
-        @apply active;
+        filter: drop-shadow(0 0 4px var(--cyan));
     }
     20% {
         filter: brightness(0.9) contrast(1.2) drop-shadow(0 0 6px var(--cyan));
@@ -397,7 +397,7 @@
 
 @keyframes usedToEmpty {
     0% {
-        @apply used;
+        filter: brightness(0.5) contrast(2) drop-shadow(0 0 4px var(--dark-cyan));
     }
     20% {
         filter: grayscale(0.2) contrast(1.8) drop-shadow(0 0 6px var(--dark-cyan));
@@ -417,7 +417,7 @@
 
 @keyframes usedToActive {
     0% {
-        @apply used;
+        filter: brightness(0.5) contrast(2) drop-shadow(0 0 4px var(--dark-cyan));
     }
     20% {
         filter: brightness(0.6) contrast(1.8) drop-shadow(0 0 6px var(--dark-cyan));

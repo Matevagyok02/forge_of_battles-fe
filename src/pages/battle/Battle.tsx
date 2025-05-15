@@ -2,7 +2,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {FC, Suspense, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {IBattle, ICard, IMatch, IPlayerState, MatchStage} from "../../interfaces.ts";
 import {AuthContext, MatchContext, ModalContext} from "../../context.tsx";
-import Board, {deckColorStyles} from "./Board.tsx";
+import Board from "./Board.tsx";
 import BattleChat from "./BattleChat.tsx";
 import {OpponentHand, PlayerHand} from "./Hands.tsx";
 import {getCardsById, isMatchAbandoned} from "../../api/api.ts";
