@@ -17,6 +17,8 @@ import EffectDisplay from "./EffectDisplay.tsx";
 import styles from "../../styles/battle_page/Battle.module.css";
 import events from "../../assets/events.json";
 import MatchCancelledDialog from "./MatchCancelledDialog.tsx";
+import AttackAnimationDisplay, {AttackAnimationHandle} from "./components/AttackAnimationDisplay.tsx";
+import {Button} from "../../components/Button.tsx";
 
 export enum IncomingBattleEvent {
     turnStarted = "turn-started",
@@ -27,7 +29,6 @@ export enum IncomingBattleEvent {
     deployed = "deployed",
     usedAction = "used-action",
     usedPassive = "used-passive",
-    stormed = "stormed",
     addedMana = "added-mana",
     movedToFront = "moved-to-front",
 }
@@ -41,7 +42,7 @@ export enum OutgoingBattleEvent {
     deploy = "deploy",
     useAction = "use-action",
     usePassive = "use-passive",
-    storm = "storm",
+    attack = "attack",
     addMana = "add-mana",
     moveToFront = "move-to-front"
 }
@@ -63,6 +64,7 @@ const Battle: FC = () => {
     const [showResult, setShowResult] = useState<boolean>(false);
 
     const eventDisplay = useRef<EventDisplayHandle | null>(null);
+    const attackAnimationDisplay = useRef<AttackAnimationHandle | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     const {user, isAuthenticated} = useContext(AuthContext);
@@ -83,6 +85,18 @@ const Battle: FC = () => {
         }
     }, [eventDisplay.current]);
 
+    const playerAttack = useCallback(() => {
+        if (attackAnimationDisplay.current) {
+            attackAnimationDisplay.current!.playerAttack();
+        }
+    }, [attackAnimationDisplay.current]);
+
+    const opponentAttack = useCallback(() => {
+        if (attackAnimationDisplay.current) {
+            attackAnimationDisplay.current!.opponentAttack();
+        }
+    }, [attackAnimationDisplay.current]);
+
     const setUpSocket = (matchKey: string) => {
         const socket = io(
             import.meta.env.VITE_SOCKET_URL + "/battle",
@@ -101,6 +115,16 @@ const Battle: FC = () => {
         });
 
         socket.on("connected", setMatch);
+
+        socket.on("attacked", (data: { battle: IBattle }) => {
+            setBattleData(data);
+            playerAttack();
+        });
+
+        socket.on("opponent-attacked", (data: { battle: IBattle }) => {
+            setBattleData(data);
+            opponentAttack();
+        });
 
         setTimeout(
             () => socket.on("opponent-connected", () => displayEvent(events.opponent_connected)),
@@ -315,6 +339,11 @@ const Battle: FC = () => {
                                 <EventDisplay ref={eventDisplay} />
                                 <BattleInterface />
                                 <EffectDisplay />
+                                <AttackAnimationDisplay ref={attackAnimationDisplay} />
+                                <div className="fixed z-50 left-4 top-1/2" >
+                                    <Button text={"Attack"} onClick={playerAttack} />
+                                    <Button text={"Attack 2"} onClick={opponentAttack} />
+                                </div>
                             </div>
                         </MatchContext.Provider>
                     }

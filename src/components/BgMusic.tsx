@@ -136,13 +136,15 @@ export const AutoMusicController: FC = () => {
     const location = useLocation();
 
     const disabledPaths = [
-        "/add-card",
-        "/join",
-        "/preparation",
+        "add-card",
+        "join",
+        "preparation",
     ];
 
     useEffect(() => {
-        if (disabledPaths.includes(location.pathname)) {
+        const pathname = location.pathname.split("/")[1];
+
+        if (disabledPaths.includes(pathname)) {
             setMusicVolume(0);
         } else {
             setMusicVolume(loadMusicVolume());

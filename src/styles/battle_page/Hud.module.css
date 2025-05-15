@@ -64,6 +64,13 @@
             width: 360px;
             height: 40px;
 
+            .manaShard {
+                height: 32px;
+                width: 32px;
+                background-image: url("../../assets/icons/mana_shard.png");
+                background-size: 100% 100%;
+            }
+
             &::after {
                 content: "";
                 position: absolute;
@@ -126,13 +133,6 @@
                         3px calc(var(--h) / 2)
                 );
             }
-
-            .manaShard {
-                height: 32px;
-                width: 32px;
-                background-image: url("../../assets/icons/mana_shard.png");
-                background-size: 100% 100%;
-            }
         }
 
         .manaPoolDecor {
@@ -177,6 +177,22 @@
         width: fit-content;
         flex-direction: column;
         align-items: center;
+
+        .healthDifference {
+            @apply absolute left-16 top-20 text-6xl font-amarante;
+            --color: grey;
+            color: var(--color);
+            text-shadow: 0 0 8px var(--color);
+            animation: health-change 3s linear forwards;
+        }
+
+        .healthDifference[data-value="true"] {
+            --color: red;
+        }
+
+        .healthDifference[data-value="false"] {
+            --color: green;
+        }
 
         .health {
             aspect-ratio: 1/1;
@@ -321,7 +337,7 @@
 
 @keyframes emptyToActive {
     0% {
-        @apply empty;
+        filter: grayscale(1) brightness(0.5) drop-shadow(0 0 4px var(--silver));
     }
     20% {
         filter: grayscale(0.8) brightness(0.6) drop-shadow(0 0 6px var(--silver));
@@ -341,7 +357,7 @@
 
 @keyframes activeToEmpty {
     0% {
-        @apply active;
+        filter: drop-shadow(0 0 4px var(--cyan));
     }
     20% {
         filter: grayscale(0.2) brightness(0.1) drop-shadow(0 0 6px var(--cyan));
@@ -361,7 +377,7 @@
 
 @keyframes activeToUsed {
     0% {
-        @apply active;
+        filter: drop-shadow(0 0 4px var(--cyan));
     }
     20% {
         filter: brightness(0.9) contrast(1.2) drop-shadow(0 0 6px var(--cyan));
@@ -381,7 +397,7 @@
 
 @keyframes usedToEmpty {
     0% {
-        @apply used;
+        filter: brightness(0.5) contrast(2) drop-shadow(0 0 4px var(--dark-cyan));
     }
     20% {
         filter: grayscale(0.2) contrast(1.8) drop-shadow(0 0 6px var(--dark-cyan));
@@ -401,7 +417,7 @@
 
 @keyframes usedToActive {
     0% {
-        @apply used;
+        filter: brightness(0.5) contrast(2) drop-shadow(0 0 4px var(--dark-cyan));
     }
     20% {
         filter: brightness(0.6) contrast(1.8) drop-shadow(0 0 6px var(--dark-cyan));
@@ -416,6 +432,23 @@
         filter: brightness(0.9) contrast(1.2) drop-shadow(0 0 8px var(--cyan)) drop-shadow(0 0 4px var(--cyan));
     }
     100% {
+    }
+}
+
+@keyframes health-change {
+    0% {
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(20%);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(-20%);
+    }
+    100% {
+        opacity: 0;
     }
 }
 

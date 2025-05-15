@@ -28,4 +28,4 @@ const LoadingScreen : FC <{loading ?: boolean}> = ({loading = true}) => {
         </div>
     )
 }
-export default LoadingScreen
+export default LoadingScreen;

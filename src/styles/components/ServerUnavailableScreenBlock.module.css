@@ -1,0 +1,18 @@
+.blocker {
+    @apply fixed left-0 top-0 w-full h-full flex items-center justify-center z-50 bg-neutral-900;
+
+    .content {
+        @apply flex flex-col gap-4 items-center justify-center bg-neutral-800 min-w-min min-h-min p-8 text-center;
+        width: 40vw;
+        height: 60vh;
+
+        & h1 {
+            @apply text-8xl;
+            text-shadow: 0 0 8px black;
+        }
+
+        & p {
+            @apply text-2xl;
+        }
+    }
+}

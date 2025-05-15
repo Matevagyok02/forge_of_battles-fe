@@ -170,10 +170,30 @@ const ManaPool: FC<{ activeMana: number, allMana: number }> = ({ activeMana, all
 const Health: FC<{ baseHealth: number, bonusHealth: number }> = ({ baseHealth, bonusHealth }) => {
 
     const [health, setHealth] = useState<number>(baseHealth + bonusHealth);
+    const [healthDifference, setHealthDifference] = useState<number>(0);
 
     useEffect(() => {
-        setHealth(baseHealth + bonusHealth);
+        setHealth(prevState => {
+            setHealthDifference(prevState - (baseHealth + bonusHealth));
+            return baseHealth + bonusHealth;
+        });
     }, [baseHealth, bonusHealth]);
+
+    useEffect(() => {
+        let timeout: number;
+
+        if (healthDifference !== 0) {
+            timeout = setTimeout(() => {
+                setHealthDifference(0);
+            }, 3000);
+        }
+
+        return () => {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+        };
+    }, [healthDifference]);
 
     const calcHealthPercentage = (health: number) => {
         if (health === maxHealth)
@@ -185,6 +205,11 @@ const Health: FC<{ baseHealth: number, bonusHealth: number }> = ({ baseHealth, b
 
     return(
         <div className={styles.healthContainer} >
+            { healthDifference !== 0 &&
+                <h1 data-value={healthDifference > 0} className={styles.healthDifference} >
+                    {healthDifference > 0 ? "-" : "+"}{Math.abs(healthDifference)}
+                </h1>
+            }
             <div className={styles.healthDecor} ></div>
             <div
                 className={styles.health}

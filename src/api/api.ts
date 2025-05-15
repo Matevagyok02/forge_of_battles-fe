@@ -114,3 +114,5 @@ export const getCardsByDeck = (deck: string) => api.get<ICard[]>("/cards", {
         deck
     }
 });
+
+export const testServer = (): R<MessageResponse> => api.get("/test", { timeout: 5000 });
