@@ -18,7 +18,6 @@ import styles from "../../styles/battle_page/Battle.module.css";
 import events from "../../assets/events.json";
 import MatchCancelledDialog from "./MatchCancelledDialog.tsx";
 import AttackAnimationDisplay, {AttackAnimationHandle} from "./components/AttackAnimationDisplay.tsx";
-import {Button} from "../../components/Button.tsx";
 
 export enum IncomingBattleEvent {
     turnStarted = "turn-started",
@@ -340,10 +339,6 @@ const Battle: FC = () => {
                                 <BattleInterface />
                                 <EffectDisplay />
                                 <AttackAnimationDisplay ref={attackAnimationDisplay} />
-                                <div className="fixed z-50 left-4 top-1/2" >
-                                    <Button text={"Attack"} onClick={playerAttack} />
-                                    <Button text={"Attack 2"} onClick={opponentAttack} />
-                                </div>
                             </div>
                         </MatchContext.Provider>
                     }
